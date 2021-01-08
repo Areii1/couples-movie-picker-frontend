@@ -2,16 +2,16 @@ import React from "react";
 import styled from "styled-components";
 
 type Props = {
-  firstName: string | undefined;
-  lastName: string | undefined;
-  image: string | undefined;
+  firstName?: string | undefined;
+  lastName?: string;
+  image?: string;
   isCurrentUser: boolean;
   size: number;
 };
 
-const getColor = (lastName: string | undefined) => {
-  if (lastName !== undefined) {
-    const secondChar = lastName[1];
+const getColor = (firstname: string | undefined) => {
+  if (firstname !== undefined) {
+    const secondChar = firstname[1];
     if (secondChar < "e") {
       return "lightblue";
     } else if (secondChar < "j") {
@@ -26,7 +26,7 @@ const getColor = (lastName: string | undefined) => {
       return "gray";
     }
   } else {
-    return "transparent";
+    return "lightgray";
   }
 };
 
@@ -34,12 +34,15 @@ export const ProfileBall = (props: Props) => {
   return (
     <Wrapper
       isCurrentUser={props.isCurrentUser}
-      lastName={props.lastName}
+      firstName={props.firstName}
       size={props.size}
       image={props.image}
     >
       {props.image === undefined && (
-        <Text>{`${props.firstName![0]}${props.lastName![0]}`}</Text>
+        <>
+          {props.firstName && <Text>{props.firstName[0].toUpperCase()}</Text>}
+          {!props.firstName && <Text>?</Text>}
+        </>
       )}
       {props.image !== undefined && (
         <Image src={props.image} size={props.size} />
@@ -50,7 +53,7 @@ export const ProfileBall = (props: Props) => {
 
 type WrapperProps = {
   isCurrentUser: boolean;
-  lastName: string | undefined;
+  firstName: string | undefined;
   size: number;
   image: string | undefined;
 };
@@ -62,7 +65,7 @@ const Wrapper = styled.div`
   border: ${(props: WrapperProps) =>
     props.isCurrentUser ? "1px solid orange" : "1px solid transparent"};
   background-color: ${(props: WrapperProps) =>
-    props.image ? "transparent" : getColor(props.lastName)};
+    props.image ? "transparent" : getColor(props.firstName)};
   display: flex;
   justify-content: center;
   align-items: center;

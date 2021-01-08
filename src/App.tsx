@@ -8,6 +8,11 @@ import { ProfileBall } from "./components/profileBall/ProfileBall";
 import { Route, Switch, Link } from "react-router-dom";
 import { getTrendingMovies } from "./apiService/getTrendingMovies";
 import { Auth } from "aws-amplify";
+import { Puff } from "./components/puff/Puff";
+import {
+  removeProfilePicture,
+  uploadProfilePicture,
+} from "./apiService/uploadProfilePicture";
 
 configureAmplify();
 
@@ -54,6 +59,32 @@ export const App = () => {
     setGetCurrentAuthenticatedUserProcess,
   ] = React.useState<any>({ status: Status.INITIAL });
 
+  const [signInProcess, setSignInProcess] = React.useState<any>({
+    status: Status.INITIAL,
+  });
+  const [signUpProcess, setSignUpProcess] = React.useState<any>({
+    status: Status.INITIAL,
+  });
+
+  const [signOutProcess, setSignOutProcess] = React.useState<any>({
+    status: Status.INITIAL,
+  });
+
+  const [uploadPictureProcess, setUploadPictureProcess] = React.useState<any>({
+    status: Status.INITIAL,
+  });
+
+  const [removePictureProcess, setRemovePictureProcess] = React.useState<any>({
+    status: Status.INITIAL,
+  });
+
+  const [selectedFile, setSelectedFile] = React.useState<any>();
+
+  const initiateSession = async () => {
+    getUserInfo();
+    getMovies();
+  };
+
   const getUserInfo = async () => {
     try {
       setGetCurrentSessionProcess({ status: Status.LOADING });
@@ -83,37 +114,22 @@ export const App = () => {
     }
   };
 
-  // const getCurrentSession = async () => {
-  //   try {
-  //     setGetCurrentSessionProcess({ status: Status.LOADING });
-  //     const getCurrentSessionResponse = await Auth.currentSession();
-  //     setGetCurrentSessionProcess({
-  //       status: Status.SUCCESS,
-  //       data: getCurrentSessionResponse,
-  //     });
-  //   } catch (getCurrentSessionError) {
-  //     setGetCurrentSessionProcess({
-  //       status: Status.ERROR,
-  //       error: getCurrentSessionError,
-  //     });
-  //   }
-  // };
-
-  // const getCurrentAuthenticatedUser = async () => {
-  //   try {
-  //     setGetCurrentAuthenticatedUserProcess({ status: Status.LOADING });
-  //     const getCurrentAuthenticatedUserResponse = await Auth.currentAuthenticatedUser();
-  //     setGetCurrentAuthenticatedUserProcess({
-  //       status: Status.SUCCESS,
-  //       data: getCurrentAuthenticatedUserResponse,
-  //     });
-  //   } catch (getCurrentAuthenticatedUserError) {
-  //     setGetCurrentAuthenticatedUserProcess({
-  //       status: Status.ERROR,
-  //       error: getCurrentAuthenticatedUserError,
-  //     });
-  //   }
-  // };
+  const signOut = async () => {
+    try {
+      setSignOutProcess({ status: Status.LOADING });
+      const signOutResponse = await Auth.signOut();
+      setSignOutProcess({
+        status: Status.SUCCESS,
+        data: signOutResponse,
+      });
+      initiateSession();
+    } catch (signOutError) {
+      setSignOutProcess({
+        status: Status.ERROR,
+        error: signOutError,
+      });
+    }
+  };
 
   const getMovies = async () => {
     try {
@@ -170,55 +186,103 @@ export const App = () => {
 
   const loginUser = async (event: FormEvent) => {
     event.preventDefault();
-    console.log("logging in user");
     try {
+      setSignInProcess({ status: Status.LOADING });
       const loginResponse = await Auth.signIn({
         username: loginUsernameFieldValue,
         password: loginPasswordFieldValue,
       });
-
-      console.log(loginResponse, "login response");
+      setSignInProcess({ status: Status.SUCCESS, data: loginResponse });
+      initiateSession();
     } catch (loginError) {
-      console.log(loginError, "sign up error");
+      setSignInProcess({ status: Status.ERROR, error: loginError });
     }
   };
 
   const signUserUp = async (event: FormEvent) => {
     event.preventDefault();
-    console.log("signing user");
     try {
-      const signupResponse = await Auth.signUp({
+      setSignUpProcess({ status: Status.LOADING });
+      const signUpResponse = await Auth.signUp({
         username: signupUsernameFieldValue,
         password: signupPasswordFieldValue,
       });
-      console.log(signupResponse, "signupResponse");
+      setSignUpProcess({ status: Status.SUCCESS, data: signUpResponse });
     } catch (signupError) {
-      console.log(signupError, "signupError");
+      setSignUpProcess({ status: Status.ERROR, error: signupError });
     }
   };
 
+  const uploadPicture = async (file: any) => {
+    try {
+      setUploadPictureProcess({ status: Status.LOADING });
+      const uploadPictureResponse = await uploadProfilePicture(
+        file.name,
+        file,
+        getCurrentAuthenticatedUserProcess.data.username
+      );
+      console.log(uploadPictureResponse, "uploadPictureResponse");
+      setUploadPictureProcess({
+        status: Status.SUCCESS,
+        data: uploadPictureResponse,
+      });
+    } catch (uploadPictureError) {
+      console.log(uploadPictureError, "error");
+      setUploadPictureProcess({
+        status: Status.ERROR,
+        error: uploadPictureError,
+      });
+    }
+  };
+
+  const removePicture = async () => {
+    try {
+      setRemovePictureProcess({ status: Status.LOADING });
+      const uploadPictureResponse = await removeProfilePicture();
+      setRemovePictureProcess({
+        status: Status.SUCCESS,
+        data: uploadPictureResponse,
+      });
+    } catch (uploadPictureError) {
+      setRemovePictureProcess({
+        status: Status.ERROR,
+        error: uploadPictureError,
+      });
+    }
+  };
+
+  const selectFile = (event: any) => {
+    console.log(event.target.files[0], "files");
+    // setSelectedFile(event.target.files[0]);
+    uploadPicture(event.target.files[0]);
+  };
+
   React.useEffect(() => {
-    getUserInfo();
-    getMovies();
+    initiateSession();
     window.addEventListener("keydown", keyDownHandler);
     return () => {
       window.removeEventListener("keyDown", keyDownHandler);
     };
   }, []);
 
+  console.log(getCurrentSessionProcess, "getCurrentSessionProcess");
   console.log(
     getCurrentAuthenticatedUserProcess,
     "getCurrentAuthenticatedUserProcess"
   );
-  console.log(getCurrentSessionProcess, "getCurrentSessionProcess");
+  // console.log(signInProcess, "signInProcess");
+  // console.log(signUpProcess, "signUpProcess");
   return (
     <ContentWrapper className="App">
       <NavigationBar>
         <NavigationBarItem>
           <Link to="/user/aaa">
             <ProfileBall
-              firstName="aaaaaa"
-              lastName="aaaa"
+              firstName={
+                getCurrentAuthenticatedUserProcess.status === Status.SUCCESS
+                  ? getCurrentAuthenticatedUserProcess.data.username
+                  : undefined
+              }
               image={undefined}
               isCurrentUser={false}
               size={50}
@@ -282,62 +346,125 @@ export const App = () => {
             </FireMeter>
           </Route>
           <Route exact path="/user/:id">
-            {getCurrentSessionProcess.status === Status.SUCCESS && (
-              <h3>
-                {getCurrentAuthenticatedUserProcess &&
-                  getCurrentAuthenticatedUserProcess.data &&
-                  getCurrentAuthenticatedUserProcess.data.username}
-              </h3>
+            {getCurrentAuthenticatedUserProcess.status === Status.SUCCESS && (
+              <>
+                <div>
+                  <h3>Profile picture</h3>
+                  <AvatarSection>
+                    <ProfileBall
+                      firstName={
+                        getCurrentAuthenticatedUserProcess.data.username
+                      }
+                      image={undefined}
+                      isCurrentUser={false}
+                      size={50}
+                    />
+                    <InputWrapper>
+                      <FileInput
+                        type="file"
+                        onChange={(event) => selectFile(event)}
+                      />
+                      <Button type="button" title="upload">
+                        <ButtonText>Upload</ButtonText>
+                      </Button>
+                    </InputWrapper>
+                    <Button
+                      type="button"
+                      onClick={removePicture}
+                      title="remove"
+                    >
+                      <ButtonText>Remove</ButtonText>
+                    </Button>
+                  </AvatarSection>
+                </div>
+                <div>
+                  {signOutProcess.status === Status.INITIAL && (
+                    <Button type="button" onClick={signOut} title="log out">
+                      <ButtonText>Log out</ButtonText>
+                    </Button>
+                  )}
+                  {signOutProcess.status === Status.LOADING && (
+                    <Puff size={50} fill="lightblue" />
+                  )}
+                </div>
+              </>
             )}
-            {getCurrentSessionProcess.status === Status.ERROR && (
+            {(getCurrentSessionProcess.status === Status.ERROR ||
+              getCurrentAuthenticatedUserProcess.status === Status.ERROR) && (
               <>
                 <FormWrapper>
-                  <h1>Log in</h1>
-                  <Form onSubmit={loginUser}>
-                    <InputField
-                      type="text"
-                      value={loginUsernameFieldValue}
-                      onChange={(event) =>
-                        setLoginUsernameFieldValue(event.target.value)
-                      }
-                      placeholder="username"
-                    />
-                    <InputField
-                      type="password"
-                      value={loginPasswordFieldValue}
-                      onChange={(event) =>
-                        setLoginPasswordFieldValue(event.target.value)
-                      }
-                      placeholder="password"
-                    />
-                    <Button type="submit" title="login">
-                      <ButtonText>Log in</ButtonText>
-                    </Button>
-                  </Form>
+                  {signInProcess.status === Status.INITIAL && (
+                    <>
+                      <h1>Log in</h1>
+                      <Form onSubmit={loginUser}>
+                        <InputField
+                          type="text"
+                          value={loginUsernameFieldValue}
+                          onChange={(event) =>
+                            setLoginUsernameFieldValue(event.target.value)
+                          }
+                          placeholder="username"
+                        />
+                        <InputField
+                          type="password"
+                          value={loginPasswordFieldValue}
+                          onChange={(event) =>
+                            setLoginPasswordFieldValue(event.target.value)
+                          }
+                          placeholder="password"
+                        />
+                        <Button type="submit" title="login">
+                          <ButtonText>Log in</ButtonText>
+                        </Button>
+                      </Form>
+                    </>
+                  )}
+                  {signInProcess.status === Status.LOADING && (
+                    <Puff size={50} fill="lightblue" />
+                  )}
+                  {signInProcess.status === Status.SUCCESS && (
+                    <h3>user signed in</h3>
+                  )}
+                  {signInProcess.status === Status.ERROR && (
+                    <h3>could not sign in</h3>
+                  )}
                 </FormWrapper>
                 <FormWrapper>
-                  <h1>Sign up</h1>
-                  <Form onSubmit={(event) => signUserUp(event)}>
-                    <InputField
-                      type="text"
-                      value={signupUsernameFieldValue}
-                      onChange={(event) =>
-                        setSignupUsernameFieldValue(event.target.value)
-                      }
-                      placeholder="username"
-                    />
-                    <InputField
-                      type="password"
-                      value={signupPasswordFieldValue}
-                      onChange={(event) =>
-                        setSignupPasswordFieldValue(event.target.value)
-                      }
-                      placeholder="password"
-                    />
-                    <Button type="submit" title="sign up">
-                      <ButtonText>sign up</ButtonText>
-                    </Button>
-                  </Form>
+                  {signUpProcess.status === Status.INITIAL && (
+                    <>
+                      <h1>Sign up</h1>
+                      <Form onSubmit={(event) => signUserUp(event)}>
+                        <InputField
+                          type="text"
+                          value={signupUsernameFieldValue}
+                          onChange={(event) =>
+                            setSignupUsernameFieldValue(event.target.value)
+                          }
+                          placeholder="username"
+                        />
+                        <InputField
+                          type="password"
+                          value={signupPasswordFieldValue}
+                          onChange={(event) =>
+                            setSignupPasswordFieldValue(event.target.value)
+                          }
+                          placeholder="password"
+                        />
+                        <Button type="submit" title="sign up">
+                          <ButtonText>sign up</ButtonText>
+                        </Button>
+                      </Form>
+                    </>
+                  )}
+                  {signUpProcess.status === Status.LOADING && (
+                    <Puff size={50} fill="lightblue" />
+                  )}
+                  {signUpProcess.status === Status.SUCCESS && (
+                    <h3>User registered</h3>
+                  )}
+                  {signUpProcess.status === Status.ERROR && (
+                    <h3>User could not be registered</h3>
+                  )}
                 </FormWrapper>
               </>
             )}
@@ -352,6 +479,10 @@ export const App = () => {
     </ContentWrapper>
   );
 };
+
+const AvatarSection = styled.div`
+  display: flex;
+`;
 
 const ContentWrapper = styled.div`
   margin: auto;
@@ -491,7 +622,22 @@ const InputField = styled.input`
 const Button = styled.button`
   width: 100px;
   height: 30px;
-  margin-top: 20px;
+`;
+
+const InputWrapper = styled.div`
+  width: 100px;
+  height: 30px;
+  position: relative;
+`;
+
+const FileInput = styled.input`
+  opacity: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100px;
+  height: 30px;
+  cursor: pointer;
 `;
 
 const ButtonText = styled.h5`

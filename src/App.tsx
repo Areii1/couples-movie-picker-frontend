@@ -1,11 +1,8 @@
 import React, { FormEvent } from "react";
 import styled from "styled-components";
 import { configureAmplify } from "./config/Config";
-import { ReactComponent as FireIcon } from "./assets/fire.svg";
-import { ReactComponent as Heart2Icon } from "./assets/heart-2.svg";
-import { ReactComponent as ColdIcon } from "./assets/snowflake.svg";
 import { ProfileBall } from "./components/profileBall/ProfileBall";
-import { Route, Switch, Link } from "react-router-dom";
+import { Route, Switch } from "react-router-dom";
 import { getTrendingMovies } from "./apiService/getTrendingMovies";
 import { Auth } from "aws-amplify";
 import { Puff } from "./components/puff/Puff";
@@ -13,15 +10,23 @@ import {
   removeProfilePicture,
   uploadProfilePicture,
 } from "./apiService/uploadProfilePicture";
+import { NavigationBar } from "./components/navigationBar/NavigationBar";
+import { FireMeter } from "./components/fireMeter/FireMeter";
 
 configureAmplify();
 
-enum Status {
+export enum Status {
   INITIAL,
   LOADING,
   SUCCESS,
   ERROR,
 }
+
+export type Process =
+  | { status: Status.INITIAL }
+  | { status: Status.LOADING }
+  | { status: Status.SUCCESS; data: any }
+  | { status: Status.ERROR; error: Error };
 
 export const App = () => {
   const [fireMeterSwitch, setFireMeterSwitch] = React.useState<any>({
@@ -252,8 +257,6 @@ export const App = () => {
   };
 
   const selectFile = (event: any) => {
-    console.log(event.target.files[0], "files");
-    // setSelectedFile(event.target.files[0]);
     uploadPicture(event.target.files[0]);
   };
 
@@ -265,45 +268,11 @@ export const App = () => {
     };
   }, []);
 
-  console.log(getCurrentSessionProcess, "getCurrentSessionProcess");
-  console.log(
-    getCurrentAuthenticatedUserProcess,
-    "getCurrentAuthenticatedUserProcess"
-  );
-  // console.log(signInProcess, "signInProcess");
-  // console.log(signUpProcess, "signUpProcess");
   return (
     <ContentWrapper className="App">
-      <NavigationBar>
-        <NavigationBarItem>
-          <Link to="/user/aaa">
-            <ProfileBall
-              firstName={
-                getCurrentAuthenticatedUserProcess.status === Status.SUCCESS
-                  ? getCurrentAuthenticatedUserProcess.data.username
-                  : undefined
-              }
-              image={undefined}
-              isCurrentUser={false}
-              size={50}
-            />
-          </Link>
-        </NavigationBarItem>
-        <NavigationBarItem>
-          <Link to="/">
-            <IconWrapper>
-              <FireIcon />
-            </IconWrapper>
-          </Link>
-        </NavigationBarItem>
-        <NavigationBarItem>
-          <Link to="/love">
-            <IconWrapper>
-              <Heart2Icon />
-            </IconWrapper>
-          </Link>
-        </NavigationBarItem>
-      </NavigationBar>
+      <NavigationBar
+        getCurrentAuthenticatedUserProcess={getCurrentAuthenticatedUserProcess}
+      />
       <MainCard>
         <Switch>
           <Route exact path="/">
@@ -318,32 +287,11 @@ export const App = () => {
                 </Title>
               </ImageSection>
             )}
-            <FireMeter>
-              <FireMeterHotIconButton
-                onClick={() =>
-                  !fireMeterSwitch.locked
-                    ? setFireMeterSwitch({ position: 0, locked: true })
-                    : () => {}
-                }
-                title="awesome"
-              >
-                <FireIcon />
-              </FireMeterHotIconButton>
-              <FireMeterColdIconButton
-                onClick={() =>
-                  !fireMeterSwitch.locked
-                    ? setFireMeterSwitch({ position: 100, locked: true })
-                    : () => {}
-                }
-                title="horrible"
-              >
-                <ColdIcon />
-              </FireMeterColdIconButton>
-              <MeterSwitchButton
-                fireMeterSwitch={fireMeterSwitch}
-                onClick={handleSwitchButtonClick}
-              />
-            </FireMeter>
+            <FireMeter
+              fireMeterSwitch={fireMeterSwitch}
+              setFireMeterSwitch={setFireMeterSwitch}
+              handleSwitchButtonClick={handleSwitchButtonClick}
+            />
           </Route>
           <Route exact path="/user/:id">
             {getCurrentAuthenticatedUserProcess.status === Status.SUCCESS && (
@@ -492,28 +440,6 @@ const ContentWrapper = styled.div`
   align-items: center;
 `;
 
-const NavigationBar = styled.ul`
-  list-style-type: none;
-  padding: 0;
-  background-color: white;
-  display: flex;
-  border-radius: 10px;
-  margin-top: 20px;
-`;
-
-const NavigationBarItem = styled.li`
-  width: 80px;
-  height: 80px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-
-const IconWrapper = styled.div`
-  width: 50px;
-  height: 50px;
-`;
-
 const MainCard = styled.div`
   width: 100%;
   height: 600px;
@@ -525,68 +451,6 @@ const MainCard = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-`;
-
-const FireMeter = styled.div`
-  position: relative;
-  display: flex;
-  justify-content: space-between;
-  margin: 100px auto 0 auto;
-  width: 300px;
-  height: 30px;
-  background: rgb(220, 106, 1);
-  background: linear-gradient(
-    90deg,
-    rgba(220, 106, 1, 1) 0%,
-    rgba(8, 82, 151, 1) 100%
-  );
-  border-radius: 10px;
-`;
-
-const FireMeterHotIconButton = styled.div`
-  width: 50px;
-  height: 50px;
-  margin: -15px 0 0 -25px;
-  cursor: pointer;
-`;
-
-const FireMeterColdIconButton = styled(FireMeterHotIconButton)`
-  margin: -15px -25px 0 0;
-  cursor: pointer;
-`;
-
-type MeterSwitchButtonProps = {
-  fireMeterSwitch: any;
-};
-
-const getMeterSwitchPxPosition = (fireMeterSwitchPosition: any) => {
-  const meterSwitcCircleRadius = 25;
-  const barMultiplier = 3;
-  const positionIsLowMax = fireMeterSwitchPosition === 100;
-  if (positionIsLowMax) {
-    const finalPos =
-      fireMeterSwitchPosition * barMultiplier - meterSwitcCircleRadius;
-    return `${finalPos}px`;
-  } else {
-    const finalPos =
-      fireMeterSwitchPosition * barMultiplier - meterSwitcCircleRadius;
-    return `${finalPos}px`;
-  }
-};
-
-const MeterSwitchButton = styled.button`
-  width: 50px;
-  height: 50px;
-  border-radius: 50px;
-  background-color: white;
-  border: ${(props: MeterSwitchButtonProps) =>
-    props.fireMeterSwitch.locked ? "2px solid green;" : "1px solid lightgray;"};
-  position: absolute;
-  top: calc(50% - 25px);
-  opacity: 0.9;
-  left: ${(props: MeterSwitchButtonProps) =>
-    getMeterSwitchPxPosition(props.fireMeterSwitch.position)};
-  cursor: pointer;
 `;
 
 const ImageSection = styled.div`

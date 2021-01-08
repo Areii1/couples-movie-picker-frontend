@@ -1,5 +1,6 @@
 import { Auth } from "aws-amplify";
 import React from "react";
+import { Redirect } from "react-router";
 import styled from "styled-components";
 import {
   removeProfilePicture,
@@ -11,7 +12,7 @@ import { Puff } from "../components/puff/Puff";
 import { Button, ButtonText } from "./LogIn";
 
 type Props = {
-  getCurrentSessionProcess: Process;
+  getCurrentSessionProcess: any;
   getCurrentAuthenticatedUserProcess: Process;
   initiateSession: () => void;
 };
@@ -30,7 +31,7 @@ export const AccountSettings = (props: Props) => {
   });
 
   const [selectedFile, setSelectedFile] = React.useState<any>();
-  
+
   const uploadPicture = async (file: any) => {
     if (props.getCurrentAuthenticatedUserProcess.status === Status.SUCCESS) {
       try {
@@ -91,6 +92,14 @@ export const AccountSettings = (props: Props) => {
   const selectFile = (event: any) => {
     uploadPicture(event.target.files[0]);
   };
+
+  console.log(props.getCurrentSessionProcess, "getCurrentSessionProcess");
+  if (props.getCurrentSessionProcess.error) {
+    console.log(
+      props.getCurrentSessionProcess.error,
+      "props.getCurrentSessionProcess.error"
+    );
+  }
   return (
     <>
       {props.getCurrentAuthenticatedUserProcess.status === Status.SUCCESS && (
@@ -134,7 +143,12 @@ export const AccountSettings = (props: Props) => {
       )}
       {(props.getCurrentSessionProcess.status === Status.ERROR ||
         props.getCurrentAuthenticatedUserProcess.status === Status.ERROR) && (
-        <></>
+        <>
+          {props.getCurrentSessionProcess &&
+            props.getCurrentSessionProcess.error === "No current user" && (
+              <Redirect to="login" />
+            )}
+        </>
       )}
     </>
   );

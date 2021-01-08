@@ -18,20 +18,20 @@ export const NavigationBar = (props: Props) => {
   return (
     <List>
       <ListItem>
-        <Link to="/user/aaa">
+        <Link to="/">
+          <IconWrapper>
+            <FireIcon />
+          </IconWrapper>
+        </Link>
+      </ListItem>
+      <ListItem>
+        <Link to="/user">
           <ProfileBall
             firstName={firstName}
             image={undefined}
             isCurrentUser={false}
             size={50}
           />
-        </Link>
-      </ListItem>
-      <ListItem>
-        <Link to="/">
-          <IconWrapper>
-            <FireIcon />
-          </IconWrapper>
         </Link>
       </ListItem>
       <ListItem>

@@ -1,15 +1,9 @@
-import React, { FormEvent } from "react";
+import React from "react";
 import styled from "styled-components";
 import { configureAmplify } from "./config/Config";
-import { ProfileBall } from "./components/profileBall/ProfileBall";
 import { Route, Switch } from "react-router-dom";
 import { getTrendingMovies } from "./apiService/getTrendingMovies";
 import { Auth } from "aws-amplify";
-import { Puff } from "./components/puff/Puff";
-import {
-  removeProfilePicture,
-  uploadProfilePicture,
-} from "./apiService/uploadProfilePicture";
 import { NavigationBar } from "./components/navigationBar/NavigationBar";
 import { MainView } from "./views/MainView";
 import { LogIn } from "./views/LogIn";

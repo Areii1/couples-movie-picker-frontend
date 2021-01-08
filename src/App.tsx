@@ -196,8 +196,13 @@ const MainCard = styled.div`
   margin-top: 50px;
   border-radius: 10px;
   overflow: hidden;
-  text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
+`;
+
+export const PrimaryHeadline = styled.h3`
+  font-size: 25px;
+  margin: 0;
+  font-weight: 400;
 `;

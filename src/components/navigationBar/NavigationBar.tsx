@@ -18,14 +18,14 @@ export const NavigationBar = (props: Props) => {
   return (
     <List>
       <ListItem>
-        <Link to="/">
+        <Link to="/" title="like">
           <IconWrapper>
             <FireIcon />
           </IconWrapper>
         </Link>
       </ListItem>
       <ListItem>
-        <Link to="/user">
+        <Link to="/user" title="user">
           <ProfileBall
             firstName={firstName}
             image={undefined}
@@ -35,7 +35,7 @@ export const NavigationBar = (props: Props) => {
         </Link>
       </ListItem>
       <ListItem>
-        <Link to="/love">
+        <Link to="/love" title="matches">
           <IconWrapper>
             <Heart2Icon />
           </IconWrapper>

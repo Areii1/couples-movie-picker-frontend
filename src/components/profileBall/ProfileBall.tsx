@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import { darken } from "../../views/LogIn";
 
 type Props = {
   firstName?: string | undefined;
@@ -21,12 +22,12 @@ const getColor = (firstname: string | undefined) => {
     } else if (secondChar < "y") {
       return "salmon";
     } else if (secondChar < "z") {
-      return "lightgray";
-    } else {
       return "gray";
+    } else {
+      return "lightgray";
     }
   } else {
-    return "lightgray";
+    return "gray";
   }
 };
 
@@ -70,12 +71,16 @@ const Wrapper = styled.div`
   justify-content: center;
   align-items: center;
   overflow: hidden;
+  :hover {
+    animation: ${darken} 0.3s linear forwards; 
+  }
 `;
 
 const Text = styled.h5`
   margin: 0;
-  font-size: 18px;
+  font-size: 30px;
   text-decoration: none;
+  color: white;
 `;
 
 type ImageProps = {

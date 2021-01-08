@@ -11,7 +11,7 @@ import {
   uploadProfilePicture,
 } from "./apiService/uploadProfilePicture";
 import { NavigationBar } from "./components/navigationBar/NavigationBar";
-import { FireMeter } from "./components/fireMeter/FireMeter";
+import { MainView } from "./views/MainView";
 
 configureAmplify();
 
@@ -276,18 +276,8 @@ export const App = () => {
       <MainCard>
         <Switch>
           <Route exact path="/">
-            {getTrendingMoviesProcess.status === Status.SUCCESS && (
-              <ImageSection>
-                <img
-                  src={`https://image.tmdb.org/t/p/w500/${getTrendingMoviesProcess.data.results[0].backdrop_path}`}
-                  alt={getTrendingMoviesProcess.data.results[0].original_title}
-                />
-                <Title>
-                  {getTrendingMoviesProcess.data.results[0].original_title}
-                </Title>
-              </ImageSection>
-            )}
-            <FireMeter
+            <MainView
+              getTrendingMoviesProcess={getTrendingMoviesProcess}
               fireMeterSwitch={fireMeterSwitch}
               setFireMeterSwitch={setFireMeterSwitch}
               handleSwitchButtonClick={handleSwitchButtonClick}
@@ -451,18 +441,6 @@ const MainCard = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-`;
-
-const ImageSection = styled.div`
-  width: 500px;
-`;
-
-const Title = styled.h3`
-  font-size: 40px;
-  color: #808080;
-  word-wrap: break-word;
-  width: 500px;
-  margin: 20px 0 0 0;
 `;
 
 const FormWrapper = styled.div`

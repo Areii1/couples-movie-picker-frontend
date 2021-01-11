@@ -120,18 +120,18 @@ export const AccountSettings = (props: Props) => {
                   type="file"
                   onChange={(event) => selectFile(event)}
                 />
-                <Button type="button" title="upload">
+                <Button type="button" title="upload" error={false}>
                   <ButtonText>Upload</ButtonText>
                 </Button>
               </InputWrapper>
-              <Button type="button" onClick={removePicture} title="remove">
+              <Button type="button" onClick={removePicture} title="remove" error={false}>
                 <ButtonText>Remove</ButtonText>
               </Button>
             </AvatarSection>
           </div>
           <div>
             {signOutProcess.status === Status.INITIAL && (
-              <Button type="button" onClick={signOut} title="log out">
+              <Button type="button" onClick={signOut} title="log out" error={false}>
                 <ButtonText>Log out</ButtonText>
               </Button>
             )}

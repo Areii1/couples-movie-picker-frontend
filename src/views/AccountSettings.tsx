@@ -9,7 +9,7 @@ import {
 import { Process, Status } from "../App";
 import { ProfileBall } from "../components/profileBall/ProfileBall";
 import { Puff } from "../components/puff/Puff";
-import { Button, ButtonText } from "./LogIn";
+import { Button, ButtonText, LogInPrimaryHeadline } from "./LogIn";
 
 type Props = {
   getCurrentSessionProcess: any;
@@ -80,12 +80,14 @@ export const AccountSettings = (props: Props) => {
         status: Status.SUCCESS,
         data: signOutResponse,
       });
+      alert("logged out");
       props.initiateSession();
     } catch (signOutError) {
       setSignOutProcess({
         status: Status.ERROR,
         error: signOutError,
       });
+      alert("could not log out");
     }
   };
 
@@ -93,19 +95,22 @@ export const AccountSettings = (props: Props) => {
     uploadPicture(event.target.files[0]);
   };
 
-  console.log(props.getCurrentSessionProcess, "getCurrentSessionProcess");
-  if (props.getCurrentSessionProcess.error) {
-    console.log(
-      props.getCurrentSessionProcess.error,
-      "props.getCurrentSessionProcess.error"
-    );
-  }
+  // console.log(
+  //   props.getCurrentAuthenticatedUserProcess,
+  //   "getCurrentAuthenticatedUserProcess"
+  // );
+  // console.log(props.getCurrentSessionProcess, "getCurrentSession");
+
   return (
-    <>
+    <Wrapper>
+      <LogInPrimaryHeadline>Profile</LogInPrimaryHeadline>
+      {(props.getCurrentSessionProcess.status === Status.LOADING ||
+        props.getCurrentAuthenticatedUserProcess.status === Status.LOADING) && (
+        <Puff size={50} fill="blue" />
+      )}
       {props.getCurrentAuthenticatedUserProcess.status === Status.SUCCESS && (
         <>
           <div>
-            <h3>Profile picture</h3>
             <AvatarSection>
               <ProfileBall
                 firstName={
@@ -114,6 +119,7 @@ export const AccountSettings = (props: Props) => {
                 image={undefined}
                 isCurrentUser={false}
                 size={50}
+                animate={false}
               />
               <InputWrapper>
                 <FileInput
@@ -124,33 +130,41 @@ export const AccountSettings = (props: Props) => {
                   <ButtonText>Upload</ButtonText>
                 </Button>
               </InputWrapper>
-              <Button type="button" onClick={removePicture} title="remove" error={false}>
+              <Button
+                type="button"
+                onClick={removePicture}
+                title="remove"
+                error={false}
+              >
                 <ButtonText>Remove</ButtonText>
               </Button>
             </AvatarSection>
           </div>
           <div>
-            {signOutProcess.status === Status.INITIAL && (
-              <Button type="button" onClick={signOut} title="log out" error={false}>
-                <ButtonText>Log out</ButtonText>
+            {signOutProcess.status !== Status.LOADING && (
+              <Button
+                type="button"
+                onClick={signOut}
+                title="log out"
+                error={signOutProcess.status === Status.ERROR}
+              >
+                <ButtonText>
+                  {signOutProcess.status === Status.ERROR
+                    ? "Try again"
+                    : "Log out"}
+                </ButtonText>
               </Button>
             )}
             {signOutProcess.status === Status.LOADING && (
               <Puff size={50} fill="lightblue" />
             )}
+            {signOutProcess.status === Status.SUCCESS && (
+              <Redirect to="/login" />
+            )}
           </div>
         </>
       )}
-      {(props.getCurrentSessionProcess.status === Status.ERROR ||
-        props.getCurrentAuthenticatedUserProcess.status === Status.ERROR) && (
-        <>
-          {props.getCurrentSessionProcess &&
-            props.getCurrentSessionProcess.error === "No current user" && (
-              <Redirect to="login" />
-            )}
-        </>
-      )}
-    </>
+    </Wrapper>
   );
 };
 
@@ -172,4 +186,9 @@ const InputWrapper = styled.div`
   width: 100px;
   height: 30px;
   position: relative;
+`;
+
+const Wrapper = styled.div`
+  text-align: center;
+  margin-top: 50px;
 `;

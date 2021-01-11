@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 import { HeartIcon } from "../icons/HeartIcon";
-import { FireIcon } from '../icons/FireIcon';
+import { FireIcon } from "../icons/FireIcon";
 import { Process, Status } from "../../App";
 import { ProfileBall } from "../profileBall/ProfileBall";
 
@@ -25,12 +25,13 @@ export const NavigationBar = (props: Props) => {
         </Link>
       </ListItem>
       <ListItem>
-        <Link to="/user" title="user">
+        <Link to="/user" title={firstName}>
           <ProfileBall
             firstName={firstName}
             image={undefined}
             isCurrentUser={false}
             size={50}
+            animate
           />
         </Link>
       </ListItem>

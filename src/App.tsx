@@ -46,6 +46,7 @@ export const App = (props: any) => {
   ] = React.useState<any>({ status: Status.INITIAL });
 
   const initiateSession = async () => {
+    console.log("initiateSession");
     getUserInfo();
     getMovies();
   };
@@ -139,6 +140,25 @@ export const App = (props: any) => {
       window.removeEventListener("keyDown", keyDownHandler);
     };
   }, []);
+
+  React.useEffect(() => {
+    console.log('efect triggered');
+    if (
+      getCurrentSessionProcess.status === Status.ERROR &&
+      getCurrentAuthenticatedUserProcess.status === Status.SUCCESS
+    ) {
+      setGetCurrentAuthenticatedUserProcess({
+        status: Status.ERROR,
+        error: { message: "current session failed" },
+      });
+    }
+  }, [getCurrentSessionProcess.status]);
+
+  console.log(
+    getCurrentAuthenticatedUserProcess,
+    "getCurrentAuthenticatedUserProcess"
+  );
+  console.log(getCurrentSessionProcess, "getCurrentSession");
 
   return (
     <ContentWrapper className="App">

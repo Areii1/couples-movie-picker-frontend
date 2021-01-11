@@ -1,6 +1,5 @@
 import React from "react";
-import styled from "styled-components";
-import { darken } from "../../views/LogIn";
+import styled, { css, keyframes } from "styled-components";
 
 type Props = {
   firstName?: string | undefined;
@@ -8,13 +7,14 @@ type Props = {
   image?: string;
   isCurrentUser: boolean;
   size: number;
+  animate: boolean;
 };
 
 const getColor = (firstname: string | undefined) => {
   if (firstname !== undefined) {
     const secondChar = firstname[1];
     if (secondChar < "e") {
-      return "lightblue";
+      return "aqua";
     } else if (secondChar < "j") {
       return "lightgreen";
     } else if (secondChar < "o") {
@@ -31,6 +31,27 @@ const getColor = (firstname: string | undefined) => {
   }
 };
 
+const getHoverColor = (firstname: string | undefined) => {
+  if (firstname !== undefined) {
+    const secondChar = firstname[1];
+    if (secondChar < "e") {
+      return "#91ffff";
+    } else if (secondChar < "j") {
+      return "#b9e9b9";
+    } else if (secondChar < "o") {
+      return "#ffe657";
+    } else if (secondChar < "y") {
+      return "#fda69c;";
+    } else if (secondChar < "z") {
+      return "#a1a1a1";
+    } else {
+      return "lightgray";
+    }
+  } else {
+    return "#a1a1a1";
+  }
+};
+
 export const ProfileBall = (props: Props) => {
   return (
     <Wrapper
@@ -38,6 +59,7 @@ export const ProfileBall = (props: Props) => {
       firstName={props.firstName}
       size={props.size}
       image={props.image}
+      animate={props.animate}
     >
       {props.image === undefined && (
         <>
@@ -57,7 +79,17 @@ type WrapperProps = {
   firstName: string | undefined;
   size: number;
   image: string | undefined;
+  animate: boolean;
 };
+
+const lighten = (firstName: string | undefined) => keyframes`
+  from {
+    background-color: ${getColor(firstName)};
+  }
+  to {
+    background-color: ${getHoverColor(firstName)};
+  }
+`;
 
 const Wrapper = styled.div`
   width: ${(props: WrapperProps) => `${props.size}px`};
@@ -71,8 +103,14 @@ const Wrapper = styled.div`
   justify-content: center;
   align-items: center;
   overflow: hidden;
+  /* color: #afffff; */
   :hover {
-    animation: ${darken} 0.3s linear forwards; 
+    animation: ${(props: WrapperProps) =>
+      props.animate
+        ? css`
+            ${lighten(props.firstName)} 0.3s linear forwards
+          `
+        : `unset`};
   }
 `;
 

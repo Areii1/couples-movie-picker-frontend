@@ -3,7 +3,7 @@ import styled, { keyframes } from "styled-components";
 import { Puff } from "../components/puff/Puff";
 import { Status } from "../App";
 import { Auth } from "aws-amplify";
-import { Link } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 
 type Props = {
   initiateSession: () => void;
@@ -31,6 +31,7 @@ export const LogIn = (props: Props) => {
           username: loginUsernameFieldValue,
           password: loginPasswordFieldValue,
         });
+        alert('user logged in');
         setSignInProcess({ status: Status.SUCCESS, data: loginResponse });
         props.initiateSession();
       } catch (loginError) {
@@ -90,7 +91,7 @@ export const LogIn = (props: Props) => {
             )}
           </Form>
         </ContentWrapper>
-        {signInProcess.status === Status.SUCCESS && <h3>user signed in</h3>}
+        {signInProcess.status === Status.SUCCESS && <Redirect to="/user" />}
       </FormWrapper>
     </Wrapper>
   );

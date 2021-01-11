@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { ReactComponent as FireIcon } from "../../assets/fire.svg";
+import { FireIcon } from "../icons/FireIcon";
 import { ReactComponent as ColdIcon } from "../../assets/snowflake.svg";
 
 type Props = {
@@ -20,7 +20,7 @@ export const FireMeter = (props: Props) => {
         }
         title="awesome"
       >
-        <FireIcon />
+        <FireIcon size={50} />
       </HotIconButton>
       <ColdIconButton
         onClick={() =>

@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
-import { ReactComponent as Heart2Icon } from "../../assets/heart-2.svg";
+import { HeartIcon } from "../icons/HeartIcon";
 import { FireIcon } from '../icons/FireIcon';
 import { Process, Status } from "../../App";
 import { ProfileBall } from "../profileBall/ProfileBall";
@@ -37,7 +37,7 @@ export const NavigationBar = (props: Props) => {
       <ListItem>
         <Link to="/love" title="matches">
           <IconWrapper>
-            <Heart2Icon />
+            <HeartIcon size={50} />
           </IconWrapper>
         </Link>
       </ListItem>

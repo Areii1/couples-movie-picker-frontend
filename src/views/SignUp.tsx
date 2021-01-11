@@ -1,6 +1,6 @@
 import { Auth } from "aws-amplify";
 import React, { FormEvent } from "react";
-import { Link } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 import { Status } from "../App";
 import { Puff } from "../components/puff/Puff";
 import {
@@ -15,7 +15,8 @@ import {
   Wrapper,
 } from "./LogIn";
 
-export const SignUp = () => {
+export const SignUp = (props: any) => {
+  console.log(props, "props");
   const [
     signupUsernameFieldValue,
     setSignupUsernameFieldValue,
@@ -37,6 +38,7 @@ export const SignUp = () => {
           username: signupUsernameFieldValue,
           password: signupPasswordFieldValue,
         });
+        alert("user registered");
         setSignUpProcess({ status: Status.SUCCESS, data: signUpResponse });
       } catch (signupError) {
         setSignUpProcess({ status: Status.ERROR, error: signupError });
@@ -95,7 +97,7 @@ export const SignUp = () => {
             )}
           </Form>
         </>
-        {signUpProcess.status === Status.SUCCESS && <h3>User registered</h3>}
+        {signUpProcess.status === Status.SUCCESS && <Redirect to="/login" />}
       </FormWrapper>
     </Wrapper>
   );

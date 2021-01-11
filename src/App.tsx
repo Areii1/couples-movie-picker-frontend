@@ -25,7 +25,7 @@ export type Process =
   | { status: Status.SUCCESS; data: any }
   | { status: Status.ERROR; error: Error };
 
-export const App = () => {
+export const App = (props: any) => {
   const [fireMeterSwitch, setFireMeterSwitch] = React.useState<any>({
     position: 50,
     locked: false,

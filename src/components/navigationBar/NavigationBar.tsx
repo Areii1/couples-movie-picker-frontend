@@ -8,11 +8,13 @@ import { ProfileBall } from "../profileBall/ProfileBall";
 
 type Props = {
   getCurrentAuthenticatedUserProcess: Process;
+  getUserItemProcess: Process;
 };
 
 export const NavigationBar = (props: Props) => {
   const firstName =
-    props.getCurrentAuthenticatedUserProcess.status === Status.SUCCESS
+    props.getCurrentAuthenticatedUserProcess.status === Status.SUCCESS &&
+    props.getUserItemProcess.status === Status.SUCCESS
       ? props.getCurrentAuthenticatedUserProcess.data.username
       : undefined;
   return (
@@ -28,7 +30,11 @@ export const NavigationBar = (props: Props) => {
         <Link to="/user" title={firstName}>
           <ProfileBall
             firstName={firstName}
-            image={undefined}
+            image={
+              props.getUserItemProcess.status === Status.SUCCESS
+                ? `https://couplesmoviepickerbacken-profilepicturesbucketa8b-wzbj5zhprz9k.s3.eu-central-1.amazonaws.com/${props.getUserItemProcess.data.profilePicture.S}`
+                : undefined
+            }
             isCurrentUser={false}
             size={50}
             animate

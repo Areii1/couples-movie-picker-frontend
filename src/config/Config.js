@@ -12,5 +12,15 @@ export const configureAmplify = () => {
       bucket: "couplesmoviepickerbacken-profilepicturesbucketa8b-wzbj5zhprz9k",
       region: "eu-central-1",
     },
+    API: {
+      endpoints: [
+        {
+          endpoint:
+            "https://xf31qodq01.execute-api.eu-central-1.amazonaws.com/prod",
+          name: "couples-movie-picker-api",
+          region: "eu-central-1",
+        },
+      ],
+    },
   });
 };

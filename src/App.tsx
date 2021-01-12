@@ -3,7 +3,7 @@ import styled from "styled-components";
 import "./App.css";
 import { CSSTransition } from "react-transition-group";
 import { configureAmplify } from "./config/Config";
-import { Route, Switch } from "react-router-dom";
+import { Route } from "react-router-dom";
 import { getTrendingMovies } from "./apiService/getTrendingMovies";
 import { Auth } from "aws-amplify";
 import { NavigationBar } from "./components/navigationBar/NavigationBar";
@@ -11,6 +11,7 @@ import { MainView } from "./views/MainView";
 import { LogIn } from "./views/LogIn";
 import { SignUp } from "./views/SignUp";
 import { AccountSettings } from "./views/AccountSettings";
+import { getUser } from "./apiService/getUser";
 
 configureAmplify();
 
@@ -36,21 +37,35 @@ export const App = () => {
   const [
     getTrendingMoviesProcess,
     setGetTrendingMoviesProcess,
-  ] = React.useState<any>({ status: Status.INITIAL });
+  ] = React.useState<Process>({ status: Status.INITIAL });
 
   const [
     getCurrentSessionProcess,
     setGetCurrentSessionProcess,
-  ] = React.useState<any>({ status: Status.INITIAL });
+  ] = React.useState<Process>({ status: Status.INITIAL });
 
   const [
     getCurrentAuthenticatedUserProcess,
     setGetCurrentAuthenticatedUserProcess,
-  ] = React.useState<any>({ status: Status.INITIAL });
+  ] = React.useState<Process>({ status: Status.INITIAL });
+
+  const [getUserItemProcess, setGetUserItemProcess] = React.useState<Process>({
+    status: Status.INITIAL,
+  });
 
   const initiateSession = async () => {
     getUserInfo();
     getMovies();
+  };
+
+  const getUserItem = async () => {
+    try {
+      setGetUserItemProcess({ status: Status.LOADING });
+      const getUserResponse = await getUser("vvvv");
+      setGetUserItemProcess({ status: Status.SUCCESS, data: getUserResponse });
+    } catch (getUserError) {
+      setGetUserItemProcess({ status: Status.ERROR, error: getUserError });
+    }
   };
 
   const getUserInfo = async () => {
@@ -68,6 +83,7 @@ export const App = () => {
           status: Status.SUCCESS,
           data: getCurrentAuthenticatedUserResponse,
         });
+        getUserItem();
       } catch (getCurrentAuthenticatedUserError) {
         setGetCurrentAuthenticatedUserProcess({
           status: Status.ERROR,
@@ -143,86 +159,92 @@ export const App = () => {
     };
   }, []);
 
+  console.log(getUserItemProcess, 'getUserItemProcess');
+  console.log(getCurrentSessionProcess, 'getCurrentSessionProcess');
+  console.log(getCurrentAuthenticatedUserProcess, 'getCurrentAuthenticatedUserProcess');
   return (
     <ContentWrapper>
       <NavigationBar
         getCurrentAuthenticatedUserProcess={getCurrentAuthenticatedUserProcess}
+        getUserItemProcess={getUserItemProcess}
       />
       <MainCard>
-          <MainCardContentWrapper>
-            <Route exact path="/">
-              {({ match }) => (
-                <CSSTransition
-                  in={match !== null}
-                  timeout={1000}
-                  classNames="page"
-                  unmountOnExit
-                >
-                  <div className="page">
-                    <MainView
-                      getTrendingMoviesProcess={getTrendingMoviesProcess}
-                      fireMeterSwitch={fireMeterSwitch}
-                      setFireMeterSwitch={setFireMeterSwitch}
-                      handleSwitchButtonClick={handleSwitchButtonClick}
-                    />
-                  </div>
-                </CSSTransition>
-              )}
-            </Route>
-            <Route exact path="/login">
-              {({ match }) => (
-                <CSSTransition
-                  in={match !== null}
-                  timeout={300}
-                  classNames="page"
-                  unmountOnExit
-                >
-                  <div className="page">
-                    <LogIn initiateSession={initiateSession} />
-                  </div>
-                </CSSTransition>
-              )}
-            </Route>
-            <Route exact path="/signup">
-              {({ match }) => (
-                <CSSTransition
-                  in={match !== null}
-                  timeout={300}
-                  classNames="page"
-                  unmountOnExit
-                >
-                  <div className="page">
-                    <SignUp />
-                  </div>
-                </CSSTransition>
-              )}
-            </Route>
-            <Route exact path="/user">
-              {({ match }) => (
-                <CSSTransition
-                  in={match !== null}
-                  timeout={300}
-                  classNames="page"
-                  unmountOnExit
-                >
-                  <div className="page">
-                    <AccountSettings
-                      getCurrentSessionProcess={getCurrentSessionProcess}
-                      getCurrentAuthenticatedUserProcess={
-                        getCurrentAuthenticatedUserProcess
-                      }
-                      initiateSession={initiateSession}
-                    />
-                  </div>
-                </CSSTransition>
-              )}
-            </Route>
-            <Route exact path="/love">
-              <div>
-                <h1>matches</h1>
-              </div>
-            </Route>
-          </MainCardContentWrapper>
+        <MainCardContentWrapper>
+          <Route exact path="/">
+            {({ match }) => (
+              <CSSTransition
+                in={match !== null}
+                timeout={1000}
+                classNames="page"
+                unmountOnExit
+              >
+                <div className="page">
+                  <MainView
+                    getTrendingMoviesProcess={getTrendingMoviesProcess}
+                    fireMeterSwitch={fireMeterSwitch}
+                    setFireMeterSwitch={setFireMeterSwitch}
+                    handleSwitchButtonClick={handleSwitchButtonClick}
+                  />
+                </div>
+              </CSSTransition>
+            )}
+          </Route>
+          <Route exact path="/login">
+            {({ match }) => (
+              <CSSTransition
+                in={match !== null}
+                timeout={300}
+                classNames="page"
+                unmountOnExit
+              >
+                <div className="page">
+                  <LogIn initiateSession={initiateSession} />
+                </div>
+              </CSSTransition>
+            )}
+          </Route>
+          <Route exact path="/signup">
+            {({ match }) => (
+              <CSSTransition
+                in={match !== null}
+                timeout={300}
+                classNames="page"
+                unmountOnExit
+              >
+                <div className="page">
+                  <SignUp />
+                </div>
+              </CSSTransition>
+            )}
+          </Route>
+          <Route exact path="/user">
+            {({ match }) => (
+              <CSSTransition
+                in={match !== null}
+                timeout={300}
+                classNames="page"
+                unmountOnExit
+              >
+                <div className="page">
+                  <AccountSettings
+                    getCurrentSessionProcess={getCurrentSessionProcess}
+                    getCurrentAuthenticatedUserProcess={
+                      getCurrentAuthenticatedUserProcess
+                    }
+                    initiateSession={initiateSession}
+                    getUserItemProcess={getUserItemProcess}
+                    getUserItem={getUserItem}
+                  />
+                </div>
+              </CSSTransition>
+            )}
+          </Route>
+          <Route exact path="/love">
+            <div>
+              <h1>matches</h1>
+            </div>
+          </Route>
+        </MainCardContentWrapper>
       </MainCard>
     </ContentWrapper>
   );

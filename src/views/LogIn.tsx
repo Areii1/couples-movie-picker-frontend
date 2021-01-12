@@ -97,7 +97,9 @@ export const LogIn = (props: Props) => {
   );
 };
 
-export const Wrapper = styled.div``;
+export const Wrapper = styled.div`
+  width: 400px;
+`;
 
 const ContentWrapper = styled.div`
   display: flex;
@@ -170,6 +172,7 @@ export const HeadlineWrapper = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  width: 250px;
 `;
 
 export const Text = styled.h5`

@@ -12,7 +12,7 @@ type Props = {
 
 export const MainView = (props: Props) => {
   return (
-    <>
+    <Wrapper>
       {props.getTrendingMoviesProcess.status === Status.SUCCESS && (
         <>
           <ImageSection>
@@ -22,30 +22,44 @@ export const MainView = (props: Props) => {
                 props.getTrendingMoviesProcess.data.results[0].original_title
               }
             />
+          </ImageSection>
+          <DetailsSection>
             <Title>
               {props.getTrendingMoviesProcess.data.results[0].original_title}
             </Title>
-          </ImageSection>
-          <FireMeter
-            fireMeterSwitch={props.fireMeterSwitch}
-            setFireMeterSwitch={props.setFireMeterSwitch}
-            handleSwitchButtonClick={props.handleSwitchButtonClick}
-          />
+            <FireMeter
+              fireMeterSwitch={props.fireMeterSwitch}
+              setFireMeterSwitch={props.setFireMeterSwitch}
+              handleSwitchButtonClick={props.handleSwitchButtonClick}
+            />
+          </DetailsSection>
         </>
       )}
-    </>
+    </Wrapper>
   );
 };
 
+const Wrapper = styled.div`
+  width: 100%;
+`;
+
 const ImageSection = styled.div`
-  width: 500px;
-  /* margin: -50px 0 0 -50px; */
+  margin: -50px 0 0 -50px;
+  text-align: center;
 `;
 
 const Title = styled.h3`
-  font-size: 40px;
+  font-size: 35px;
   color: #808080;
   word-wrap: break-word;
-  width: 500px;
+  width: 400px;
+  margin: 0;
+`;
+
+const DetailsSection = styled.div`
   margin: 20px 0 0 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 400px;
 `;

@@ -8,6 +8,7 @@ type Props = {
   isCurrentUser: boolean;
   size: number;
   animate: boolean;
+  fontSize?: number;
 };
 
 const getColor = (firstname: string | undefined) => {
@@ -63,8 +64,12 @@ export const ProfileBall = (props: Props) => {
     >
       {props.image === undefined && (
         <>
-          {props.firstName && <Text>{props.firstName[0].toUpperCase()}</Text>}
-          {!props.firstName && <Text>?</Text>}
+          {props.firstName && (
+            <Text fontSize={props.fontSize}>
+              {props.firstName[0].toUpperCase()}
+            </Text>
+          )}
+          {!props.firstName && <Text fontSize={props.fontSize}>?</Text>}
         </>
       )}
       {props.image !== undefined && (
@@ -114,9 +119,14 @@ const Wrapper = styled.div`
   }
 `;
 
+type TextProps = {
+  fontSize: number | undefined;
+};
+
 const Text = styled.h5`
   margin: 0;
-  font-size: 30px;
+  font-size: ${(props: TextProps) =>
+    props.fontSize ? `${props.fontSize}px` : "30px"};
   text-decoration: none;
   color: white;
 `;

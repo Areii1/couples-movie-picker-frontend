@@ -93,15 +93,13 @@ export const AccountSettings = (props: Props) => {
     }
   };
 
-  const selectFile = (event: any) => {
-    uploadPicture(event.target.files[0]);
-  };
+  React.useEffect(() => {
+    return () => {};
+  }, []);
 
-  // console.log(
-  //   props.getCurrentAuthenticatedUserProcess,
-  //   "getCurrentAuthenticatedUserProcess"
-  // );
-  // console.log(props.getCurrentSessionProcess, "getCurrentSession");
+  const selectFile = (event: any) => {
+    setSelectedFile(event.target.files[0]);
+  };
 
   return (
     <Wrapper>
@@ -112,43 +110,48 @@ export const AccountSettings = (props: Props) => {
       )}
       {props.getCurrentAuthenticatedUserProcess.status === Status.SUCCESS && (
         <>
-          <div>
-            <AvatarSection>
-              <SecondaryHeadline>Picture</SecondaryHeadline>
-              <AvatarSectionContentWrapper>
-                <ProfileBallWrapper>
-                  <ProfileBall
-                    firstName={
-                      props.getCurrentAuthenticatedUserProcess.data.username
-                    }
-                    image={undefined}
-                    isCurrentUser={false}
-                    size={75}
-                    animate={false}
-                  />
-                </ProfileBallWrapper>
-                <ImageIcon size={30} />
-                <InputWrapper>
-                  <FileInput
-                    type="file"
-                    onChange={(event) => selectFile(event)}
-                  />
-                  <Button type="button" title="upload" error={false}>
-                    <ButtonText>Upload</ButtonText>
-                  </Button>
-                </InputWrapper>
-                <Button
-                  type="button"
-                  onClick={removePicture}
-                  title="remove"
-                  error={false}
-                >
-                  <ButtonText>Remove</ButtonText>
-                </Button>
-              </AvatarSectionContentWrapper>
-            </AvatarSection>
-          </div>
-          <div>
+          <Section>
+            <SecondaryHeadline>Picture</SecondaryHeadline>
+            <PictureUploadWrapper>
+              <ProfileBallWrapper>
+                <ProfileBall
+                  firstName={
+                    props.getCurrentAuthenticatedUserProcess.data.username
+                  }
+                  image={
+                    selectedFile === undefined
+                      ? undefined
+                      : URL.createObjectURL(selectedFile)
+                  }
+                  isCurrentUser={false}
+                  size={selectedFile === undefined ? 75 : 100}
+                  animate={false}
+                  fontSize={50}
+                />
+              </ProfileBallWrapper>
+              <Dropzone>
+                <FileInput
+                  type="file"
+                  onChange={(event) => selectFile(event)}
+                />
+                <ImageIcon size={40} animate={true} />
+                <DropzoneText>Click or drag to upload image</DropzoneText>
+              </Dropzone>
+              <TransparentButton title="choose random image">
+                <RandomImageText>randomize</RandomImageText>
+              </TransparentButton>
+            </PictureUploadWrapper>
+            <Button
+              type="button"
+              onClick={removePicture}
+              title="remove"
+              error={false}
+            >
+              <ButtonText>Remove</ButtonText>
+            </Button>
+          </Section>
+          <Section>
+            <SecondaryHeadline>Log out</SecondaryHeadline>
             {signOutProcess.status !== Status.LOADING && (
               <Button
                 type="button"
@@ -169,7 +172,7 @@ export const AccountSettings = (props: Props) => {
             {signOutProcess.status === Status.SUCCESS && (
               <Redirect to="/login" />
             )}
-          </div>
+          </Section>
         </>
       )}
       {props.getCurrentSessionProcess.status === Status.ERROR && (
@@ -190,19 +193,32 @@ export const AccountSettings = (props: Props) => {
   );
 };
 
-const AvatarSection = styled.div`
+const Section = styled.div`
   text-align: start;
   margin-top: 20px;
 `;
 
-const AvatarSectionContentWrapper = styled.div`
+const PictureUploadWrapper = styled.div`
+  margin-top: 10px;
   display: flex;
-  /* justify-content: center; */
   align-items: center;
+  justify-content: space-between;
 `;
 
 const ProfileBallWrapper = styled.div`
-  margin-top: 10px;
+  width: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const DropzoneText = styled.p`
+  font-size: 10px;
+`;
+
+const RandomImageText = styled.p`
+  font-size: 10px;
+  color: blue;
 `;
 
 const TextWrapper = styled.div`
@@ -212,6 +228,19 @@ const TextWrapper = styled.div`
 const Text = styled.p`
   font-size: 16px;
   font-weight: 400;
+  text-align: center;
+`;
+
+const Dropzone = styled.div`
+  width: 200px;
+  height: 100px;
+  position: relative;
+  border: 1px dotted black;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-radius: 5px;
 `;
 
 const FileInput = styled.input`
@@ -219,18 +248,19 @@ const FileInput = styled.input`
   position: absolute;
   top: 0;
   left: 0;
-  width: 100px;
-  height: 30px;
+  width: 200px;
+  height: 100px;
   cursor: pointer;
-`;
-
-const InputWrapper = styled.div`
-  width: 100px;
-  height: 30px;
-  position: relative;
 `;
 
 const Wrapper = styled.div`
   text-align: center;
-  width: 100%;
+  width: 400px;
+`;
+
+const TransparentButton = styled.button`
+  padding: 0;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
 `;

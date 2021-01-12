@@ -149,80 +149,80 @@ export const App = () => {
         getCurrentAuthenticatedUserProcess={getCurrentAuthenticatedUserProcess}
       />
       <MainCard>
-        <MainCardContentWrapper>
-          <Route exact path="/">
-            {({ match }) => (
-              <CSSTransition
-                in={match !== null}
-                timeout={1000}
-                classNames="page"
-                unmountOnExit
-              >
-                <div className="page">
-                  <MainView
-                    getTrendingMoviesProcess={getTrendingMoviesProcess}
-                    fireMeterSwitch={fireMeterSwitch}
-                    setFireMeterSwitch={setFireMeterSwitch}
-                    handleSwitchButtonClick={handleSwitchButtonClick}
-                  />
-                </div>
-              </CSSTransition>
-            )}
-          </Route>
-          <Route exact path="/login">
-            {({ match }) => (
-              <CSSTransition
-                in={match !== null}
-                timeout={300}
-                classNames="page"
-                unmountOnExit
-              >
-                <div className="page">
-                  <LogIn initiateSession={initiateSession} />
-                </div>
-              </CSSTransition>
-            )}
-          </Route>
-          <Route exact path="/signup">
-            {({ match }) => (
-              <CSSTransition
-                in={match !== null}
-                timeout={300}
-                classNames="page"
-                unmountOnExit
-              >
-                <div className="page">
-                  <SignUp />
-                </div>
-              </CSSTransition>
-            )}
-          </Route>
-          <Route exact path="/user">
-            {({ match }) => (
-              <CSSTransition
-                in={match !== null}
-                timeout={300}
-                classNames="page"
-                unmountOnExit
-              >
-                <div className="page">
-                  <AccountSettings
-                    getCurrentSessionProcess={getCurrentSessionProcess}
-                    getCurrentAuthenticatedUserProcess={
-                      getCurrentAuthenticatedUserProcess
-                    }
-                    initiateSession={initiateSession}
-                  />
-                </div>
-              </CSSTransition>
-            )}
-          </Route>
-          <Route exact path="/love">
-            <div>
-              <h1>matches</h1>
-            </div>
-          </Route>
-        </MainCardContentWrapper>
+          <MainCardContentWrapper>
+            <Route exact path="/">
+              {({ match }) => (
+                <CSSTransition
+                  in={match !== null}
+                  timeout={1000}
+                  classNames="page"
+                  unmountOnExit
+                >
+                  <div className="page">
+                    <MainView
+                      getTrendingMoviesProcess={getTrendingMoviesProcess}
+                      fireMeterSwitch={fireMeterSwitch}
+                      setFireMeterSwitch={setFireMeterSwitch}
+                      handleSwitchButtonClick={handleSwitchButtonClick}
+                    />
+                  </div>
+                </CSSTransition>
+              )}
+            </Route>
+            <Route exact path="/login">
+              {({ match }) => (
+                <CSSTransition
+                  in={match !== null}
+                  timeout={300}
+                  classNames="page"
+                  unmountOnExit
+                >
+                  <div className="page">
+                    <LogIn initiateSession={initiateSession} />
+                  </div>
+                </CSSTransition>
+              )}
+            </Route>
+            <Route exact path="/signup">
+              {({ match }) => (
+                <CSSTransition
+                  in={match !== null}
+                  timeout={300}
+                  classNames="page"
+                  unmountOnExit
+                >
+                  <div className="page">
+                    <SignUp />
+                  </div>
+                </CSSTransition>
+              )}
+            </Route>
+            <Route exact path="/user">
+              {({ match }) => (
+                <CSSTransition
+                  in={match !== null}
+                  timeout={300}
+                  classNames="page"
+                  unmountOnExit
+                >
+                  <div className="page">
+                    <AccountSettings
+                      getCurrentSessionProcess={getCurrentSessionProcess}
+                      getCurrentAuthenticatedUserProcess={
+                        getCurrentAuthenticatedUserProcess
+                      }
+                      initiateSession={initiateSession}
+                    />
+                  </div>
+                </CSSTransition>
+              )}
+            </Route>
+            <Route exact path="/love">
+              <div>
+                <h1>matches</h1>
+              </div>
+            </Route>
+          </MainCardContentWrapper>
       </MainCard>
     </ContentWrapper>
   );
@@ -250,12 +250,15 @@ const MainCard = styled.div`
   border-radius: 10px;
   padding: 50px;
   height: 600px;
+  display: flex;
+  justify-content: start;
+  overflow: hidden;
 `;
 
 const MainCardContentWrapper = styled.div`
-  /* overflow: hidden; */
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: start;
 `;

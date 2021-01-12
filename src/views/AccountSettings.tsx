@@ -32,24 +32,26 @@ export const AccountSettings = (props: Props) => {
     status: Status.INITIAL,
   });
 
-  const [selectedFile, setSelectedFile] = React.useState<any>();
+  const [hoveringProfileBall, setHoveringProfileBall] = React.useState<boolean>(
+    false
+  );
 
-  const uploadPicture = async (file: any) => {
+  const [selectedFile, setSelectedFile] = React.useState<any>(undefined);
+
+  const uploadPicture = async () => {
     if (props.getCurrentAuthenticatedUserProcess.status === Status.SUCCESS) {
       try {
         setUploadPictureProcess({ status: Status.LOADING });
         const uploadPictureResponse = await uploadProfilePicture(
-          file.name,
-          file,
+          selectedFile.name,
+          selectedFile,
           props.getCurrentAuthenticatedUserProcess.data.username
         );
-        console.log(uploadPictureResponse, "uploadPictureResponse");
         setUploadPictureProcess({
           status: Status.SUCCESS,
           data: uploadPictureResponse,
         });
       } catch (uploadPictureError) {
-        console.log(uploadPictureError, "error");
         setUploadPictureProcess({
           status: Status.ERROR,
           error: uploadPictureError,
@@ -93,14 +95,11 @@ export const AccountSettings = (props: Props) => {
     }
   };
 
-  React.useEffect(() => {
-    return () => {};
-  }, []);
-
   const selectFile = (event: any) => {
     setSelectedFile(event.target.files[0]);
   };
 
+  const hasProfilePicture = false;
   return (
     <Wrapper>
       <LogInPrimaryHeadline>Profile</LogInPrimaryHeadline>
@@ -113,7 +112,44 @@ export const AccountSettings = (props: Props) => {
           <Section>
             <SecondaryHeadline>Picture</SecondaryHeadline>
             <PictureUploadWrapper>
-              <ProfileBallWrapper>
+              <ProfileBallWrapper
+                onMouseEnter={() => setHoveringProfileBall(true)}
+                onMouseLeave={() => setHoveringProfileBall(false)}
+              >
+                {hoveringProfileBall &&
+                  uploadPictureProcess.status === Status.INITIAL &&
+                  selectedFile === undefined && hasProfilePicture && (
+                    <ProfileBallOverlay>
+                      <TransparentButton
+                        onClick={() => removePicture()}
+                        title="reject"
+                      >
+                        <Mark fontColor="salmon">✕</Mark>
+                      </TransparentButton>
+                    </ProfileBallOverlay>
+                  )}
+                {selectedFile !== undefined &&
+                  uploadPictureProcess.status === Status.INITIAL && (
+                    <ProfileBallOverlay>
+                      <TransparentButton
+                        onClick={() => uploadPicture()}
+                        title="confirm"
+                      >
+                        <Mark fontColor="lightgreen">✓</Mark>
+                      </TransparentButton>
+                      <TransparentButton
+                        onClick={() => setSelectedFile(undefined)}
+                        title="reject"
+                      >
+                        <Mark fontColor="salmon">✕</Mark>
+                      </TransparentButton>
+                    </ProfileBallOverlay>
+                  )}
+                {uploadPictureProcess.status === Status.LOADING && (
+                  <LoadingIconWrapper>
+                    <Puff size={75} fill="white" />
+                  </LoadingIconWrapper>
+                )}
                 <ProfileBall
                   firstName={
                     props.getCurrentAuthenticatedUserProcess.data.username
@@ -133,6 +169,7 @@ export const AccountSettings = (props: Props) => {
                 <FileInput
                   type="file"
                   onChange={(event) => selectFile(event)}
+                  accept="image/*"
                 />
                 <ImageIcon size={40} animate={true} />
                 <DropzoneText>Click or drag to upload image</DropzoneText>
@@ -210,6 +247,9 @@ const ProfileBallWrapper = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  overflow: hidden;
+  position: relative;
+  border-radius: 100px;
 `;
 
 const DropzoneText = styled.p`
@@ -263,4 +303,43 @@ const TransparentButton = styled.button`
   background-color: transparent;
   border: none;
   cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const ProfileBallOverlay = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: rgb(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100px;
+  height: 100px;
+`;
+
+const LoadingIconWrapper = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100px;
+  height: 100px;
+  background-color: rgb(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+type MarkProps = {
+  fontColor: string;
+};
+
+const Mark = styled.h5`
+  color: ${(props: MarkProps) => props.fontColor};
+  font-size: 50px;
+  margin: 0;
+  text-align: center;
+  vertical-align: center;
 `;

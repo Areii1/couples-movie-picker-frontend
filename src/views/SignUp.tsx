@@ -38,7 +38,7 @@ export const SignUp = (props: any) => {
           username: signupUsernameFieldValue,
           password: signupPasswordFieldValue,
         });
-        alert("user registered");
+        // alert("user registered");
         setSignUpProcess({ status: Status.SUCCESS, data: signUpResponse });
       } catch (signupError) {
         setSignUpProcess({ status: Status.ERROR, error: signupError });

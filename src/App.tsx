@@ -1,5 +1,7 @@
 import React from "react";
 import styled from "styled-components";
+import "./App.css";
+import { CSSTransition } from "react-transition-group";
 import { configureAmplify } from "./config/Config";
 import { Route, Switch } from "react-router-dom";
 import { getTrendingMovies } from "./apiService/getTrendingMovies";
@@ -25,11 +27,12 @@ export type Process =
   | { status: Status.SUCCESS; data: any }
   | { status: Status.ERROR; error: Error };
 
-export const App = (props: any) => {
+export const App = () => {
   const [fireMeterSwitch, setFireMeterSwitch] = React.useState<any>({
     position: 50,
     locked: false,
   });
+
   const [
     getTrendingMoviesProcess,
     setGetTrendingMoviesProcess,
@@ -46,7 +49,6 @@ export const App = (props: any) => {
   ] = React.useState<any>({ status: Status.INITIAL });
 
   const initiateSession = async () => {
-    console.log("initiateSession");
     getUserInfo();
     getMovies();
   };
@@ -141,61 +143,86 @@ export const App = (props: any) => {
     };
   }, []);
 
-  React.useEffect(() => {
-    console.log("efect triggered");
-    if (
-      getCurrentSessionProcess.status === Status.ERROR &&
-      getCurrentAuthenticatedUserProcess.status === Status.SUCCESS
-    ) {
-      setGetCurrentAuthenticatedUserProcess({
-        status: Status.ERROR,
-        error: { message: "current session failed" },
-      });
-    }
-  }, [getCurrentSessionProcess.status]);
-
-  console.log(
-    getCurrentAuthenticatedUserProcess,
-    "getCurrentAuthenticatedUserProcess"
-  );
-  console.log(getCurrentSessionProcess, "getCurrentSession");
-
   return (
     <ContentWrapper>
       <NavigationBar
         getCurrentAuthenticatedUserProcess={getCurrentAuthenticatedUserProcess}
       />
       <MainCard>
-        <Switch>
+        <MainCardContentWrapper>
           <Route exact path="/">
-            <MainView
-              getTrendingMoviesProcess={getTrendingMoviesProcess}
-              fireMeterSwitch={fireMeterSwitch}
-              setFireMeterSwitch={setFireMeterSwitch}
-              handleSwitchButtonClick={handleSwitchButtonClick}
-            />
+            {({ match }) => (
+              <CSSTransition
+                in={match !== null}
+                timeout={1000}
+                classNames="page"
+                unmountOnExit
+              >
+                <div className="page">
+                  <MainView
+                    getTrendingMoviesProcess={getTrendingMoviesProcess}
+                    fireMeterSwitch={fireMeterSwitch}
+                    setFireMeterSwitch={setFireMeterSwitch}
+                    handleSwitchButtonClick={handleSwitchButtonClick}
+                  />
+                </div>
+              </CSSTransition>
+            )}
           </Route>
           <Route exact path="/login">
-            <LogIn initiateSession={initiateSession} />
+            {({ match }) => (
+              <CSSTransition
+                in={match !== null}
+                timeout={300}
+                classNames="page"
+                unmountOnExit
+              >
+                <div className="page">
+                  <LogIn initiateSession={initiateSession} />
+                </div>
+              </CSSTransition>
+            )}
           </Route>
           <Route exact path="/signup">
-            <SignUp />
+            {({ match }) => (
+              <CSSTransition
+                in={match !== null}
+                timeout={300}
+                classNames="page"
+                unmountOnExit
+              >
+                <div className="page">
+                  <SignUp />
+                </div>
+              </CSSTransition>
+            )}
           </Route>
           <Route exact path="/user">
-            <AccountSettings
-              getCurrentSessionProcess={getCurrentSessionProcess}
-              getCurrentAuthenticatedUserProcess={
-                getCurrentAuthenticatedUserProcess
-              }
-              initiateSession={initiateSession}
-            />
+            {({ match }) => (
+              <CSSTransition
+                in={match !== null}
+                timeout={300}
+                classNames="page"
+                unmountOnExit
+              >
+                <div className="page">
+                  <AccountSettings
+                    getCurrentSessionProcess={getCurrentSessionProcess}
+                    getCurrentAuthenticatedUserProcess={
+                      getCurrentAuthenticatedUserProcess
+                    }
+                    initiateSession={initiateSession}
+                  />
+                </div>
+              </CSSTransition>
+            )}
           </Route>
           <Route exact path="/love">
             <div>
               <h1>matches</h1>
             </div>
           </Route>
-        </Switch>
+        </MainCardContentWrapper>
       </MainCard>
     </ContentWrapper>
   );
@@ -221,9 +248,14 @@ const MainCard = styled.div`
   background-color: white;
   margin-top: 50px;
   border-radius: 10px;
-  overflow: hidden;
+  padding: 50px;
+  height: 600px;
+`;
+
+const MainCardContentWrapper = styled.div`
+  /* overflow: hidden; */
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 50px;
 `;

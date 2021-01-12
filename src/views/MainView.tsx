@@ -39,6 +39,7 @@ export const MainView = (props: Props) => {
 
 const ImageSection = styled.div`
   width: 500px;
+  /* margin: -50px 0 0 -50px; */
 `;
 
 const Title = styled.h3`

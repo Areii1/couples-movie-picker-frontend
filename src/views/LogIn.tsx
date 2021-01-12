@@ -31,7 +31,7 @@ export const LogIn = (props: Props) => {
           username: loginUsernameFieldValue,
           password: loginPasswordFieldValue,
         });
-        alert('user logged in');
+        // alert('user logged in');
         setSignInProcess({ status: Status.SUCCESS, data: loginResponse });
         props.initiateSession();
       } catch (loginError) {

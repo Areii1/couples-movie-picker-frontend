@@ -1,12 +1,14 @@
 import { Auth } from "aws-amplify";
 import React from "react";
 import { Redirect } from "react-router";
+import { Link } from "react-router-dom";
 import styled from "styled-components";
 import {
   removeProfilePicture,
   uploadProfilePicture,
 } from "../apiService/uploadProfilePicture";
-import { Process, Status } from "../App";
+import { Process, SecondaryHeadline, Status } from "../App";
+import { ImageIcon } from "../components/icons/ImageIcon";
 import { ProfileBall } from "../components/profileBall/ProfileBall";
 import { Puff } from "../components/puff/Puff";
 import { Button, ButtonText, LogInPrimaryHeadline } from "./LogIn";
@@ -112,32 +114,38 @@ export const AccountSettings = (props: Props) => {
         <>
           <div>
             <AvatarSection>
-              <ProfileBall
-                firstName={
-                  props.getCurrentAuthenticatedUserProcess.data.username
-                }
-                image={undefined}
-                isCurrentUser={false}
-                size={50}
-                animate={false}
-              />
-              <InputWrapper>
-                <FileInput
-                  type="file"
-                  onChange={(event) => selectFile(event)}
-                />
-                <Button type="button" title="upload" error={false}>
-                  <ButtonText>Upload</ButtonText>
+              <SecondaryHeadline>Picture</SecondaryHeadline>
+              <AvatarSectionContentWrapper>
+                <ProfileBallWrapper>
+                  <ProfileBall
+                    firstName={
+                      props.getCurrentAuthenticatedUserProcess.data.username
+                    }
+                    image={undefined}
+                    isCurrentUser={false}
+                    size={75}
+                    animate={false}
+                  />
+                </ProfileBallWrapper>
+                <ImageIcon size={30} />
+                <InputWrapper>
+                  <FileInput
+                    type="file"
+                    onChange={(event) => selectFile(event)}
+                  />
+                  <Button type="button" title="upload" error={false}>
+                    <ButtonText>Upload</ButtonText>
+                  </Button>
+                </InputWrapper>
+                <Button
+                  type="button"
+                  onClick={removePicture}
+                  title="remove"
+                  error={false}
+                >
+                  <ButtonText>Remove</ButtonText>
                 </Button>
-              </InputWrapper>
-              <Button
-                type="button"
-                onClick={removePicture}
-                title="remove"
-                error={false}
-              >
-                <ButtonText>Remove</ButtonText>
-              </Button>
+              </AvatarSectionContentWrapper>
             </AvatarSection>
           </div>
           <div>
@@ -164,12 +172,46 @@ export const AccountSettings = (props: Props) => {
           </div>
         </>
       )}
+      {props.getCurrentSessionProcess.status === Status.ERROR && (
+        <TextWrapper>
+          <Text>
+            No current user, please{" "}
+            <Link to="/signup" title="signup">
+              register
+            </Link>{" "}
+            or{" "}
+            <Link to="/login" title="login">
+              login
+            </Link>
+          </Text>
+        </TextWrapper>
+      )}
     </Wrapper>
   );
 };
 
 const AvatarSection = styled.div`
+  text-align: start;
+  margin-top: 20px;
+`;
+
+const AvatarSectionContentWrapper = styled.div`
   display: flex;
+  /* justify-content: center; */
+  align-items: center;
+`;
+
+const ProfileBallWrapper = styled.div`
+  margin-top: 10px;
+`;
+
+const TextWrapper = styled.div`
+  margin-top: 20px;
+`;
+
+const Text = styled.p`
+  font-size: 16px;
+  font-weight: 400;
 `;
 
 const FileInput = styled.input`
@@ -190,5 +232,5 @@ const InputWrapper = styled.div`
 
 const Wrapper = styled.div`
   text-align: center;
-  margin-top: 50px;
+  width: 100%;
 `;

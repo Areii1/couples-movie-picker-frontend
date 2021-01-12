@@ -142,7 +142,7 @@ export const App = (props: any) => {
   }, []);
 
   React.useEffect(() => {
-    console.log('efect triggered');
+    console.log("efect triggered");
     if (
       getCurrentSessionProcess.status === Status.ERROR &&
       getCurrentAuthenticatedUserProcess.status === Status.SUCCESS
@@ -161,7 +161,7 @@ export const App = (props: any) => {
   console.log(getCurrentSessionProcess, "getCurrentSession");
 
   return (
-    <ContentWrapper className="App">
+    <ContentWrapper>
       <NavigationBar
         getCurrentAuthenticatedUserProcess={getCurrentAuthenticatedUserProcess}
       />
@@ -201,6 +201,13 @@ export const App = (props: any) => {
   );
 };
 
+export const SecondaryHeadline = styled.h5`
+  font-size: 20px;
+  margin: 0;
+  font-weight: 400;
+  color: black;
+`;
+
 const ContentWrapper = styled.div`
   margin: auto;
   width: 500px;
@@ -211,7 +218,6 @@ const ContentWrapper = styled.div`
 
 const MainCard = styled.div`
   width: 100%;
-  height: 600px;
   background-color: white;
   margin-top: 50px;
   border-radius: 10px;
@@ -219,10 +225,5 @@ const MainCard = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-`;
-
-export const PrimaryHeadline = styled.h3`
-  font-size: 25px;
-  margin: 0;
-  font-weight: 400;
+  padding: 50px;
 `;

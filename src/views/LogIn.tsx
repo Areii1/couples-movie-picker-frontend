@@ -97,9 +97,7 @@ export const LogIn = (props: Props) => {
   );
 };
 
-export const Wrapper = styled.div`
-  margin-top: 50px;
-`;
+export const Wrapper = styled.div``;
 
 const ContentWrapper = styled.div`
   display: flex;

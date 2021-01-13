@@ -3,10 +3,8 @@ import React from "react";
 import { Redirect } from "react-router";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
-import {
-  removeProfilePicture,
-  uploadProfilePicture,
-} from "../apiService/uploadProfilePicture";
+import { uploadProfilePicture } from "../apiService/uploadProfilePicture";
+import { removeProfilePicture } from "../apiService/removeProfilePicture";
 import { Process, SecondaryHeadline, Status } from "../App";
 import { ImageIcon } from "../components/icons/ImageIcon";
 import { ProfileBall } from "../components/profileBall/ProfileBall";
@@ -18,7 +16,7 @@ type Props = {
   getCurrentAuthenticatedUserProcess: Process;
   initiateSession: () => void;
   getUserItemProcess: Process;
-  getUserItem: () => void;
+  getUserItem: (username: string) => void;
 };
 
 export const AccountSettings = (props: Props) => {
@@ -54,7 +52,9 @@ export const AccountSettings = (props: Props) => {
           data: uploadPictureResponse,
         });
         alert("uploaded profile picture");
-        props.getUserItem();
+        props.getUserItem(
+          props.getCurrentAuthenticatedUserProcess.data.username
+        );
         setSelectedFile(undefined);
       } catch (uploadPictureError) {
         setUploadPictureProcess({
@@ -66,20 +66,26 @@ export const AccountSettings = (props: Props) => {
   };
 
   const removePicture = async () => {
-    try {
-      setRemovePictureProcess({ status: Status.LOADING });
-      const uploadPictureResponse = await removeProfilePicture();
-      setRemovePictureProcess({
-        status: Status.SUCCESS,
-        data: uploadPictureResponse,
-      });
-      alert('removed profile picture');
-      props.getUserItem();
-    } catch (uploadPictureError) {
-      setRemovePictureProcess({
-        status: Status.ERROR,
-        error: uploadPictureError,
-      });
+    if (props.getCurrentAuthenticatedUserProcess.status === Status.SUCCESS) {
+      try {
+        setRemovePictureProcess({ status: Status.LOADING });
+        const uploadPictureResponse = await removeProfilePicture(
+          props.getCurrentAuthenticatedUserProcess.data.username
+        );
+        setRemovePictureProcess({
+          status: Status.SUCCESS,
+          data: uploadPictureResponse,
+        });
+        alert("removed profile picture");
+        props.getUserItem(
+          props.getCurrentAuthenticatedUserProcess.data.username
+        );
+      } catch (uploadPictureError) {
+        setRemovePictureProcess({
+          status: Status.ERROR,
+          error: uploadPictureError,
+        });
+      }
     }
   };
 
@@ -148,97 +154,107 @@ export const AccountSettings = (props: Props) => {
     }
   };
 
+  console.log(removePictureProcess, "removePictureProcess");
+  console.log(props.getUserItemProcess, 'getUserItemProcess');
+
   return (
     <Wrapper>
       <LogInPrimaryHeadline>Profile</LogInPrimaryHeadline>
-      <>
-        <Section>
-          <SecondaryHeadline>Picture</SecondaryHeadline>
-          <PictureUploadWrapper>
-            <ProfileBallWrapper
-              onMouseEnter={() => setHoveringProfileBall(true)}
-              onMouseLeave={() => setHoveringProfileBall(false)}
-            >
-              {hoveringProfileBall &&
-                uploadPictureProcess.status === Status.INITIAL &&
-                selectedFile === undefined &&
-                hasProfilePicture() && (
-                  <ProfileBallOverlay>
-                    <TransparentButton
-                      onClick={() => removePicture()}
-                      title="remove picture"
-                    >
-                      <Mark fontColor="salmon">✕</Mark>
-                    </TransparentButton>
-                  </ProfileBallOverlay>
+      {props.getCurrentSessionProcess.status === Status.LOADING && (
+        <Puff size={50} fill="blue" />
+      )}
+      {props.getCurrentSessionProcess.status === Status.SUCCESS && (
+        <>
+          <Section>
+            <SecondaryHeadline>Picture</SecondaryHeadline>
+            <PictureUploadWrapper>
+              <ProfileBallWrapper
+                onMouseEnter={() => setHoveringProfileBall(true)}
+                onMouseLeave={() => setHoveringProfileBall(false)}
+              >
+                {hoveringProfileBall &&
+                  uploadPictureProcess.status === Status.INITIAL &&
+                  selectedFile === undefined &&
+                  hasProfilePicture() && (
+                    <ProfileBallOverlay>
+                      <TransparentButton
+                        onClick={() => removePicture()}
+                        title="remove picture"
+                      >
+                        <Mark fontColor="salmon">✕</Mark>
+                      </TransparentButton>
+                    </ProfileBallOverlay>
+                  )}
+                {selectedFile !== undefined &&
+                  uploadPictureProcess.status === Status.INITIAL && (
+                    <ProfileBallOverlay>
+                      <TransparentButton
+                        onClick={() => uploadPicture()}
+                        title="confirm"
+                      >
+                        <Mark fontColor="lightgreen">✓</Mark>
+                      </TransparentButton>
+                      <TransparentButton
+                        onClick={() => setSelectedFile(undefined)}
+                        title="reject"
+                      >
+                        <Mark fontColor="salmon">✕</Mark>
+                      </TransparentButton>
+                    </ProfileBallOverlay>
+                  )}
+                {uploadPictureProcess.status === Status.LOADING && (
+                  <LoadingIconWrapper>
+                    <Puff size={75} fill="white" />
+                  </LoadingIconWrapper>
                 )}
-              {selectedFile !== undefined &&
-                uploadPictureProcess.status === Status.INITIAL && (
-                  <ProfileBallOverlay>
-                    <TransparentButton
-                      onClick={() => uploadPicture()}
-                      title="confirm"
-                    >
-                      <Mark fontColor="lightgreen">✓</Mark>
-                    </TransparentButton>
-                    <TransparentButton
-                      onClick={() => setSelectedFile(undefined)}
-                      title="reject"
-                    >
-                      <Mark fontColor="salmon">✕</Mark>
-                    </TransparentButton>
-                  </ProfileBallOverlay>
-                )}
-              {uploadPictureProcess.status === Status.LOADING && (
-                <LoadingIconWrapper>
-                  <Puff size={75} fill="white" />
-                </LoadingIconWrapper>
-              )}
-              <ProfileBall
-                firstName={getFirstName()}
-                image={getImage()}
-                isCurrentUser={false}
-                size={100}
-                animate={false}
-                fontSize={50}
-              />
-            </ProfileBallWrapper>
-            <Dropzone>
-              <FileInput
-                type="file"
-                onChange={(event) => selectFile(event)}
-                accept="image/*"
-              />
-              <ImageIcon size={40} animate={true} />
-              <DropzoneText>Click or drag to upload image</DropzoneText>
-            </Dropzone>
-            <TransparentButton title="choose random image">
-              <RandomImageText>randomize</RandomImageText>
-            </TransparentButton>
-          </PictureUploadWrapper>
-        </Section>
-        <Section>
-          <SecondaryHeadline>Log out</SecondaryHeadline>
-          {signOutProcess.status !== Status.LOADING && (
-            <Button
-              type="button"
-              onClick={signOut}
-              title="log out"
-              error={signOutProcess.status === Status.ERROR}
-            >
-              <ButtonText>
-                {signOutProcess.status === Status.ERROR
-                  ? "Try again"
-                  : "Log out"}
-              </ButtonText>
-            </Button>
-          )}
-          {signOutProcess.status === Status.LOADING && (
-            <Puff size={50} fill="lightblue" />
-          )}
-          {signOutProcess.status === Status.SUCCESS && <Redirect to="/login" />}
-        </Section>
-      </>
+                <ProfileBall
+                  firstName={getFirstName()}
+                  image={getImage()}
+                  isCurrentUser={false}
+                  size={100}
+                  animate={false}
+                  fontSize={50}
+                />
+              </ProfileBallWrapper>
+              <Dropzone>
+                <FileInput
+                  type="file"
+                  onChange={(event) => selectFile(event)}
+                  accept="image/*"
+                />
+                <ImageIcon size={40} animate={true} />
+                <DropzoneText>Click or drag to upload image</DropzoneText>
+              </Dropzone>
+              <TransparentButton title="choose random image">
+                <RandomImageText>randomize</RandomImageText>
+              </TransparentButton>
+            </PictureUploadWrapper>
+          </Section>
+          <Section>
+            <SecondaryHeadline>Log out</SecondaryHeadline>
+            {signOutProcess.status !== Status.LOADING && (
+              <Button
+                type="button"
+                onClick={signOut}
+                title="log out"
+                error={signOutProcess.status === Status.ERROR}
+              >
+                <ButtonText>
+                  {signOutProcess.status === Status.ERROR
+                    ? "Try again"
+                    : "Log out"}
+                </ButtonText>
+              </Button>
+            )}
+            {signOutProcess.status === Status.LOADING && (
+              <Puff size={50} fill="lightblue" />
+            )}
+            {signOutProcess.status === Status.SUCCESS && (
+              <Redirect to="/login" />
+            )}
+          </Section>
+        </>
+      )}
       {props.getCurrentSessionProcess.status === Status.ERROR && (
         <TextWrapper>
           <Text>

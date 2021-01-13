@@ -58,10 +58,10 @@ export const App = () => {
     getMovies();
   };
 
-  const getUserItem = async () => {
+  const getUserItem = async (username: string) => {
     try {
       setGetUserItemProcess({ status: Status.LOADING });
-      const getUserResponse = await getUser("vvvv");
+      const getUserResponse = await getUser(username);
       setGetUserItemProcess({ status: Status.SUCCESS, data: getUserResponse });
     } catch (getUserError) {
       setGetUserItemProcess({ status: Status.ERROR, error: getUserError });
@@ -83,7 +83,7 @@ export const App = () => {
           status: Status.SUCCESS,
           data: getCurrentAuthenticatedUserResponse,
         });
-        getUserItem();
+        getUserItem(getCurrentAuthenticatedUserResponse.username);
       } catch (getCurrentAuthenticatedUserError) {
         setGetCurrentAuthenticatedUserProcess({
           status: Status.ERROR,
@@ -159,9 +159,29 @@ export const App = () => {
     };
   }, []);
 
-  console.log(getUserItemProcess, 'getUserItemProcess');
-  console.log(getCurrentSessionProcess, 'getCurrentSessionProcess');
-  console.log(getCurrentAuthenticatedUserProcess, 'getCurrentAuthenticatedUserProcess');
+  React.useEffect(() => {
+    if (
+      getCurrentSessionProcess.status === Status.ERROR &&
+      (getCurrentAuthenticatedUserProcess.status === Status.SUCCESS ||
+        getUserItemProcess.status === Status.SUCCESS)
+    ) {
+      setGetCurrentAuthenticatedUserProcess({
+        status: Status.ERROR,
+        error: { name: "error", message: "current session does not exist" },
+      });
+      setGetUserItemProcess({
+        status: Status.ERROR,
+        error: { name: "error", message: "current session does not exist" },
+      });
+    }
+  }, [getCurrentSessionProcess.status]);
+
+  console.log(getUserItemProcess, "getUserItemProcess");
+  console.log(getCurrentSessionProcess, "getCurrentSessionProcess");
+  console.log(
+    getCurrentAuthenticatedUserProcess,
+    "getCurrentAuthenticatedUserProcess"
+  );
   return (
     <ContentWrapper>
       <NavigationBar

@@ -299,6 +299,7 @@ const MainCard = styled.div`
   display: flex;
   justify-content: start;
   overflow: hidden;
+  box-shadow: 10px 5px 5px #b3b2b2;
 `;
 
 const MainCardContentWrapper = styled.div`

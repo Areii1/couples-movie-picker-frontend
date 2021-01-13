@@ -357,7 +357,7 @@ const Wrapper = styled.div`
   width: 400px;
 `;
 
-const TransparentButton = styled.button`
+export const TransparentButton = styled.button`
   padding: 0;
   background-color: transparent;
   border: none;
@@ -403,6 +403,7 @@ const LoadingIconWrapper = styled.div`
 
 type MarkProps = {
   fontColor: string;
+  size?: number;
 };
 
 const markFadeIn = keyframes`
@@ -423,10 +424,10 @@ const getColorHover = (fontColor: string) => keyframes`
   }
 `;
 
-const Mark = styled.h5`
+export const Mark = styled.h5`
   color: ${(props: MarkProps) => props.fontColor};
   animation: ${markFadeIn} 0.3s linear forwards;
-  font-size: 50px;
+  font-size: ${(props: MarkProps) => (props.size ? `${props.size}px` : "50px")};
   margin: 0;
   text-align: center;
   vertical-align: center;

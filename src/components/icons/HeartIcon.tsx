@@ -4,6 +4,7 @@ import styled, { keyframes, css } from "styled-components";
 type Props = {
   size: number;
   animate: boolean;
+  isRed: boolean;
 };
 
 export const HeartIcon = (props: Props) => {
@@ -18,9 +19,10 @@ export const HeartIcon = (props: Props) => {
       height={`${props.size}px`}
       width={`${props.size}px`}
       animate={props.animate}
+      isRed={props.isRed}
     >
       <path
-        fill="#D7443E"
+        fill={props.isRed ? "#D7443E" : "lightgreen"}
         d="M285.257,35.528c58.743,0.286,106.294,47.836,106.58,106.58
 		c0,107.624-195.918,214.204-195.918,214.204S0,248.165,0,142.108c0-58.862,47.717-106.58,106.58-106.58l0,0
 		c36.032-0.281,69.718,17.842,89.339,48.065C215.674,53.517,249.273,35.441,285.257,35.528z"
@@ -29,17 +31,18 @@ export const HeartIcon = (props: Props) => {
   );
 };
 
-const lighten = keyframes`
+const lighten = (isRed: boolean) => keyframes`
   from {
-    fill: #D7443E;
+    fill: ${isRed ? "#D7443E" : "lightgreen"};
   }
   to {
-    fill: #ff4c46;
+    fill: ${isRed ? "#ff4c46" : "#b9e9b9"};
   }
 `;
 
 type SvgProps = {
   animate: boolean;
+  isRed: boolean;
 };
 
 const Svg = styled.svg`
@@ -50,7 +53,7 @@ const Svg = styled.svg`
       animation: ${(props: SvgProps) =>
         props.animate
           ? css`
-              ${lighten} 0.3s linear forwards
+              ${lighten(props.isRed)} 0.3s linear forwards
             `
           : "unset"};
     }

@@ -44,7 +44,7 @@ export const NavigationBar = (props: Props) => {
       <ListItem>
         <Link to="/love" title="matches">
           <IconWrapper>
-            <HeartIcon size={50} animate/>
+            <HeartIcon size={50} animate isRed/>
           </IconWrapper>
         </Link>
       </ListItem>

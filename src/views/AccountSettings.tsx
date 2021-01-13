@@ -2,7 +2,7 @@ import { Auth } from "aws-amplify";
 import React from "react";
 import { Redirect } from "react-router";
 import { Link } from "react-router-dom";
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 import { uploadProfilePicture } from "../apiService/uploadProfilePicture";
 import { removeProfilePicture } from "../apiService/removeProfilePicture";
 import { Process, SecondaryHeadline, Status } from "../App";
@@ -36,6 +36,10 @@ export const AccountSettings = (props: Props) => {
     false
   );
 
+  const [queryingUpdatedItem, setQueryingUpdatedItem] = React.useState<boolean>(
+    false
+  );
+
   const [selectedFile, setSelectedFile] = React.useState<any>(undefined);
 
   const uploadPicture = async () => {
@@ -52,10 +56,10 @@ export const AccountSettings = (props: Props) => {
           data: uploadPictureResponse,
         });
         alert("uploaded profile picture");
+        setQueryingUpdatedItem(true);
         props.getUserItem(
           props.getCurrentAuthenticatedUserProcess.data.username
         );
-        setSelectedFile(undefined);
       } catch (uploadPictureError) {
         setUploadPictureProcess({
           status: Status.ERROR,
@@ -154,8 +158,15 @@ export const AccountSettings = (props: Props) => {
     }
   };
 
-  console.log(removePictureProcess, "removePictureProcess");
-  console.log(props.getUserItemProcess, 'getUserItemProcess');
+  React.useEffect(() => {
+    if (
+      queryingUpdatedItem &&
+      props.getUserItemProcess.status === Status.SUCCESS
+    ) {
+      setSelectedFile(undefined);
+      setQueryingUpdatedItem(false);
+    }
+  }, [props.getUserItemProcess.status]);
 
   return (
     <Wrapper>
@@ -202,7 +213,8 @@ export const AccountSettings = (props: Props) => {
                       </TransparentButton>
                     </ProfileBallOverlay>
                   )}
-                {uploadPictureProcess.status === Status.LOADING && (
+                {(uploadPictureProcess.status === Status.LOADING ||
+                  queryingUpdatedItem) && (
                   <LoadingIconWrapper>
                     <Puff size={75} fill="white" />
                   </LoadingIconWrapper>
@@ -351,11 +363,21 @@ const TransparentButton = styled.button`
   align-items: center;
 `;
 
+const fadeIn = keyframes`
+  from {
+    background-color: rgb(0, 0, 0, 0.05);
+  }
+  to {
+    background-color: rgb(0, 0, 0, 0.5);
+  }
+`;
+
 const ProfileBallOverlay = styled.div`
   position: absolute;
   top: 0;
   left: 0;
   background-color: rgb(0, 0, 0, 0.5);
+  animation: ${fadeIn} 0.3s linear forwards;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -379,10 +401,33 @@ type MarkProps = {
   fontColor: string;
 };
 
+const markFadeIn = keyframes`
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+`;
+
+const getColorHover = (fontColor: string) => keyframes`
+  from {
+    color: ${fontColor};
+  }
+  to {
+    color: ${fontColor === "lightgreen" ? "green" : "red"};
+  }
+`;
+
 const Mark = styled.h5`
   color: ${(props: MarkProps) => props.fontColor};
+  animation: ${markFadeIn} 0.3s linear forwards;
   font-size: 50px;
   margin: 0;
   text-align: center;
   vertical-align: center;
+  :hover {
+    animation: ${(props: MarkProps) => getColorHover(props.fontColor)} 0.3s
+      linear forwards;
+  }
 `;

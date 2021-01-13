@@ -31,7 +31,7 @@ export const NavigationBar = (props: Props) => {
           <ProfileBall
             firstName={firstName}
             image={
-              props.getUserItemProcess.status === Status.SUCCESS
+              (props.getUserItemProcess.status === Status.SUCCESS && props.getUserItemProcess.data.profilePicture)
                 ? `https://couplesmoviepickerbacken-profilepicturesbucketa8b-wzbj5zhprz9k.s3.eu-central-1.amazonaws.com/${props.getUserItemProcess.data.profilePicture.S}`
                 : undefined
             }
@@ -44,7 +44,7 @@ export const NavigationBar = (props: Props) => {
       <ListItem>
         <Link to="/love" title="matches">
           <IconWrapper>
-            <HeartIcon size={50} />
+            <HeartIcon size={50} animate/>
           </IconWrapper>
         </Link>
       </ListItem>

@@ -1,9 +1,10 @@
 import React from "react";
-import styled, { keyframes } from "styled-components";
+import styled, { keyframes, css } from "styled-components";
 
 type Props = {
   size: number;
-}
+  animate: boolean;
+};
 
 export const HeartIcon = (props: Props) => {
   return (
@@ -16,6 +17,7 @@ export const HeartIcon = (props: Props) => {
       xmlSpace="preserve"
       height={`${props.size}px`}
       width={`${props.size}px`}
+      animate={props.animate}
     >
       <path
         fill="#D7443E"
@@ -36,12 +38,21 @@ const lighten = keyframes`
   }
 `;
 
+type SvgProps = {
+  animate: boolean;
+};
+
 const Svg = styled.svg`
   enable-background: new 0 0 391.837 391.837;
 
   :hover {
     path {
-      animation: ${lighten} 0.3s linear forwards;
+      animation: ${(props: SvgProps) =>
+        props.animate
+          ? css`
+              ${lighten} 0.3s linear forwards
+            `
+          : "unset"};
     }
   }
 `;

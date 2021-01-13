@@ -81,6 +81,7 @@ export const AccountSettings = (props: Props) => {
           data: uploadPictureResponse,
         });
         alert("removed profile picture");
+        setQueryingUpdatedItem(true);
         props.getUserItem(
           props.getCurrentAuthenticatedUserProcess.data.username
         );
@@ -184,8 +185,10 @@ export const AccountSettings = (props: Props) => {
                 onMouseLeave={() => setHoveringProfileBall(false)}
               >
                 {hoveringProfileBall &&
-                  uploadPictureProcess.status === Status.INITIAL &&
+                  (uploadPictureProcess.status === Status.INITIAL ||
+                    uploadPictureProcess.status === Status.SUCCESS) &&
                   selectedFile === undefined &&
+                  removePictureProcess.status === Status.INITIAL &&
                   hasProfilePicture() && (
                     <ProfileBallOverlay>
                       <TransparentButton
@@ -214,7 +217,8 @@ export const AccountSettings = (props: Props) => {
                     </ProfileBallOverlay>
                   )}
                 {(uploadPictureProcess.status === Status.LOADING ||
-                  queryingUpdatedItem) && (
+                  queryingUpdatedItem ||
+                  removePictureProcess.status === Status.LOADING) && (
                   <LoadingIconWrapper>
                     <Puff size={75} fill="white" />
                   </LoadingIconWrapper>

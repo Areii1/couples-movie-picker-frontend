@@ -12,6 +12,7 @@ import { LogIn } from "./views/LogIn";
 import { SignUp } from "./views/SignUp";
 import { AccountSettings } from "./views/AccountSettings";
 import { getUser } from "./apiService/getUser";
+import { MatchesView } from "./views/MatchesView";
 
 configureAmplify();
 
@@ -260,9 +261,12 @@ export const App = () => {
             )}
           </Route>
           <Route exact path="/love">
-            <div>
-              <h1>matches</h1>
-            </div>
+            <MatchesView
+              getCurrentAuthenticatedUserProcess={
+                getCurrentAuthenticatedUserProcess
+              }
+              getUserItemProcess={getUserItemProcess}
+            />
           </Route>
         </MainCardContentWrapper>
       </MainCard>

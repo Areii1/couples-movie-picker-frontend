@@ -50,6 +50,11 @@ export const App = () => {
     setGetCurrentAuthenticatedUserProcess,
   ] = React.useState<Process>({ status: Status.INITIAL });
 
+  const [
+    getPairedUserProcess,
+    setGetPairedUserProcess,
+  ] = React.useState<Process>({ status: Status.INITIAL });
+
   const [getUserItemProcess, setGetUserItemProcess] = React.useState<Process>({
     status: Status.INITIAL,
   });
@@ -57,6 +62,19 @@ export const App = () => {
   const initiateSession = async () => {
     getUserInfo();
     getMovies();
+  };
+
+  const getPairedUser = async (username: string, jwtToken?: string) => {
+    try {
+      setGetPairedUserProcess({ status: Status.LOADING });
+      const getPairedUserResponse = await getUser(username, jwtToken);
+      setGetPairedUserProcess({
+        status: Status.SUCCESS,
+        data: getPairedUserResponse,
+      });
+    } catch (getUserError) {
+      setGetPairedUserProcess({ status: Status.ERROR, error: getUserError });
+    }
   };
 
   const getUserItem = async (username: string, jwtToken?: string) => {
@@ -183,12 +201,32 @@ export const App = () => {
     }
   }, [getCurrentSessionProcess.status]);
 
-  console.log(getUserItemProcess, "getUserItemProcess");
-  console.log(getCurrentSessionProcess, "getCurrentSessionProcess");
-  console.log(
-    getCurrentAuthenticatedUserProcess,
-    "getCurrentAuthenticatedUserProcess"
-  );
+  React.useEffect(() => {
+    if (
+      getUserItemProcess.status === Status.SUCCESS &&
+      getCurrentSessionProcess.status === Status.SUCCESS
+    ) {
+      if (
+        getUserItemProcess.data.outgoingRequests ||
+        getUserItemProcess.data.partner
+      ) {
+        getPairedUser(
+          getUserItemProcess.data.partner
+            ? getUserItemProcess.data.partner.S
+            : getUserItemProcess.data.outgoingRequests.S,
+          getCurrentSessionProcess.data.getIdToken().getJwtToken()
+        );
+      }
+    }
+  }, [getUserItemProcess.status]);
+
+  // console.log(getUserItemProcess, "getUserItemProcess");
+  // console.log(getCurrentSessionProcess, "getCurrentSessionProcess");
+  // console.log(
+  //   getCurrentAuthenticatedUserProcess,
+  //   "getCurrentAuthenticatedUserProcess"
+  // );
+  console.log(getPairedUserProcess, "getPairedUserProcess");
   return (
     <ContentWrapper>
       <NavigationBar
@@ -273,6 +311,7 @@ export const App = () => {
               }
               getUserItemProcess={getUserItemProcess}
               getCurrentSessionProcess={getCurrentSessionProcess}
+              getPairedUserProcess={getPairedUserProcess}
             />
           </Route>
         </MainCardContentWrapper>

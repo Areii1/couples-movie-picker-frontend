@@ -4,17 +4,20 @@ import { LogInPrimaryHeadline } from "./LogIn";
 import { Process, Status, SecondaryHeadline } from "../App";
 import { ProfileBall } from "../components/profileBall/ProfileBall";
 import { HeartIcon } from "../components/icons/HeartIcon";
-import { Form, Button, InputField, ButtonText } from "./LogIn";
+import { Form, InputField } from "./LogIn";
 import { Puff } from "../components/puff/Puff";
 import { getUser } from "../apiService/getUser";
 import { TransparentButton, Mark } from "./AccountSettings";
 import { pairWithUser } from "../apiService/pairWithUser";
 import { SearchIcon } from "../components/icons/SearchIcon";
+import { PendingIcon } from "../components/icons/PendingIcon";
+import { cancelPairingRequest } from "../apiService/cancelPairingRequest";
 
 type Props = {
   getCurrentAuthenticatedUserProcess: Process;
   getCurrentSessionProcess: Process;
   getUserItemProcess: Process;
+  getPairedUserProcess: Process;
 };
 
 export const MatchesView = (props: Props) => {
@@ -26,6 +29,11 @@ export const MatchesView = (props: Props) => {
   const [pairingProcess, setPairingProcess] = React.useState<Process>({
     status: Status.INITIAL,
   });
+
+  const [
+    cancelPairingRequestProcess,
+    setCancelPairingRequestProcess,
+  ] = React.useState<Process>({ status: Status.INITIAL });
 
   const searchUser = async (event: FormEvent) => {
     event.preventDefault();
@@ -64,21 +72,51 @@ export const MatchesView = (props: Props) => {
     ) {
       try {
         setPairingProcess({ status: Status.LOADING });
-        const searchForUserResponse = await pairWithUser(
+        const pairWithUserResponse = await pairWithUser(
           searchProcess.data.username.S,
           props.getCurrentSessionProcess.data.getIdToken().getJwtToken()
         );
         setPairingProcess({
           status: Status.SUCCESS,
-          data: searchForUserResponse,
+          data: pairWithUserResponse,
         });
-      } catch (searchForUserError) {
-        setPairingProcess({ status: Status.ERROR, error: searchForUserError });
+      } catch (pairWithUserError) {
+        setPairingProcess({ status: Status.ERROR, error: pairWithUserError });
       }
     }
   };
 
-  console.log(searchProcess, "searchProcess");
+  const cancelPairing = async () => {
+    if (
+      props.getUserItemProcess.status === Status.SUCCESS &&
+      props.getUserItemProcess.data.outgoingRequests &&
+      props.getCurrentSessionProcess.status === Status.SUCCESS
+    ) {
+      console.log(
+        props.getCurrentSessionProcess.data.getIdToken().getJwtToken(),
+        "matches view jwttoken"
+      );
+      try {
+        setCancelPairingRequestProcess({ status: Status.LOADING });
+        const cancelPairingResponse = await cancelPairingRequest(
+          props.getUserItemProcess.data.outgoingRequests.S,
+          props.getCurrentSessionProcess.data.getIdToken().getJwtToken()
+        );
+        console.log(cancelPairingResponse, "cancelPairingResponse");
+        setCancelPairingRequestProcess({
+          status: Status.SUCCESS,
+          data: cancelPairingResponse,
+        });
+      } catch (cancelPairingError) {
+        setCancelPairingRequestProcess({
+          status: Status.ERROR,
+          error: cancelPairingError,
+        });
+      }
+    }
+  };
+
+  console.log(cancelPairingRequestProcess, "cancelPairingRequestProcess");
 
   return (
     <Wrapper>
@@ -129,9 +167,45 @@ export const MatchesView = (props: Props) => {
                   <Headline>nobody</Headline>
                 </TextWrapper>
               </MatchSection>
-              {props.getUserItemProcess.data.outgoingRequests && (
-                <FoundUserWrapper>sd</FoundUserWrapper>
-              )}
+              {props.getUserItemProcess.data.outgoingRequests &&
+                props.getPairedUserProcess.status === Status.SUCCESS && (
+                  <FoundUserWrapper>
+                    <PendingIcon animate size={30} />
+                    <ProfileWrapper>
+                      <ProfileBall
+                        firstName={props.getPairedUserProcess.data.username.S}
+                        image={
+                          props.getPairedUserProcess.data.profilePicture
+                            ? `https://couplesmoviepickerbacken-profilepicturesbucketa8b-n82wt82xtb6y.s3.eu-central-1.amazonaws.com/${props.getPairedUserProcess.data.profilePicture.S}`
+                            : undefined
+                        }
+                        isCurrentUser={false}
+                        size={50}
+                        animate={false}
+                        fontSize={30}
+                      />
+                      <ProfileText>
+                        {props.getPairedUserProcess.data.username.S}
+                      </ProfileText>
+                    </ProfileWrapper>
+                    <ButtonsWrapper>
+                      {pairingProcess.status === Status.INITIAL && (
+                        <TransparentButton
+                          onClick={() => cancelPairing()}
+                          title="reject"
+                        >
+                          <Mark fontColor="salmon" size={30}>
+                            ✕
+                          </Mark>
+                        </TransparentButton>
+                      )}
+                      {pairingProcess.status === Status.LOADING && (
+                        <Puff size={20} fill="lightblue" />
+                      )}
+                      {pairingProcess.status === Status.SUCCESS && <div />}
+                    </ButtonsWrapper>
+                  </FoundUserWrapper>
+                )}
             </MatchSectionWrapper>
             {!props.getUserItemProcess.data.outgoingRequests && (
               <MatchSectionWrapper>
@@ -264,9 +338,7 @@ const FoundUserWrapper = styled.div`
   display: flex;
   align-items: center;
   margin-top: 20px;
-  /* border-left: 3px solid black; */
   width: 300px;
-  /* padding-left: 20px; */
 `;
 
 const Headline = styled.h5`
@@ -283,7 +355,6 @@ const ProfileText = styled.p`
 `;
 
 const ProfileWrapper = styled.div`
-  /* margin-left: 20px; */
   display: flex;
   align-items: center;
 `;

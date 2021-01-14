@@ -13,6 +13,7 @@ import { SearchIcon } from "../components/icons/SearchIcon";
 
 type Props = {
   getCurrentAuthenticatedUserProcess: Process;
+  getCurrentSessionProcess: Process;
   getUserItemProcess: Process;
 };
 
@@ -30,11 +31,15 @@ export const MatchesView = (props: Props) => {
     event.preventDefault();
     if (
       props.getCurrentAuthenticatedUserProcess.status === Status.SUCCESS &&
+      props.getCurrentSessionProcess.status === Status.SUCCESS &&
       searchFieldValue.length > 0
     ) {
       try {
         setSearchProcess({ status: Status.LOADING });
-        const searchForUserResponse = await getUser(searchFieldValue);
+        const searchForUserResponse = await getUser(
+          searchFieldValue,
+          props.getCurrentSessionProcess.data.getIdToken().getJwtToken()
+        );
         console.log(searchForUserResponse, "searchForUserResponse");
         setSearchProcess({
           status: Status.SUCCESS,
@@ -53,18 +58,22 @@ export const MatchesView = (props: Props) => {
   };
 
   const pairWith = async () => {
-    if (searchProcess.status === Status.SUCCESS) {
+    if (
+      searchProcess.status === Status.SUCCESS &&
+      props.getCurrentSessionProcess.status === Status.SUCCESS
+    ) {
       try {
-        setSearchProcess({ status: Status.LOADING });
+        setPairingProcess({ status: Status.LOADING });
         const searchForUserResponse = await pairWithUser(
-          searchProcess.data.username
+          searchProcess.data.username.S,
+          props.getCurrentSessionProcess.data.getIdToken().getJwtToken()
         );
-        setSearchProcess({
+        setPairingProcess({
           status: Status.SUCCESS,
           data: searchForUserResponse,
         });
       } catch (searchForUserError) {
-        setSearchProcess({ status: Status.ERROR, error: searchForUserError });
+        setPairingProcess({ status: Status.ERROR, error: searchForUserError });
       }
     }
   };
@@ -89,7 +98,7 @@ export const MatchesView = (props: Props) => {
                       image={
                         props.getUserItemProcess.status === Status.SUCCESS &&
                         props.getUserItemProcess.data.profilePicture
-                          ? `https://couplesmoviepickerbacken-profilepicturesbucketa8b-wzbj5zhprz9k.s3.eu-central-1.amazonaws.com/${props.getUserItemProcess.data.profilePicture.S}`
+                          ? `https://couplesmoviepickerbacken-profilepicturesbucketa8b-n82wt82xtb6y.s3.eu-central-1.amazonaws.com/${props.getUserItemProcess.data.profilePicture.S}`
                           : undefined
                       }
                       isCurrentUser={false}
@@ -120,76 +129,81 @@ export const MatchesView = (props: Props) => {
                   <Headline>nobody</Headline>
                 </TextWrapper>
               </MatchSection>
+              {props.getUserItemProcess.data.outgoingRequests && (
+                <FoundUserWrapper>sd</FoundUserWrapper>
+              )}
             </MatchSectionWrapper>
-            <MatchSectionWrapper>
-              <SecondaryHeadline>Search</SecondaryHeadline>
-              {(searchProcess.status === Status.INITIAL ||
-                searchProcess.status === Status.ERROR) && (
-                <FormWrapper>
-                  <Form onSubmit={searchUser}>
-                    <InputFieldWrapper>
-                      <InputField
-                        type="text"
-                        value={searchFieldValue}
-                        onChange={(event) =>
-                          setSearchFieldValue(event.target.value)
+            {!props.getUserItemProcess.data.outgoingRequests && (
+              <MatchSectionWrapper>
+                <SecondaryHeadline>Search</SecondaryHeadline>
+                {(searchProcess.status === Status.INITIAL ||
+                  searchProcess.status === Status.ERROR) && (
+                  <FormWrapper>
+                    <Form onSubmit={searchUser}>
+                      <InputFieldWrapper>
+                        <InputField
+                          type="text"
+                          value={searchFieldValue}
+                          onChange={(event) =>
+                            setSearchFieldValue(event.target.value)
+                          }
+                          placeholder="search for a partner"
+                        />
+                        <SearchIconButton title="search" onClick={searchUser}>
+                          <SearchIcon size={20} animate />
+                        </SearchIconButton>
+                      </InputFieldWrapper>
+                    </Form>
+                  </FormWrapper>
+                )}
+                {searchProcess.status === Status.LOADING && (
+                  <Puff size={50} fill="lightblue" />
+                )}
+                {searchProcess.status === Status.SUCCESS && (
+                  <FoundUserWrapper>
+                    <ProfileWrapper>
+                      <ProfileBall
+                        firstName={searchProcess.data.username.S}
+                        image={
+                          searchProcess.data.profilePicture
+                            ? `https://couplesmoviepickerbacken-profilepicturesbucketa8b-n82wt82xtb6y.s3.eu-central-1.amazonaws.com/${searchProcess.data.profilePicture.S}`
+                            : undefined
                         }
-                        placeholder="search for a partner"
+                        isCurrentUser={false}
+                        size={50}
+                        animate={false}
+                        fontSize={30}
                       />
-                      <SearchIconButton title="search" onClick={searchUser}>
-                        <SearchIcon size={20} animate />
-                      </SearchIconButton>
-                    </InputFieldWrapper>
-                  </Form>
-                </FormWrapper>
-              )}
-              {searchProcess.status === Status.LOADING && (
-                <Puff size={50} fill="lightblue" />
-              )}
-              {searchProcess.status === Status.SUCCESS && (
-                <FoundUserWrapper>
-                  <ProfileWrapper>
-                    <ProfileBall
-                      firstName={searchProcess.data.username.S}
-                      image={
-                        searchProcess.data.profilePicture
-                          ? `https://couplesmoviepickerbacken-profilepicturesbucketa8b-wzbj5zhprz9k.s3.eu-central-1.amazonaws.com/${searchProcess.data.profilePicture.S}`
-                          : undefined
-                      }
-                      isCurrentUser={false}
-                      size={50}
-                      animate={false}
-                      fontSize={30}
-                    />
-                    <ProfileText>{searchProcess.data.username.S}</ProfileText>
-                  </ProfileWrapper>
-                  <ButtonsWrapper>
-                    <TransparentButton
-                      onClick={() =>
-                        setSearchProcess({ status: Status.INITIAL })
-                      }
-                      title="reject"
-                    >
-                      <Mark fontColor="salmon" size={30}>
-                        ✕
-                      </Mark>
-                    </TransparentButton>
-                    {pairingProcess.status === Status.INITIAL && (
+                      <ProfileText>{searchProcess.data.username.S}</ProfileText>
+                    </ProfileWrapper>
+                    <ButtonsWrapper>
                       <TransparentButton
-                        onClick={() => pairWith()}
-                        title="confirm"
+                        onClick={() =>
+                          setSearchProcess({ status: Status.INITIAL })
+                        }
+                        title="reject"
                       >
-                        <HeartIcon size={30} animate isRed={false} />
+                        <Mark fontColor="salmon" size={30}>
+                          ✕
+                        </Mark>
                       </TransparentButton>
-                    )}
-                    {pairingProcess.status === Status.LOADING && (
-                      <Puff size={20} fill="lightblue" />
-                    )}
-                    {pairingProcess.status === Status.SUCCESS && <div />}
-                  </ButtonsWrapper>
-                </FoundUserWrapper>
-              )}
-            </MatchSectionWrapper>
+                      {pairingProcess.status === Status.INITIAL && (
+                        <TransparentButton
+                          onClick={() => pairWith()}
+                          title="confirm"
+                        >
+                          <HeartIcon size={30} animate isRed={false} />
+                        </TransparentButton>
+                      )}
+                      {pairingProcess.status === Status.LOADING && (
+                        <Puff size={20} fill="lightblue" />
+                      )}
+                      {pairingProcess.status === Status.SUCCESS && <div />}
+                    </ButtonsWrapper>
+                  </FoundUserWrapper>
+                )}
+              </MatchSectionWrapper>
+            )}
           </div>
         )}
     </Wrapper>

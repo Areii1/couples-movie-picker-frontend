@@ -32,7 +32,7 @@ export const NavigationBar = (props: Props) => {
             firstName={firstName}
             image={
               (props.getUserItemProcess.status === Status.SUCCESS && props.getUserItemProcess.data.profilePicture)
-                ? `https://couplesmoviepickerbacken-profilepicturesbucketa8b-wzbj5zhprz9k.s3.eu-central-1.amazonaws.com/${props.getUserItemProcess.data.profilePicture.S}`
+                ? `https://couplesmoviepickerbacken-profilepicturesbucketa8b-n82wt82xtb6y.s3.eu-central-1.amazonaws.com/${props.getUserItemProcess.data.profilePicture.S}`
                 : undefined
             }
             isCurrentUser={false}

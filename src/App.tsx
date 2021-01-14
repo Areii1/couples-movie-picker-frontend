@@ -59,11 +59,14 @@ export const App = () => {
     getMovies();
   };
 
-  const getUserItem = async (username: string) => {
+  const getUserItem = async (username: string, jwtToken?: string) => {
     try {
       setGetUserItemProcess({ status: Status.LOADING });
-      const getUserResponse = await getUser(username);
-      setGetUserItemProcess({ status: Status.SUCCESS, data: getUserResponse });
+      const getUserResponse = await getUser(username, jwtToken);
+      setGetUserItemProcess({
+        status: Status.SUCCESS,
+        data: getUserResponse,
+      });
     } catch (getUserError) {
       setGetUserItemProcess({ status: Status.ERROR, error: getUserError });
     }
@@ -84,7 +87,10 @@ export const App = () => {
           status: Status.SUCCESS,
           data: getCurrentAuthenticatedUserResponse,
         });
-        getUserItem(getCurrentAuthenticatedUserResponse.username);
+        getUserItem(
+          getCurrentAuthenticatedUserResponse.username,
+          getCurrentSessionResponse.getIdToken().getJwtToken()
+        );
       } catch (getCurrentAuthenticatedUserError) {
         setGetCurrentAuthenticatedUserProcess({
           status: Status.ERROR,
@@ -266,6 +272,7 @@ export const App = () => {
                 getCurrentAuthenticatedUserProcess
               }
               getUserItemProcess={getUserItemProcess}
+              getCurrentSessionProcess={getCurrentSessionProcess}
             />
           </Route>
         </MainCardContentWrapper>

@@ -3,20 +3,20 @@ import Amplify from "aws-amplify";
 export const configureAmplify = () => {
   Amplify.configure({
     Auth: {
-      identityPoolId: "eu-central-1:f2229712-f4b6-4e01-97cd-49f87669e656",
+      identityPoolId: "eu-central-1:37c128a0-8907-4643-a5a9-a62c72c61c4b",
       region: "eu-central-1",
-      userPoolId: "eu-central-1_g1k7tnnPw",
-      userPoolWebClientId: "1g5sc46kkel87k19fuco8dbd07",
+      userPoolId: "eu-central-1_6C0tL3PuD",
+      userPoolWebClientId: "230ot6gdeedsftpfmegr2pisu7",
     },
     Storage: {
-      bucket: "couplesmoviepickerbacken-profilepicturesbucketa8b-n82wt82xtb6y",
+      bucket: "couplesmoviepickerbacken-profilepicturesbucketa8b-2miadmkpd2b7",
       region: "eu-central-1",
     },
     API: {
       endpoints: [
         {
           endpoint:
-            "https://5vi3yek4g3.execute-api.eu-central-1.amazonaws.com/prod",
+            "https://7ocld0otxg.execute-api.eu-central-1.amazonaws.com/prod",
           name: "couples-movie-picker-api",
           region: "eu-central-1",
         },

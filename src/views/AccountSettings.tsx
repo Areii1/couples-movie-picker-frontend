@@ -127,7 +127,7 @@ export const AccountSettings = (props: Props) => {
       return URL.createObjectURL(selectedFile);
     } else if (props.getUserItemProcess.status === Status.SUCCESS) {
       if (props.getUserItemProcess.data.profilePicture) {
-        return `https://couplesmoviepickerbacken-profilepicturesbucketa8b-n82wt82xtb6y.s3.eu-central-1.amazonaws.com/${props.getUserItemProcess.data.profilePicture.S}`;
+        return `https://couplesmoviepickerbacken-profilepicturesbucketa8b-2miadmkpd2b7.s3.eu-central-1.amazonaws.com/${props.getUserItemProcess.data.profilePicture.S}`;
       } else {
         return undefined;
       }

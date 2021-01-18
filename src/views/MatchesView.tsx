@@ -12,12 +12,16 @@ import { pairWithUser } from "../apiService/pairWithUser";
 import { SearchIcon } from "../components/icons/SearchIcon";
 import { PendingIcon } from "../components/icons/PendingIcon";
 import { cancelPairingRequest } from "../apiService/cancelPairingRequest";
+import { rejectIncomingRequest } from "../apiService/rejectIncomingRequest";
+import { acceptIncomingRequest } from "../apiService/acceptIncomingRequest";
 
 type Props = {
   getCurrentAuthenticatedUserProcess: Process;
   getCurrentSessionProcess: Process;
   getUserItemProcess: Process;
   getPairedUserProcess: Process;
+  getUserItem: (username: string, jwtToken: string) => void;
+  getPairedUser: (username: string, jwtToken: string) => void;
 };
 
 export const MatchesView = (props: Props) => {
@@ -33,6 +37,16 @@ export const MatchesView = (props: Props) => {
   const [
     cancelPairingRequestProcess,
     setCancelPairingRequestProcess,
+  ] = React.useState<Process>({ status: Status.INITIAL });
+
+  const [
+    rejectIncomingRequestProcess,
+    setRejectIncomingRequestProcess,
+  ] = React.useState<Process>({ status: Status.INITIAL });
+
+  const [
+    acceptIncomingRequestProcess,
+    setAcceptIncomingRequestProcess,
   ] = React.useState<Process>({ status: Status.INITIAL });
 
   const searchUser = async (event: FormEvent) => {
@@ -68,9 +82,11 @@ export const MatchesView = (props: Props) => {
   const pairWith = async () => {
     if (
       searchProcess.status === Status.SUCCESS &&
-      props.getCurrentSessionProcess.status === Status.SUCCESS
+      props.getCurrentSessionProcess.status === Status.SUCCESS &&
+      props.getUserItemProcess.status === Status.SUCCESS
     ) {
       try {
+        setSearchProcess({ status: Status.INITIAL });
         setPairingProcess({ status: Status.LOADING });
         const pairWithUserResponse = await pairWithUser(
           searchProcess.data.username.S,
@@ -80,6 +96,10 @@ export const MatchesView = (props: Props) => {
           status: Status.SUCCESS,
           data: pairWithUserResponse,
         });
+        props.getUserItem(
+          props.getUserItemProcess.data.username.S,
+          props.getCurrentSessionProcess.data.getIdToken().getJwtToken()
+        );
       } catch (pairWithUserError) {
         setPairingProcess({ status: Status.ERROR, error: pairWithUserError });
       }
@@ -107,6 +127,10 @@ export const MatchesView = (props: Props) => {
           status: Status.SUCCESS,
           data: cancelPairingResponse,
         });
+        props.getUserItem(
+          props.getUserItemProcess.data.username.S,
+          props.getCurrentSessionProcess.data.getIdToken().getJwtToken()
+        );
       } catch (cancelPairingError) {
         setCancelPairingRequestProcess({
           status: Status.ERROR,
@@ -116,16 +140,153 @@ export const MatchesView = (props: Props) => {
     }
   };
 
+  const rejectIncoming = async (rejectUsername: string) => {
+    if (
+      props.getUserItemProcess.status === Status.SUCCESS &&
+      props.getUserItemProcess.data.outgoingRequests &&
+      props.getCurrentSessionProcess.status === Status.SUCCESS
+    ) {
+      const rejectableRequest = props.getUserItemProcess.data.incomingRequests.L.find(
+        (request: string) => rejectUsername === request
+      );
+      if (rejectableRequest) {
+        try {
+          setRejectIncomingRequestProcess({ status: Status.LOADING });
+          const rejectIncomingRequestResponse = await rejectIncomingRequest(
+            props.getUserItemProcess.data.outgoingRequests.S,
+            props.getCurrentSessionProcess.data.getIdToken().getJwtToken()
+          );
+          setRejectIncomingRequestProcess({
+            status: Status.SUCCESS,
+            data: rejectIncomingRequestResponse,
+          });
+          props.getUserItem(
+            props.getUserItemProcess.data.username.S,
+            props.getCurrentSessionProcess.data.getIdToken().getJwtToken()
+          );
+        } catch (rejectIncomingRequestError) {
+          setRejectIncomingRequestProcess({
+            status: Status.ERROR,
+            error: rejectIncomingRequestError,
+          });
+        }
+      }
+    }
+  };
+
+  const acceptIncoming = async (acceptUsername: string) => {
+    if (
+      props.getUserItemProcess.status === Status.SUCCESS &&
+      acceptUsername &&
+      props.getCurrentSessionProcess.status === Status.SUCCESS
+    ) {
+      const acceptableRequest = props.getUserItemProcess.data.incomingRequests.L.find(
+        (request: string) => acceptUsername === request
+      );
+      if (acceptableRequest) {
+        try {
+          setAcceptIncomingRequestProcess({ status: Status.LOADING });
+          const acceptIncomingRequestResponse = await acceptIncomingRequest(
+            props.getUserItemProcess.data.outgoingRequests.S,
+            props.getCurrentSessionProcess.data.getIdToken().getJwtToken()
+          );
+          setAcceptIncomingRequestProcess({
+            status: Status.SUCCESS,
+            data: acceptIncomingRequestResponse,
+          });
+          props.getUserItem(
+            props.getUserItemProcess.data.username.S,
+            props.getCurrentSessionProcess.data.getIdToken().getJwtToken()
+          );
+        } catch (accpetIncomingRequestError) {
+          setAcceptIncomingRequestProcess({
+            status: Status.ERROR,
+            error: accpetIncomingRequestError,
+          });
+        }
+      }
+    }
+  };
+
+  const getRequestListItems = () => {
+    if (props.getUserItemProcess.status === Status.SUCCESS) {
+      const requestListItems = props.getUserItemProcess.data.incomingRequests.L.map(
+        (request: any) => {
+          return (
+            <RequestListItem>
+              <FoundUserWrapper>
+                <ProfileWrapper>
+                  <ProfileBall
+                    firstName={request.S}
+                    image={undefined}
+                    isCurrentUser={false}
+                    size={50}
+                    animate={false}
+                    fontSize={30}
+                    showText
+                    shadow={false}
+                    border={false}
+                  />
+                  <ProfileText>{request.S}</ProfileText>
+                </ProfileWrapper>
+                <ButtonsWrapper>
+                  {rejectIncomingRequestProcess.status === Status.INITIAL && (
+                    <TransparentButton
+                      onClick={() => rejectIncoming(request.S)}
+                      title="reject"
+                    >
+                      <Mark fontColor="salmon" size={30}>
+                        ✕
+                      </Mark>
+                    </TransparentButton>
+                  )}
+                  {rejectIncomingRequestProcess.status === Status.LOADING && (
+                    <Puff size={20} fill="lightblue" />
+                  )}
+                  {rejectIncomingRequestProcess.status === Status.SUCCESS && (
+                    <div />
+                  )}
+                  {acceptIncomingRequestProcess.status === Status.INITIAL && (
+                    <TransparentButton
+                      onClick={() => acceptIncoming(request.S)}
+                      title="confirm"
+                    >
+                      <HeartIcon size={30} animate isRed={false} />
+                    </TransparentButton>
+                  )}
+                  {acceptIncomingRequestProcess.status === Status.LOADING && (
+                    <Puff size={20} fill="lightblue" />
+                  )}
+                  {acceptIncomingRequestProcess.status === Status.SUCCESS && (
+                    <div />
+                  )}
+                </ButtonsWrapper>
+              </FoundUserWrapper>
+            </RequestListItem>
+          );
+        }
+      );
+      return requestListItems;
+    }
+  };
+
+  const requestPending =
+    props.getUserItemProcess.status === Status.SUCCESS &&
+    props.getUserItemProcess.data.outgoingRequests !== undefined;
+  const isPartnered =
+    props.getUserItemProcess.status === Status.SUCCESS &&
+    props.getUserItemProcess.data.partnered !== undefined;
   console.log(cancelPairingRequestProcess, "cancelPairingRequestProcess");
+  console.log(requestPending, "requestPending");
 
   return (
     <Wrapper>
-      <LogInPrimaryHeadline>Matches</LogInPrimaryHeadline>
+      <LogInPrimaryHeadline>Partner</LogInPrimaryHeadline>
       {props.getUserItemProcess.status === Status.SUCCESS &&
         props.getCurrentAuthenticatedUserProcess.status === Status.SUCCESS && (
           <div>
             <MatchSectionWrapper>
-              <SecondaryHeadline>Match details</SecondaryHeadline>
+              <SecondaryHeadline>Details</SecondaryHeadline>
               <MatchSection>
                 <BallsWrapper>
                   <BallWrapper toLeft={false}>
@@ -143,69 +304,60 @@ export const MatchesView = (props: Props) => {
                       size={150}
                       animate={false}
                       fontSize={100}
+                      showText
+                      shadow
+                      border={false}
                     />
                   </BallWrapper>
-                  <IconWrapper>
-                    <HeartIcon size={60} animate={false} isRed />
-                  </IconWrapper>
-                  <BallWrapper toLeft>
+                  <PartnerBallWrapper toLeft>
                     <ProfileBall
-                      firstName={undefined}
-                      image={undefined}
+                      firstName={
+                        props.getPairedUserProcess.status === Status.SUCCESS
+                          ? props.getPairedUserProcess.data.username.S
+                          : undefined
+                      }
+                      image={
+                        (requestPending || isPartnered) &&
+                        props.getPairedUserProcess.status === Status.SUCCESS &&
+                        props.getPairedUserProcess.data.profilePicture
+                          ? `https://couplesmoviepickerbacken-profilepicturesbucketa8b-n82wt82xtb6y.s3.eu-central-1.amazonaws.com/${props.getPairedUserProcess.data.profilePicture.S}`
+                          : undefined
+                      }
                       isCurrentUser={false}
                       size={150}
                       animate={false}
                       fontSize={100}
+                      showText={false}
+                      shadow
+                      border={false}
                     />
-                  </BallWrapper>
+                    {requestPending && (
+                      <>
+                        <BallOverlay />
+                        <IconWrapper>
+                          <PendingIcon animate={false} size={60} />
+                        </IconWrapper>
+                      </>
+                    )}
+                  </PartnerBallWrapper>
+                  <IconWrapper>
+                    {!requestPending && (
+                      <HeartIcon size={60} animate={false} isRed />
+                    )}
+                  </IconWrapper>
                 </BallsWrapper>
-                <TextWrapper>
-                  <Headline>
-                    {props.getCurrentAuthenticatedUserProcess.data.username}
-                  </Headline>
-                  <Text>loves</Text>
-                  <Headline>nobody</Headline>
-                </TextWrapper>
               </MatchSection>
-              {props.getUserItemProcess.data.outgoingRequests &&
-                props.getPairedUserProcess.status === Status.SUCCESS && (
-                  <FoundUserWrapper>
-                    <PendingIcon animate size={30} />
-                    <ProfileWrapper>
-                      <ProfileBall
-                        firstName={props.getPairedUserProcess.data.username.S}
-                        image={
-                          props.getPairedUserProcess.data.profilePicture
-                            ? `https://couplesmoviepickerbacken-profilepicturesbucketa8b-n82wt82xtb6y.s3.eu-central-1.amazonaws.com/${props.getPairedUserProcess.data.profilePicture.S}`
-                            : undefined
-                        }
-                        isCurrentUser={false}
-                        size={50}
-                        animate={false}
-                        fontSize={30}
-                      />
-                      <ProfileText>
-                        {props.getPairedUserProcess.data.username.S}
-                      </ProfileText>
-                    </ProfileWrapper>
-                    <ButtonsWrapper>
-                      {pairingProcess.status === Status.INITIAL && (
-                        <TransparentButton
-                          onClick={() => cancelPairing()}
-                          title="reject"
-                        >
-                          <Mark fontColor="salmon" size={30}>
-                            ✕
-                          </Mark>
-                        </TransparentButton>
-                      )}
-                      {pairingProcess.status === Status.LOADING && (
-                        <Puff size={20} fill="lightblue" />
-                      )}
-                      {pairingProcess.status === Status.SUCCESS && <div />}
-                    </ButtonsWrapper>
-                  </FoundUserWrapper>
-                )}
+              {isPartnered && (
+                <p>{`${props.getUserItemProcess.data.username.S} loves ${props.getUserItemProcess.data.partner.S}`}</p>
+              )}
+              {requestPending && (
+                <TextWrapper>
+                  <p>{`${props.getUserItemProcess.data.username.S} waiting for ${props.getUserItemProcess.data.outgoingRequests.S}'s approval`}</p>
+                  <TransparentButton onClick={cancelPairing} title="cancel">
+                    <Text>cancel</Text>
+                  </TransparentButton>
+                </TextWrapper>
+              )}
             </MatchSectionWrapper>
             {!props.getUserItemProcess.data.outgoingRequests && (
               <MatchSectionWrapper>
@@ -247,6 +399,9 @@ export const MatchesView = (props: Props) => {
                         size={50}
                         animate={false}
                         fontSize={30}
+                        showText
+                        shadow
+                        border={false}
                       />
                       <ProfileText>{searchProcess.data.username.S}</ProfileText>
                     </ProfileWrapper>
@@ -277,6 +432,12 @@ export const MatchesView = (props: Props) => {
                   </FoundUserWrapper>
                 )}
               </MatchSectionWrapper>
+            )}
+            {props.getUserItemProcess.data.incomingRequests && (
+              <SectionWrapper>
+                <SecondaryHeadline>Requests</SecondaryHeadline>
+                <RequestList>{getRequestListItems()}</RequestList>
+              </SectionWrapper>
             )}
           </div>
         )}
@@ -316,11 +477,17 @@ const BallWrapper = styled.div`
   margin-right: ${(props: BallWrapperProps) => (props.toLeft ? 0 : "-20px")};
 `;
 
+const PartnerBallWrapper = styled(BallWrapper)`
+  position: relative;
+`;
+
 const TextWrapper = styled.div`
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  width: 100px;
+`;
+
+const Text = styled.p`
+  margin-left: 10px;
+  color: blue;
 `;
 
 const IconWrapper = styled.div`
@@ -339,19 +506,15 @@ const FoundUserWrapper = styled.div`
   align-items: center;
   margin-top: 20px;
   width: 300px;
-`;
-
-const Headline = styled.h5`
-  margin: 0;
-`;
-
-const Text = styled.p`
-  margin: 0;
+  box-shadow: 10px 5px 5px lightgray;
+  border: 1px solid lightgray;
+  border-radius: 5px;
+  padding: 10px 20px;
 `;
 
 const ProfileText = styled.p`
   margin: 0;
-  margin-left: 5px;
+  margin-left: 20px;
 `;
 
 const ProfileWrapper = styled.div`
@@ -373,4 +536,30 @@ const SearchIconButton = styled(TransparentButton)`
   position: absolute;
   top: 0;
   right: 0;
+`;
+
+const BallOverlay = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 150px;
+  height: 150px;
+  border-radius: 150px;
+  background-color: white;
+  opacity: 0.5;
+`;
+
+const SectionWrapper = styled.div`
+  margin-top: 20px;
+  text-align: start;
+`;
+
+const RequestList = styled.ul`
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+`;
+
+const RequestListItem = styled.li`
+  padding: 0;
 `;

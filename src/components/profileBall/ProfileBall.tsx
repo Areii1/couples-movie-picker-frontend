@@ -9,6 +9,9 @@ type Props = {
   size: number;
   animate: boolean;
   fontSize?: number;
+  showText: boolean;
+  shadow: boolean;
+  border: boolean;
 };
 
 const getColor = (firstname: string | undefined) => {
@@ -61,16 +64,13 @@ export const ProfileBall = (props: Props) => {
       size={props.size}
       image={props.image}
       animate={props.animate}
+      shadow={props.shadow}
+      border={props.border}
     >
-      {props.image === undefined && (
-        <>
-          {props.firstName && (
-            <Text fontSize={props.fontSize}>
-              {props.firstName[0].toUpperCase()}
-            </Text>
-          )}
-          {!props.firstName && <Text fontSize={props.fontSize}>?</Text>}
-        </>
+      {props.image === undefined && props.showText && (
+        <Text fontSize={props.fontSize}>
+          {props.firstName ? props.firstName[0].toUpperCase() : "?"}
+        </Text>
       )}
       {props.image !== undefined && (
         <Image src={props.image} size={props.size} />
@@ -85,6 +85,8 @@ type WrapperProps = {
   size: number;
   image: string | undefined;
   animate: boolean;
+  shadow: boolean;
+  border: boolean;
 };
 
 const lighten = (firstName: string | undefined) => keyframes`
@@ -108,7 +110,8 @@ const Wrapper = styled.div`
   justify-content: center;
   align-items: center;
   overflow: hidden;
-  /* color: #afffff; */
+  box-shadow: ${(props: WrapperProps) => props.shadow ? '10px 5px 5px lightgray' : 'unset'};
+  border: ${(props: WrapperProps) => props.border ? '1px solid black' : 'unset'};
   :hover {
     animation: ${(props: WrapperProps) =>
       props.animate

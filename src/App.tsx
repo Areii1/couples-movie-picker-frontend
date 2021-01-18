@@ -220,7 +220,7 @@ export const App = () => {
     }
   }, [getUserItemProcess.status]);
 
-  // console.log(getUserItemProcess, "getUserItemProcess");
+  console.log(getUserItemProcess, "getUserItemProcess");
   // console.log(getCurrentSessionProcess, "getCurrentSessionProcess");
   // console.log(
   //   getCurrentAuthenticatedUserProcess,
@@ -312,6 +312,8 @@ export const App = () => {
               getUserItemProcess={getUserItemProcess}
               getCurrentSessionProcess={getCurrentSessionProcess}
               getPairedUserProcess={getPairedUserProcess}
+              getPairedUser={getPairedUser}
+              getUserItem={getUserItem}
             />
           </Route>
         </MainCardContentWrapper>
@@ -338,10 +340,10 @@ const ContentWrapper = styled.div`
 const MainCard = styled.div`
   width: 100%;
   background-color: white;
-  margin-top: 50px;
+  margin: 50px 0;
   border-radius: 10px;
   padding: 50px;
-  height: 600px;
+  min-height: 600px;
   display: flex;
   justify-content: start;
   overflow: hidden;

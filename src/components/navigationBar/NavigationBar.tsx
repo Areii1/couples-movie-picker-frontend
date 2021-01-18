@@ -38,6 +38,9 @@ export const NavigationBar = (props: Props) => {
             isCurrentUser={false}
             size={50}
             animate
+            showText
+            shadow={false}
+            border={false}
           />
         </Link>
       </ListItem>
@@ -59,6 +62,7 @@ const List = styled.ul`
   display: flex;
   border-radius: 10px;
   margin-top: 20px;
+  box-shadow: 10px 5px 5px lightgray;
 `;
 
 const ListItem = styled.li`

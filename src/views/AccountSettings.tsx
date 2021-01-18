@@ -230,6 +230,9 @@ export const AccountSettings = (props: Props) => {
                   size={100}
                   animate={false}
                   fontSize={50}
+                  showText
+                  shadow
+                  border
                 />
               </ProfileBallWrapper>
               <Dropzone>

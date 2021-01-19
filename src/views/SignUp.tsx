@@ -16,7 +16,6 @@ import {
 } from "./LogIn";
 
 export const SignUp = (props: any) => {
-  console.log(props, "props");
   const [
     signupUsernameFieldValue,
     setSignupUsernameFieldValue,

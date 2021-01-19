@@ -14,7 +14,8 @@ import { PendingIcon } from "../components/icons/PendingIcon";
 import { cancelPairingRequest } from "../apiService/cancelPairingRequest";
 import { rejectIncomingRequest } from "../apiService/rejectIncomingRequest";
 import { acceptIncomingRequest } from "../apiService/acceptIncomingRequest";
-import { AnimateType } from '../components/icons/HeartIcon';
+import { AnimateType } from "../components/icons/HeartIcon";
+import { breakUpPartnership } from "../apiService/breakUpPartnership";
 
 type Props = {
   getCurrentAuthenticatedUserProcess: Process;
@@ -50,6 +51,11 @@ export const MatchesView = (props: Props) => {
     setAcceptIncomingRequestProcess,
   ] = React.useState<Process>({ status: Status.INITIAL });
 
+  const [
+    breakUpPartnershipProcess,
+    setBreakUpPartnershipProcess,
+  ] = React.useState<Process>({ status: Status.INITIAL });
+
   const searchUser = async (event: FormEvent) => {
     event.preventDefault();
     if (
@@ -63,7 +69,6 @@ export const MatchesView = (props: Props) => {
           searchFieldValue,
           props.getCurrentSessionProcess.data.getIdToken().getJwtToken()
         );
-        console.log(searchForUserResponse, "searchForUserResponse");
         setSearchProcess({
           status: Status.SUCCESS,
           data: searchForUserResponse,
@@ -71,7 +76,6 @@ export const MatchesView = (props: Props) => {
         setSearchFieldValue("");
       } catch (searchForUserError) {
         setSearchFieldValue("");
-        console.log(searchForUserError, "searchForUserError");
         setSearchProcess({ status: Status.ERROR, error: searchForUserError });
         alert(`did not find user "${searchFieldValue}"`);
       }
@@ -113,23 +117,22 @@ export const MatchesView = (props: Props) => {
       props.getUserItemProcess.data.outgoingRequests &&
       props.getCurrentSessionProcess.status === Status.SUCCESS
     ) {
-      console.log(
-        props.getCurrentSessionProcess.data.getIdToken().getJwtToken(),
-        "matches view jwttoken"
-      );
       try {
         setCancelPairingRequestProcess({ status: Status.LOADING });
         const cancelPairingResponse = await cancelPairingRequest(
           props.getUserItemProcess.data.outgoingRequests.S,
           props.getCurrentSessionProcess.data.getIdToken().getJwtToken()
         );
-        console.log(cancelPairingResponse, "cancelPairingResponse");
         setCancelPairingRequestProcess({
           status: Status.SUCCESS,
           data: cancelPairingResponse,
         });
         props.getUserItem(
           props.getUserItemProcess.data.username.S,
+          props.getCurrentSessionProcess.data.getIdToken().getJwtToken()
+        );
+        props.getPairedUser(
+          props.getUserItemProcess.data.outgoingRequests.S,
           props.getCurrentSessionProcess.data.getIdToken().getJwtToken()
         );
       } catch (cancelPairingError) {
@@ -142,7 +145,6 @@ export const MatchesView = (props: Props) => {
   };
 
   const rejectIncoming = async (rejectUsername: string) => {
-    console.log(rejectUsername, 'rejectUsername');
     if (
       props.getUserItemProcess.status === Status.SUCCESS &&
       props.getUserItemProcess.data.incomingRequests &&
@@ -150,8 +152,7 @@ export const MatchesView = (props: Props) => {
     ) {
       const rejectableRequest = props.getUserItemProcess.data.incomingRequests.SS.find(
         (request: string) => rejectUsername === request
-        );
-        console.log(rejectableRequest, 'rejectableRequest');
+      );
       if (rejectableRequest) {
         try {
           setRejectIncomingRequestProcess({ status: Status.LOADING });
@@ -210,11 +211,43 @@ export const MatchesView = (props: Props) => {
     }
   };
 
+  const breakUp = async () => {
+    if (
+      props.getUserItemProcess.status === Status.SUCCESS &&
+      props.getCurrentSessionProcess.status === Status.SUCCESS &&
+      props.getPairedUserProcess.status === Status.SUCCESS
+    ) {
+      try {
+        setBreakUpPartnershipProcess({ status: Status.LOADING });
+        const acceptIncomingRequestResponse = await breakUpPartnership(
+          props.getUserItemProcess.data.partner.S,
+          props.getCurrentSessionProcess.data.getIdToken().getJwtToken()
+        );
+        setBreakUpPartnershipProcess({
+          status: Status.SUCCESS,
+          data: acceptIncomingRequestResponse,
+        });
+        props.getUserItem(
+          props.getUserItemProcess.data.username.S,
+          props.getCurrentSessionProcess.data.getIdToken().getJwtToken()
+        );
+        props.getPairedUser(
+          props.getPairedUserProcess.data.username.S,
+          props.getCurrentSessionProcess.data.getIdToken().getJwtToken()
+        );
+      } catch (accpetIncomingRequestError) {
+        setBreakUpPartnershipProcess({
+          status: Status.ERROR,
+          error: accpetIncomingRequestError,
+        });
+      }
+    }
+  };
+
   const getRequestListItems = () => {
     if (props.getUserItemProcess.status === Status.SUCCESS) {
       const requestListItems = props.getUserItemProcess.data.incomingRequests.SS.map(
         (request: any) => {
-          console.log(request, "request");
           return (
             <RequestListItem>
               <FoundUserWrapper>
@@ -254,7 +287,11 @@ export const MatchesView = (props: Props) => {
                       onClick={() => acceptIncoming(request)}
                       title="confirm"
                     >
-                      <HeartIcon size={30} animate={AnimateType.NONE} isRed={false} />
+                      <HeartIcon
+                        size={30}
+                        animate={AnimateType.NONE}
+                        isRed={false}
+                      />
                     </TransparentButton>
                   )}
                   {acceptIncomingRequestProcess.status === Status.LOADING && (
@@ -279,8 +316,6 @@ export const MatchesView = (props: Props) => {
   const isPartnered =
     props.getUserItemProcess.status === Status.SUCCESS &&
     props.getUserItemProcess.data.partner !== undefined;
-  console.log(cancelPairingRequestProcess, "cancelPairingRequestProcess");
-  console.log(requestPending, "requestPending");
 
   return (
     <Wrapper>
@@ -338,7 +373,7 @@ export const MatchesView = (props: Props) => {
                     <BallOverlay requestPending={requestPending} />
                     {requestPending && (
                       <IconWrapper>
-                        <PendingIcon animate={false} size={60} />
+                        <PendingIcon animate={false} size={80} />
                       </IconWrapper>
                     )}
                   </PartnerBallWrapper>
@@ -349,44 +384,58 @@ export const MatchesView = (props: Props) => {
                   </IconWrapper>
                 </BallsWrapper>
               </MatchSection>
-              {isPartnered && (
-                <p>{`${props.getUserItemProcess.data.username.S} loves ${props.getUserItemProcess.data.partner.S}`}</p>
-              )}
-              {requestPending && (
-                <TextWrapper>
-                  <p>{`${props.getUserItemProcess.data.username.S} waiting for ${props.getUserItemProcess.data.outgoingRequests.S}'s approval`}</p>
-                  <TransparentButton onClick={cancelPairing} title="cancel">
-                    <Text>cancel</Text>
-                  </TransparentButton>
-                </TextWrapper>
-              )}
+              {isPartnered &&
+                breakUpPartnershipProcess.status === Status.INITIAL && (
+                  <TextWrapper>
+                    <p>{`${props.getUserItemProcess.data.username.S} loves ${props.getUserItemProcess.data.partner.S}`}</p>
+                    <TransparentButton onClick={breakUp} title="break up">
+                      <Text>break up</Text>
+                    </TransparentButton>
+                  </TextWrapper>
+                )}
+              {requestPending &&
+                cancelPairingRequestProcess.status === Status.INITIAL && (
+                  <TextWrapper>
+                    <p>
+                      {`${props.getUserItemProcess.data.username.S}`}
+                      <DeemphasizedSpan>waiting for</DeemphasizedSpan>
+                      {`${props.getUserItemProcess.data.outgoingRequests.S}'s`}
+                      <DeemphasizedSpan>approval</DeemphasizedSpan>
+                    </p>
+                    <TransparentButton onClick={cancelPairing} title="cancel">
+                      <Text>cancel</Text>
+                    </TransparentButton>
+                  </TextWrapper>
+                )}
               {!isPartnered && !requestPending && (
                 <p>{`${props.getUserItemProcess.data.username.S} loves nobody`}</p>
               )}
+              {(requestPending || isPartnered) &&
+                (breakUpPartnershipProcess.status === Status.LOADING ||
+                  cancelPairingRequestProcess.status === Status.LOADING) && (
+                  <Puff size={50} fill="lightblue" />
+                )}
             </MatchSectionWrapper>
             {!props.getUserItemProcess.data.outgoingRequests && !isPartnered && (
               <MatchSectionWrapper>
                 <SecondaryHeadline>Search</SecondaryHeadline>
-                {(searchProcess.status === Status.INITIAL ||
-                  searchProcess.status === Status.ERROR) && (
-                  <FormWrapper>
-                    <Form onSubmit={searchUser}>
-                      <InputFieldWrapper>
-                        <InputField
-                          type="text"
-                          value={searchFieldValue}
-                          onChange={(event) =>
-                            setSearchFieldValue(event.target.value)
-                          }
-                          placeholder="search for a partner"
-                        />
-                        <SearchIconButton title="search" onClick={searchUser}>
-                          <SearchIcon size={20} animate />
-                        </SearchIconButton>
-                      </InputFieldWrapper>
-                    </Form>
-                  </FormWrapper>
-                )}
+                <FormWrapper>
+                  <Form onSubmit={searchUser}>
+                    <InputFieldWrapper>
+                      <InputField
+                        type="text"
+                        value={searchFieldValue}
+                        onChange={(event) =>
+                          setSearchFieldValue(event.target.value)
+                        }
+                        placeholder="search for a partner"
+                      />
+                      <SearchIconButton title="search" onClick={searchUser}>
+                        <SearchIcon size={20} animate />
+                      </SearchIconButton>
+                    </InputFieldWrapper>
+                  </Form>
+                </FormWrapper>
                 {searchProcess.status === Status.LOADING && (
                   <Puff size={50} fill="lightblue" />
                 )}
@@ -401,39 +450,39 @@ export const MatchesView = (props: Props) => {
                             : undefined
                         }
                         isCurrentUser={false}
-                        size={50}
+                        size={40}
                         animate={false}
-                        fontSize={30}
+                        fontSize={25}
                         showText
-                        shadow
+                        shadow={false}
                         border={false}
                       />
-                      <ProfileText>{searchProcess.data.username.S}</ProfileText>
+                      <ProfileText isPartnered={searchProcess.data.partner}>
+                        {searchProcess.data.partner
+                          ? `${searchProcess.data.username.S} is already partnered with ${searchProcess.data.partner.S}`
+                          : searchProcess.data.username.S}
+                      </ProfileText>
                     </ProfileWrapper>
-                    <ButtonsWrapper>
-                      <TransparentButton
-                        onClick={() =>
-                          setSearchProcess({ status: Status.INITIAL })
-                        }
-                        title="reject"
-                      >
-                        <Mark fontColor="salmon" size={30}>
-                          ✕
-                        </Mark>
-                      </TransparentButton>
-                      {pairingProcess.status === Status.INITIAL && (
-                        <TransparentButton
-                          onClick={() => pairWith()}
-                          title="confirm"
-                        >
-                          <HeartIcon size={30} animate={AnimateType.COLOR} isRed={false} />
-                        </TransparentButton>
-                      )}
-                      {pairingProcess.status === Status.LOADING && (
-                        <Puff size={20} fill="lightblue" />
-                      )}
-                      {pairingProcess.status === Status.SUCCESS && <div />}
-                    </ButtonsWrapper>
+                    {!searchProcess.data.partner && (
+                      <ButtonsWrapper>
+                        {pairingProcess.status === Status.INITIAL && (
+                          <TransparentButton
+                            onClick={() => pairWith()}
+                            title={`pair with ${searchProcess.data.username.S}`}
+                          >
+                            <HeartIcon
+                              size={30}
+                              animate={AnimateType.COLOR}
+                              isRed={false}
+                            />
+                          </TransparentButton>
+                        )}
+                        {pairingProcess.status === Status.LOADING && (
+                          <Puff size={20} fill="lightblue" />
+                        )}
+                        {pairingProcess.status === Status.SUCCESS && <div />}
+                      </ButtonsWrapper>
+                    )}
                   </FoundUserWrapper>
                 )}
               </MatchSectionWrapper>
@@ -510,15 +559,22 @@ const FoundUserWrapper = styled.div`
   display: flex;
   align-items: center;
   margin-top: 20px;
-  width: 300px;
+  max-width: 300px;
   border: 1px solid lightgray;
   border-radius: 5px;
   padding: 10px 20px;
 `;
 
+type ProfileTextProps = {
+  isPartnered?: boolean;
+};
+
 const ProfileText = styled.p`
   margin: 0;
   margin-left: 20px;
+  color: ${(props: ProfileTextProps) => (props.isPartnered ? "red" : "black")};
+  font-size: ${(props: ProfileTextProps) =>
+    props.isPartnered ? "12px" : "16px"};
 `;
 
 const ProfileWrapper = styled.div`
@@ -570,4 +626,10 @@ const RequestList = styled.ul`
 
 const RequestListItem = styled.li`
   padding: 0;
+`;
+
+const DeemphasizedSpan = styled.span`
+  color: gray;
+  font-weight: 300;
+  margin: 0 5px;
 `;

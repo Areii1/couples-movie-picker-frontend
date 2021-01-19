@@ -10,6 +10,7 @@ import { ImageIcon } from "../components/icons/ImageIcon";
 import { ProfileBall } from "../components/profileBall/ProfileBall";
 import { Puff } from "../components/puff/Puff";
 import { Button, ButtonText, LogInPrimaryHeadline } from "./LogIn";
+import { randomizeProfilePicture } from "../apiService/randomizeProfilePicture";
 
 type Props = {
   getCurrentSessionProcess: any;
@@ -20,17 +21,28 @@ type Props = {
 };
 
 export const AccountSettings = (props: Props) => {
-  const [signOutProcess, setSignOutProcess] = React.useState<any>({
+  const [signOutProcess, setSignOutProcess] = React.useState<Process>({
     status: Status.INITIAL,
   });
 
-  const [uploadPictureProcess, setUploadPictureProcess] = React.useState<any>({
+  const [
+    uploadPictureProcess,
+    setUploadPictureProcess,
+  ] = React.useState<Process>({
     status: Status.INITIAL,
   });
 
-  const [removePictureProcess, setRemovePictureProcess] = React.useState<any>({
+  const [
+    removePictureProcess,
+    setRemovePictureProcess,
+  ] = React.useState<Process>({
     status: Status.INITIAL,
   });
+
+  const [
+    randomizeProfilePictureProcess,
+    setRandomizeProfilePictureProcess,
+  ] = React.useState<Process>({ status: Status.INITIAL });
 
   const [hoveringProfileBall, setHoveringProfileBall] = React.useState<boolean>(
     false
@@ -89,6 +101,31 @@ export const AccountSettings = (props: Props) => {
         setRemovePictureProcess({
           status: Status.ERROR,
           error: uploadPictureError,
+        });
+      }
+    }
+  };
+
+  const randomizePicture = async () => {
+    if (props.getCurrentAuthenticatedUserProcess.status === Status.SUCCESS) {
+      try {
+        setRandomizeProfilePictureProcess({ status: Status.LOADING });
+        const randomizeProfilePictureResponse = await randomizeProfilePicture(
+          props.getCurrentSessionProcess.data.getIdToken().getJwtToken()
+        );
+        setRandomizeProfilePictureProcess({
+          status: Status.SUCCESS,
+          data: randomizeProfilePictureResponse,
+        });
+        alert("changed profile picture");
+        setQueryingUpdatedItem(true);
+        props.getUserItem(
+          props.getCurrentAuthenticatedUserProcess.data.username
+        );
+      } catch (randomizeProfilePictureError) {
+        setRandomizeProfilePictureProcess({
+          status: Status.ERROR,
+          error: randomizeProfilePictureError,
         });
       }
     }
@@ -244,7 +281,10 @@ export const AccountSettings = (props: Props) => {
                 <ImageIcon size={40} animate={true} />
                 <DropzoneText>Click or drag to upload image</DropzoneText>
               </Dropzone>
-              <TransparentButton title="choose random image">
+              <TransparentButton
+                onClick={randomizePicture}
+                title="choose random image"
+              >
                 <RandomImageText>randomize</RandomImageText>
               </TransparentButton>
             </PictureUploadWrapper>

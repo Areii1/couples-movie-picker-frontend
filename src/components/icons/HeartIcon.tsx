@@ -59,7 +59,6 @@ const scaleSize = (size: number) => keyframes`
 `;
 
 const getAnimation = (animate: AnimateType, isRed: boolean, size: number) => {
-  console.log(animate, "animate");
   switch (animate) {
     case AnimateType.COLOR: {
       return css`

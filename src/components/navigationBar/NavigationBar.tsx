@@ -5,6 +5,7 @@ import { HeartIcon } from "../icons/HeartIcon";
 import { FireIcon } from "../icons/FireIcon";
 import { Process, Status } from "../../App";
 import { ProfileBall } from "../profileBall/ProfileBall";
+import { AnimateType } from '../icons/HeartIcon';
 
 type Props = {
   getCurrentAuthenticatedUserProcess: Process;
@@ -47,7 +48,7 @@ export const NavigationBar = (props: Props) => {
       <ListItem>
         <Link to="/love" title="matches">
           <IconWrapper>
-            <HeartIcon size={50} animate isRed/>
+            <HeartIcon size={50} animate={AnimateType.COLOR} isRed/>
           </IconWrapper>
         </Link>
       </ListItem>

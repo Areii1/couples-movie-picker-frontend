@@ -1,9 +1,15 @@
 import React from "react";
 import styled, { keyframes, css } from "styled-components";
 
+export enum AnimateType {
+  COLOR,
+  SCALE,
+  NONE,
+}
+
 type Props = {
   size: number;
-  animate: boolean;
+  animate: AnimateType;
   isRed: boolean;
 };
 
@@ -20,9 +26,10 @@ export const HeartIcon = (props: Props) => {
       width={`${props.size}px`}
       animate={props.animate}
       isRed={props.isRed}
+      size={props.size}
     >
       <path
-        fill={props.isRed ? "#D7443E" : "lightgreen"}
+        fill={props.isRed ? "#ff0000" : "lightgreen"}
         d="M285.257,35.528c58.743,0.286,106.294,47.836,106.58,106.58
 		c0,107.624-195.918,214.204-195.918,214.204S0,248.165,0,142.108c0-58.862,47.717-106.58,106.58-106.58l0,0
 		c36.032-0.281,69.718,17.842,89.339,48.065C215.674,53.517,249.273,35.441,285.257,35.528z"
@@ -33,29 +40,60 @@ export const HeartIcon = (props: Props) => {
 
 const lighten = (isRed: boolean) => keyframes`
   from {
-    fill: ${isRed ? "#D7443E" : "lightgreen"};
+    fill: ${isRed ? "#ff0800" : "lightgreen"};
   }
   to {
-    fill: ${isRed ? "#ff4c46" : "#b9e9b9"};
+    fill: ${isRed ? "#ff7676" : "#b9e9b9"};
   }
 `;
 
+const scaleSize = (size: number) => keyframes`
+  from {
+    width: ${`${size}px`}
+    height: ${`${size}px`}
+  }
+  to {
+    width: ${`${size * 1.3}px`}
+    height: ${`${size * 1.3}px`}
+  }
+`;
+
+const getAnimation = (animate: AnimateType, isRed: boolean, size: number) => {
+  console.log(animate, "animate");
+  switch (animate) {
+    case AnimateType.COLOR: {
+      return css`
+        path {
+          animation: ${lighten(isRed)} 0.3s linear forwards;
+        }
+      `;
+    }
+    case AnimateType.SCALE: {
+      return css`
+        /* animation: ${scaleSize(size)} 0.3s linear forwards; */
+        transform: scale(2, 2);
+      `;
+    }
+    case AnimateType.NONE: {
+      return "unset";
+    }
+    default: {
+      return "unset";
+    }
+  }
+};
+
 type SvgProps = {
-  animate: boolean;
+  animate: AnimateType;
   isRed: boolean;
+  size: number;
 };
 
 const Svg = styled.svg`
   enable-background: new 0 0 391.837 391.837;
 
   :hover {
-    path {
-      animation: ${(props: SvgProps) =>
-        props.animate
-          ? css`
-              ${lighten(props.isRed)} 0.3s linear forwards
-            `
-          : "unset"};
-    }
+    ${(props: SvgProps) =>
+      getAnimation(props.animate, props.isRed, props.size)};
   }
 `;

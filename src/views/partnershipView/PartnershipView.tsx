@@ -10,7 +10,7 @@ type Props = {
   getCurrentAuthenticatedUserProcess: Process;
   getCurrentSessionProcess: GetCurrentSessionProcess;
   getUserItemProcess: GetUserItemProcess;
-  getPairedUserProcess: Process;
+  getPairedUserProcess: GetUserItemProcess;
   getUserItem: (username: string, jwtToken: string) => void;
   getPairedUser: (username: string, jwtToken: string) => void;
 };

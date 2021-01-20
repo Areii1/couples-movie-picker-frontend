@@ -20,7 +20,7 @@ type Props = {
   getCurrentAuthenticatedUserProcess: Process;
   getCurrentSessionProcess: GetCurrentSessionProcess;
   getUserItemProcess: GetUserItemProcess;
-  getPairedUserProcess: Process;
+  getPairedUserProcess: GetUserItemProcess;
   getUserItem: (username: string, jwtToken: string) => void;
   getPairedUser: (username: string, jwtToken: string) => void;
 };
@@ -40,7 +40,6 @@ export const DetailsSection = (props: Props) => {
       props.getCurrentSessionProcess.status === Status.SUCCESS &&
       props.getUserItemProcess.status === Status.SUCCESS &&
       props.getCurrentAuthenticatedUserProcess.status === Status.SUCCESS &&
-      props.getUserItemProcess.status === Status.SUCCESS &&
       props.getUserItemProcess.data.outgoingRequests !== undefined
     ) {
       try {
@@ -67,6 +66,8 @@ export const DetailsSection = (props: Props) => {
           error: cancelPairingError,
         });
       }
+    } else {
+      alert("can't cancel");
     }
   };
 
@@ -76,7 +77,6 @@ export const DetailsSection = (props: Props) => {
       props.getUserItemProcess.status === Status.SUCCESS &&
       props.getCurrentAuthenticatedUserProcess.status === Status.SUCCESS &&
       props.getPairedUserProcess.status === Status.SUCCESS &&
-      props.getUserItemProcess.status === Status.SUCCESS &&
       props.getUserItemProcess.data.partner !== undefined
     ) {
       try {
@@ -103,6 +103,8 @@ export const DetailsSection = (props: Props) => {
           error: accpetIncomingRequestError,
         });
       }
+    } else {
+      alert("can't break up");
     }
   };
 

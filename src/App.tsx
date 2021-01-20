@@ -70,7 +70,7 @@ export const App = () => {
   const [
     getPairedUserProcess,
     setGetPairedUserProcess,
-  ] = React.useState<Process>({ status: Status.INITIAL });
+  ] = React.useState<GetUserItemProcess>({ status: Status.INITIAL });
 
   const [
     getUserItemProcess,

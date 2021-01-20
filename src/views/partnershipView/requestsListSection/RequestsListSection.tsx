@@ -10,6 +10,7 @@ import {
   Status,
   SecondaryHeadline,
   GetCurrentSessionProcess,
+  GetUserItemProcess,
 } from "../../../App";
 import { rejectIncomingRequest } from "../../../apiService/rejectIncomingRequest";
 import { acceptIncomingRequest } from "../../../apiService/acceptIncomingRequest";
@@ -21,7 +22,7 @@ import {
 } from "../PartnershipView";
 
 type Props = {
-  getUserItemProcess: Process;
+  getUserItemProcess: GetUserItemProcess;
   getCurrentSessionProcess: GetCurrentSessionProcess;
   getUserItem: (username: string, jwtToken: string) => void;
 };
@@ -76,7 +77,7 @@ export const RequestsListSection = (props: Props) => {
       props.getUserItemProcess.status === Status.SUCCESS &&
       props.getCurrentSessionProcess.status === Status.SUCCESS
     ) {
-      const acceptableRequest = props.getUserItemProcess.data.incomingRequests.SS.find(
+      const acceptableRequest = props.getUserItemProcess.data.incomingRequests?.SS.find(
         (request: any) => acceptUsername === request
       );
       if (acceptableRequest) {
@@ -105,7 +106,7 @@ export const RequestsListSection = (props: Props) => {
   };
   const getRequestListItems = () => {
     if (props.getUserItemProcess.status === Status.SUCCESS) {
-      const requestListItems = props.getUserItemProcess.data.incomingRequests.SS.map(
+      const requestListItems = props.getUserItemProcess.data.incomingRequests?.SS.map(
         (request: any) => {
           return (
             <RequestListItem>

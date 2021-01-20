@@ -11,9 +11,10 @@ import {
 } from "../../App";
 import { SecondaryHeadline } from "../../styles/Styles";
 import { Puff } from "../../components/puff/Puff";
-import { Button, ButtonText } from "../logIn/LogIn";
+import { Button, ButtonText, CardContentWrapper } from "../logIn/LogIn";
 import { PrimaryHeadline } from "../../styles/Styles";
 import { PictureSection } from "./pictureSection/PictureSection";
+import { sizingScale, fontSizes } from "../../styles/Variables";
 
 type Props = {
   getCurrentSessionProcess: GetCurrentSessionProcess;
@@ -48,7 +49,7 @@ export const AccountSettingsView = (props: Props) => {
   };
 
   return (
-    <Wrapper>
+    <SettingsCardContentWrapper>
       <PrimaryHeadline>Profile</PrimaryHeadline>
       {props.getCurrentSessionProcess.status === Status.LOADING && (
         <Puff size={50} fill="blue" />
@@ -102,26 +103,25 @@ export const AccountSettingsView = (props: Props) => {
           </Text>
         </TextWrapper>
       )}
-    </Wrapper>
+    </SettingsCardContentWrapper>
   );
 };
 
 export const Section = styled.div`
   text-align: start;
-  margin-top: 20px;
+  margin-top: ${`${sizingScale[3]}px`};
 `;
 
 const TextWrapper = styled.div`
-  margin-top: 20px;
+  margin-top: ${`${sizingScale[3]}px`};
 `;
 
 const Text = styled.p`
-  font-size: 16px;
+  font-size: ${`${fontSizes[2]}px`};
   font-weight: 400;
   text-align: center;
 `;
 
-const Wrapper = styled.div`
+const SettingsCardContentWrapper = styled(CardContentWrapper)`
   text-align: center;
-  width: 400px;
 `;

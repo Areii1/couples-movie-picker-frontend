@@ -4,7 +4,8 @@ import { Puff } from "../../components/puff/Puff";
 import { Status } from "../../App";
 import { Auth } from "aws-amplify";
 import { Link, Redirect } from "react-router-dom";
-import { PrimaryHeadline } from '../../styles/Styles';
+import { PrimaryHeadline } from "../../styles/Styles";
+import { sizingScale } from "../../styles/Variables";
 
 type Props = {
   initiateSession: () => void;
@@ -32,7 +33,6 @@ export const LogIn = (props: Props) => {
           username: loginUsernameFieldValue,
           password: loginPasswordFieldValue,
         });
-        // alert('user logged in');
         setSignInProcess({ status: Status.SUCCESS, data: loginResponse });
         props.initiateSession();
       } catch (loginError) {
@@ -45,11 +45,11 @@ export const LogIn = (props: Props) => {
   };
 
   return (
-    <Wrapper>
+    <CardContentWrapper>
       <HeadlineWrapper>
         <LogInPrimaryHeadline>Log in</LogInPrimaryHeadline>
         <Text>
-          or{" "}
+          or
           <Link to="signup" title="sign up">
             sign up
           </Link>
@@ -96,12 +96,12 @@ export const LogIn = (props: Props) => {
         </ContentWrapper>
         {signInProcess.status === Status.SUCCESS && <Redirect to="/user" />}
       </FormWrapper>
-    </Wrapper>
+    </CardContentWrapper>
   );
 };
 
-export const Wrapper = styled.div`
-  width: 400px;
+export const CardContentWrapper = styled.div`
+  width: ${`${sizingScale[13] - sizingScale[6] * 2}px`};
 `;
 
 const ContentWrapper = styled.div`

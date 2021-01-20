@@ -10,6 +10,7 @@ import { Process, Status } from "../../../App";
 import { Section } from "../AccountSettingsView";
 import { Puff } from "../../../components/puff/Puff";
 import { SecondaryHeadline } from "../../../styles/Styles";
+import { sizingScale, borderRadius, fontSizes } from '../../../styles/Variables';
 
 type Props = {
   getCurrentAuthenticatedUserProcess: Process;
@@ -280,16 +281,16 @@ const ProfileBallOverlay = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 100px;
-  height: 100px;
+  width: ${`${sizingScale[8]}px`};
+  height: ${`${sizingScale[8]}px`};
 `;
 
 const LoadingIconWrapper = styled.div`
   position: absolute;
   top: 0;
   left: 0;
-  width: 100px;
-  height: 100px;
+  width: ${`${sizingScale[8]}px`};
+  height: ${`${sizingScale[8]}px`};
   background-color: rgb(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
@@ -297,15 +298,15 @@ const LoadingIconWrapper = styled.div`
 `;
 
 const Dropzone = styled.div`
-  width: 200px;
-  height: 100px;
+  width: ${`${sizingScale[10]}px`};
+  height: ${`${sizingScale[10] / 2}px`};
   position: relative;
   border: 1px dotted black;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  border-radius: 5px;
+  border-radius: ${`${borderRadius}px`};
 `;
 
 const FileInput = styled.input`
@@ -313,34 +314,34 @@ const FileInput = styled.input`
   position: absolute;
   top: 0;
   left: 0;
-  width: 200px;
-  height: 100px;
+  width: ${`${sizingScale[10]}px`};
+  height: ${`${sizingScale[10] / 2}px`};
   cursor: pointer;
 `;
 
 const PictureUploadWrapper = styled.div`
-  margin-top: 10px;
+  margin-top: ${`${sizingScale[2]}px`};
   display: flex;
   align-items: center;
   justify-content: space-between;
 `;
 
 const ProfileBallWrapper = styled.div`
-  width: 100px;
+  width: ${`${sizingScale[8]}px`};
   display: flex;
   justify-content: center;
   align-items: center;
   overflow: hidden;
   position: relative;
-  border-radius: 100px;
+  border-radius: ${`${sizingScale[8]}px`};
 `;
 
 const DropzoneText = styled.p`
-  font-size: 10px;
+  font-size: ${`${fontSizes[0]}px`};
 `;
 
 const RandomImageText = styled.p`
-  font-size: 10px;
+  font-size: ${`${fontSizes[0]}px`};
   color: blue;
 `;
 
@@ -370,7 +371,7 @@ const getColorHover = (fontColor: string) => keyframes`
 export const Mark = styled.h5`
   color: ${(props: MarkProps) => props.fontColor};
   animation: ${markFadeIn} 0.3s linear forwards;
-  font-size: ${(props: MarkProps) => (props.size ? `${props.size}px` : "50px")};
+  font-size: ${(props: MarkProps) => (props.size ? `${props.size}px` : `${sizingScale[6]}px`)};
   margin: 0;
   text-align: center;
   vertical-align: center;

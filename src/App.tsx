@@ -18,6 +18,7 @@ import {
 } from "./apiService/getUserInformation";
 import { CognitoUserSession } from "amazon-cognito-identity-js";
 import { UserInfo } from "./types/Types";
+import { sizingScale, borderRadius } from "./styles/Variables";
 
 configureAmplify();
 
@@ -344,7 +345,7 @@ export const App = () => {
 
 const ContentWrapper = styled.div`
   margin: auto;
-  width: 500px;
+  width: ${`${sizingScale[13]}px`};
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -353,10 +354,10 @@ const ContentWrapper = styled.div`
 const MainCard = styled.div`
   width: 100%;
   background-color: white;
-  margin: 50px 0;
-  border-radius: 10px;
-  padding: 50px;
-  min-height: 600px;
+  margin: ${`${sizingScale[6]}px`} 0;
+  border-radius: ${`${borderRadius}px`};
+  padding: ${`${sizingScale[6]}px`};
+  min-height: ${`${sizingScale[14]}px`};
   display: flex;
   justify-content: start;
   overflow: hidden;

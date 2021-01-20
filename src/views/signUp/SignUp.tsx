@@ -11,7 +11,7 @@ import {
   ButtonText,
   HeadlineWrapper,
   Text,
-  Wrapper,
+  CardContentWrapper,
 } from "../logIn/LogIn";
 import { PrimaryHeadline } from '../../styles/Styles';
 
@@ -48,7 +48,7 @@ export const SignUp = () => {
   };
 
   return (
-    <Wrapper>
+    <CardContentWrapper>
       <HeadlineWrapper>
         <PrimaryHeadline>Sign up</PrimaryHeadline>
         <Text>
@@ -97,6 +97,6 @@ export const SignUp = () => {
         </>
         {signUpProcess.status === Status.SUCCESS && <Redirect to="/login" />}
       </FormWrapper>
-    </Wrapper>
+    </CardContentWrapper>
   );
 };

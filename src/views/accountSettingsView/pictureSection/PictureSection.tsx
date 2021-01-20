@@ -6,9 +6,10 @@ import { ImageIcon } from "../../../components/icons/ImageIcon";
 import { ProfileBall } from "../../../components/profileBall/ProfileBall";
 import { randomizeProfilePicture } from "../../../apiService/randomizeProfilePicture";
 import { bucketUrl } from "../../../config/Config";
-import { Process, SecondaryHeadline, Status } from "../../../App";
+import { Process, Status } from "../../../App";
 import { Section } from "../AccountSettingsView";
 import { Puff } from "../../../components/puff/Puff";
+import { SecondaryHeadline } from "../../../styles/Styles";
 
 type Props = {
   getCurrentAuthenticatedUserProcess: Process;

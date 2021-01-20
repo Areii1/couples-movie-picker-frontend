@@ -1,7 +1,12 @@
 import React from "react";
 import styled from "styled-components";
-import { LogInPrimaryHeadline } from "../logIn/LogIn";
-import { GetCurrentSessionProcess, GetUserItemProcess, Process, Status } from "../../App";
+import { PrimaryHeadline } from "../../styles/Styles";
+import {
+  GetCurrentSessionProcess,
+  GetUserItemProcess,
+  Process,
+  Status,
+} from "../../App";
 import { DetailsSection } from "./detailsSection/DetailsSection";
 import { SearchSection } from "./searchSection/SearchSection";
 import { RequestsListSection } from "./requestsListSection/RequestsListSection";
@@ -34,7 +39,7 @@ export const PartnershipView = (props: Props) => {
     props.getUserItemProcess.data.incomingRequests;
   return (
     <Wrapper>
-      <LogInPrimaryHeadline>Partner</LogInPrimaryHeadline>
+      <PrimaryHeadline>Partner</PrimaryHeadline>
       {sessionInitialized && (
         <div>
           <DetailsSection

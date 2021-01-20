@@ -342,13 +342,6 @@ export const App = () => {
   );
 };
 
-export const SecondaryHeadline = styled.h5`
-  font-size: 20px;
-  margin: 0;
-  font-weight: 400;
-  color: black;
-`;
-
 const ContentWrapper = styled.div`
   margin: auto;
   width: 500px;

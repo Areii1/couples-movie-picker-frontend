@@ -10,12 +10,12 @@ import {
   Button,
   ButtonText,
   HeadlineWrapper,
-  LogInPrimaryHeadline,
   Text,
   Wrapper,
 } from "../logIn/LogIn";
+import { PrimaryHeadline } from '../../styles/Styles';
 
-export const SignUp = (props: any) => {
+export const SignUp = () => {
   const [
     signupUsernameFieldValue,
     setSignupUsernameFieldValue,
@@ -37,7 +37,6 @@ export const SignUp = (props: any) => {
           username: signupUsernameFieldValue,
           password: signupPasswordFieldValue,
         });
-        // alert("user registered");
         setSignUpProcess({ status: Status.SUCCESS, data: signUpResponse });
       } catch (signupError) {
         setSignUpProcess({ status: Status.ERROR, error: signupError });
@@ -51,7 +50,7 @@ export const SignUp = (props: any) => {
   return (
     <Wrapper>
       <HeadlineWrapper>
-        <LogInPrimaryHeadline>Sign up</LogInPrimaryHeadline>
+        <PrimaryHeadline>Sign up</PrimaryHeadline>
         <Text>
           {"or "}
           <Link to="login" title="log in">

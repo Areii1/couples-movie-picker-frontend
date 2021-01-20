@@ -4,7 +4,6 @@ import {
   GetCurrentSessionProcess,
   GetUserItemProcess,
   Process,
-  SecondaryHeadline,
   Status,
 } from "../../../App";
 import { SearchIcon } from "../../../components/icons/SearchIcon";
@@ -22,7 +21,8 @@ import {
 } from "../PartnershipView";
 import { ProfileBall } from "../../../components/profileBall/ProfileBall";
 import { AnimateType, HeartIcon } from "../../../components/icons/HeartIcon";
-import { bucketUrl } from '../../../config/Config';
+import { bucketUrl } from "../../../config/Config";
+import { SecondaryHeadline } from "../../../styles/Styles";
 
 type Props = {
   getCurrentAuthenticatedUserProcess: Process;

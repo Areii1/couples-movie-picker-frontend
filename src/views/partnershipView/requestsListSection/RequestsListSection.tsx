@@ -8,7 +8,6 @@ import { AnimateType } from "../../../components/icons/HeartIcon";
 import {
   Process,
   Status,
-  SecondaryHeadline,
   GetCurrentSessionProcess,
   GetUserItemProcess,
 } from "../../../App";
@@ -20,6 +19,7 @@ import {
   ProfileText,
   ButtonsWrapper,
 } from "../PartnershipView";
+import { SecondaryHeadline } from "../../../styles/Styles";
 
 type Props = {
   getUserItemProcess: GetUserItemProcess;

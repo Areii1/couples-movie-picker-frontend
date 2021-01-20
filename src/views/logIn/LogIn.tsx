@@ -4,6 +4,7 @@ import { Puff } from "../../components/puff/Puff";
 import { Status } from "../../App";
 import { Auth } from "aws-amplify";
 import { Link, Redirect } from "react-router-dom";
+import { PrimaryHeadline } from '../../styles/Styles';
 
 type Props = {
   initiateSession: () => void;
@@ -35,11 +36,11 @@ export const LogIn = (props: Props) => {
         setSignInProcess({ status: Status.SUCCESS, data: loginResponse });
         props.initiateSession();
       } catch (loginError) {
-        alert('could not login');
+        alert("could not login");
         setSignInProcess({ status: Status.ERROR, error: loginError });
       }
     } else {
-      alert('username or password missing');
+      alert("username or password missing");
     }
   };
 
@@ -76,7 +77,9 @@ export const LogIn = (props: Props) => {
             {signInProcess.status !== Status.LOADING && (
               <Button
                 type="submit"
-                title={signInProcess.status === Status.ERROR ? 'try again' : 'login'}
+                title={
+                  signInProcess.status === Status.ERROR ? "try again" : "login"
+                }
                 error={signInProcess.status === Status.ERROR}
               >
                 <ButtonText>
@@ -182,9 +185,6 @@ export const Text = styled.h5`
   margin: 0;
 `;
 
-export const LogInPrimaryHeadline = styled.h3`
-  font-size: 28px;
-  margin: 0;
-  font-weight: 400;
+const LogInPrimaryHeadline = styled(PrimaryHeadline)`
   vertical-align: text-bottom;
 `;

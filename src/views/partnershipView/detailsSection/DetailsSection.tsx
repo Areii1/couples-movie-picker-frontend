@@ -4,7 +4,6 @@ import { MatchSectionWrapper } from "../PartnershipView";
 import {
   Process,
   Status,
-  SecondaryHeadline,
   GetCurrentSessionProcess,
   GetUserItemProcess,
 } from "../../../App";
@@ -16,6 +15,7 @@ import { breakUpPartnership } from "../../../apiService/breakUpPartnership";
 import { TransparentButton } from "../../accountSettingsView/pictureSection/PictureSection";
 import { Puff } from "../../../components/puff/Puff";
 import { bucketUrl } from "../../../config/Config";
+import { SecondaryHeadline } from "../../../styles/Styles";
 
 type Props = {
   getCurrentAuthenticatedUserProcess: Process;

@@ -7,11 +7,12 @@ import {
   GetCurrentSessionProcess,
   GetUserItemProcess,
   Process,
-  SecondaryHeadline,
   Status,
 } from "../../App";
+import { SecondaryHeadline } from "../../styles/Styles";
 import { Puff } from "../../components/puff/Puff";
-import { Button, ButtonText, LogInPrimaryHeadline } from "../logIn/LogIn";
+import { Button, ButtonText } from "../logIn/LogIn";
+import { PrimaryHeadline } from "../../styles/Styles";
 import { PictureSection } from "./pictureSection/PictureSection";
 
 type Props = {
@@ -48,7 +49,7 @@ export const AccountSettingsView = (props: Props) => {
 
   return (
     <Wrapper>
-      <LogInPrimaryHeadline>Profile</LogInPrimaryHeadline>
+      <PrimaryHeadline>Profile</PrimaryHeadline>
       {props.getCurrentSessionProcess.status === Status.LOADING && (
         <Puff size={50} fill="blue" />
       )}

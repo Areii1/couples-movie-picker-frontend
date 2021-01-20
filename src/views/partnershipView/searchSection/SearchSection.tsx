@@ -12,7 +12,7 @@ import { Form, InputField } from "../../logIn/LogIn";
 import { getUser } from "../../../apiService/getUser";
 import { pairWithUser } from "../../../apiService/pairWithUser";
 import { Puff } from "../../../components/puff/Puff";
-import { TransparentButton } from "../../accountSettings/AccountSettings";
+import { TransparentButton } from "../../accountSettingsView/pictureSection/PictureSection";
 import {
   FoundUserWrapper,
   MatchSectionWrapper,

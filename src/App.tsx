@@ -9,7 +9,7 @@ import { NavigationBar } from "./components/navigationBar/NavigationBar";
 import { MainView } from "./views/mainView/MainView";
 import { LogIn } from "./views/logIn/LogIn";
 import { SignUp } from "./views/signUp/SignUp";
-import { AccountSettings } from "./views/accountSettings/AccountSettings";
+import { AccountSettingsView } from "./views/accountSettingsView/AccountSettingsView";
 import { getUser } from "./apiService/getUser";
 import { PartnershipView } from "./views/partnershipView/PartnershipView";
 import {
@@ -311,7 +311,7 @@ export const App = () => {
                 unmountOnExit
               >
                 <div className="page">
-                  <AccountSettings
+                  <AccountSettingsView
                     getCurrentSessionProcess={getCurrentSessionProcess}
                     getCurrentAuthenticatedUserProcess={
                       getCurrentAuthenticatedUserProcess

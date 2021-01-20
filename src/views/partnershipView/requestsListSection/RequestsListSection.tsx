@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { ProfileBall } from "../../../components/profileBall/ProfileBall";
 import { HeartIcon } from "../../../components/icons/HeartIcon";
 import { Puff } from "../../../components/puff/Puff";
-import { TransparentButton, Mark } from "../../accountSettings/AccountSettings";
+import { TransparentButton, Mark } from "../../accountSettingsView/pictureSection/PictureSection";
 import { AnimateType } from "../../../components/icons/HeartIcon";
 import {
   Process,

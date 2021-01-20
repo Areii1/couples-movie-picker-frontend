@@ -13,7 +13,7 @@ import { ProfileBall } from "../../../components/profileBall/ProfileBall";
 import { AnimateType, HeartIcon } from "../../../components/icons/HeartIcon";
 import { cancelPairingRequest } from "../../../apiService/cancelPairingRequest";
 import { breakUpPartnership } from "../../../apiService/breakUpPartnership";
-import { TransparentButton } from "../../accountSettings/AccountSettings";
+import { TransparentButton } from "../../accountSettingsView/pictureSection/PictureSection";
 import { Puff } from "../../../components/puff/Puff";
 import { bucketUrl } from "../../../config/Config";
 

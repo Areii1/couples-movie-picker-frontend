@@ -17,6 +17,7 @@ import { ProfileBall } from "../../components/profileBall/ProfileBall";
 import { Puff } from "../../components/puff/Puff";
 import { Button, ButtonText, LogInPrimaryHeadline } from "../logIn/LogIn";
 import { randomizeProfilePicture } from "../../apiService/randomizeProfilePicture";
+import { bucketUrl } from '../../config/Config';
 
 type Props = {
   getCurrentSessionProcess: GetCurrentSessionProcess;
@@ -173,7 +174,7 @@ export const AccountSettings = (props: Props) => {
       return URL.createObjectURL(selectedFile);
     } else if (props.getUserItemProcess.status === Status.SUCCESS) {
       if (props.getUserItemProcess.data.profilePicture) {
-        return `https://couplesmoviepickerbacken-profilepicturesbucketa8b-2miadmkpd2b7.s3.eu-central-1.amazonaws.com/${props.getUserItemProcess.data.profilePicture.S}`;
+        return `${bucketUrl}/${props.getUserItemProcess.data.profilePicture.S}`;
       } else {
         return undefined;
       }

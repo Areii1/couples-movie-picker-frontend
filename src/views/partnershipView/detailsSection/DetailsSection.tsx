@@ -15,6 +15,7 @@ import { cancelPairingRequest } from "../../../apiService/cancelPairingRequest";
 import { breakUpPartnership } from "../../../apiService/breakUpPartnership";
 import { TransparentButton } from "../../accountSettings/AccountSettings";
 import { Puff } from "../../../components/puff/Puff";
+import { bucketUrl } from "../../../config/Config";
 
 type Props = {
   getCurrentAuthenticatedUserProcess: Process;
@@ -174,7 +175,7 @@ export const DetailsSection = (props: Props) => {
                     image={
                       props.getUserItemProcess.status === Status.SUCCESS &&
                       props.getUserItemProcess.data.profilePicture
-                        ? `https://couplesmoviepickerbacken-profilepicturesbucketa8b-2miadmkpd2b7.s3.eu-central-1.amazonaws.com/${props.getUserItemProcess.data.profilePicture.S}`
+                        ? `${bucketUrl}/${props.getUserItemProcess.data.profilePicture.S}`
                         : undefined
                     }
                     isCurrentUser={false}
@@ -209,7 +210,7 @@ export const DetailsSection = (props: Props) => {
                             undefined)) &&
                       props.getPairedUserProcess.status === Status.SUCCESS &&
                       props.getPairedUserProcess.data.profilePicture
-                        ? `https://couplesmoviepickerbacken-profilepicturesbucketa8b-2miadmkpd2b7.s3.eu-central-1.amazonaws.com/${props.getPairedUserProcess.data.profilePicture.S}`
+                        ? `${bucketUrl}/${props.getPairedUserProcess.data.profilePicture.S}`
                         : undefined
                     }
                     isCurrentUser={false}

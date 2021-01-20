@@ -6,6 +6,7 @@ import { FireIcon } from "../icons/FireIcon";
 import { GetUserItemProcess, Process, Status } from "../../App";
 import { ProfileBall } from "../profileBall/ProfileBall";
 import { AnimateType } from '../icons/HeartIcon';
+import { bucketUrl } from '../../config/Config';
 
 type Props = {
   getCurrentAuthenticatedUserProcess: Process;
@@ -33,7 +34,7 @@ export const NavigationBar = (props: Props) => {
             firstName={firstName}
             image={
               (props.getUserItemProcess.status === Status.SUCCESS && props.getUserItemProcess.data.profilePicture)
-                ? `https://couplesmoviepickerbacken-profilepicturesbucketa8b-2miadmkpd2b7.s3.eu-central-1.amazonaws.com/${props.getUserItemProcess.data.profilePicture.S}`
+                ? `${bucketUrl}/${props.getUserItemProcess.data.profilePicture.S}`
                 : undefined
             }
             isCurrentUser={false}

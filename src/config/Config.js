@@ -1,5 +1,8 @@
 import Amplify from "aws-amplify";
 
+const bucketName = "couplesmoviepickerbacken-profilepicturesbucketa8b-2miadmkpd2b7";
+export const bucketUrl = `https://${bucketName}.s3.eu-central-1.amazonaws.com`;
+
 export const configureAmplify = () => {
   Amplify.configure({
     Auth: {
@@ -9,7 +12,7 @@ export const configureAmplify = () => {
       userPoolWebClientId: "230ot6gdeedsftpfmegr2pisu7",
     },
     Storage: {
-      bucket: "couplesmoviepickerbacken-profilepicturesbucketa8b-2miadmkpd2b7",
+      bucket: bucketName,
       region: "eu-central-1",
     },
     API: {

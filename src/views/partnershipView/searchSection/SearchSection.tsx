@@ -1,6 +1,12 @@
 import React, { FormEvent } from "react";
 import styled from "styled-components";
-import { GetCurrentSessionProcess, GetUserItemProcess, Process, SecondaryHeadline, Status } from "../../../App";
+import {
+  GetCurrentSessionProcess,
+  GetUserItemProcess,
+  Process,
+  SecondaryHeadline,
+  Status,
+} from "../../../App";
 import { SearchIcon } from "../../../components/icons/SearchIcon";
 import { Form, InputField } from "../../logIn/LogIn";
 import { getUser } from "../../../apiService/getUser";
@@ -12,10 +18,11 @@ import {
   MatchSectionWrapper,
   ProfileWrapper,
   ProfileText,
-  ButtonsWrapper
+  ButtonsWrapper,
 } from "../PartnershipView";
 import { ProfileBall } from "../../../components/profileBall/ProfileBall";
 import { AnimateType, HeartIcon } from "../../../components/icons/HeartIcon";
+import { bucketUrl } from '../../../config/Config';
 
 type Props = {
   getCurrentAuthenticatedUserProcess: Process;
@@ -115,7 +122,7 @@ export const SearchSection = (props: Props) => {
               firstName={searchProcess.data.username.S}
               image={
                 searchProcess.data.profilePicture
-                  ? `https://couplesmoviepickerbacken-profilepicturesbucketa8b-2miadmkpd2b7.s3.eu-central-1.amazonaws.com/${searchProcess.data.profilePicture.S}`
+                  ? `${bucketUrl}/${searchProcess.data.profilePicture.S}`
                   : undefined
               }
               isCurrentUser={false}

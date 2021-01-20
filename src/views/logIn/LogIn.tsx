@@ -5,7 +5,7 @@ import { Status } from "../../App";
 import { Auth } from "aws-amplify";
 import { Link, Redirect } from "react-router-dom";
 import { PrimaryHeadline } from "../../styles/Styles";
-import { sizingScale } from "../../styles/Variables";
+import { borderRadius, fontSizes, sizingScale } from "../../styles/Variables";
 
 type Props = {
   initiateSession: () => void;
@@ -111,7 +111,7 @@ const ContentWrapper = styled.div`
 `;
 
 export const FormWrapper = styled.div`
-  margin-top: 20px;
+  margin-top: ${`${sizingScale[3]}px`};
   display: flex;
   flex-direction: column;
 `;
@@ -122,10 +122,10 @@ export const Form = styled.form`
 `;
 
 export const InputField = styled.input`
-  width: 250px;
+  width: ${`${sizingScale[11]}px`};
   border: none;
   border-bottom: 1px solid black;
-  margin: 10px 0;
+  margin: ${`${sizingScale[2]}px`} 0;
 `;
 
 export const darken = keyframes`
@@ -151,13 +151,13 @@ type ButtonProps = {
 };
 
 export const Button = styled.button`
-  width: 100px;
-  height: 30px;
-  margin-top: 20px;
+  width: ${`${sizingScale[8]}px`};
+  height: ${`${sizingScale[5]}px`};
+  margin-top: ${`${sizingScale[3]}px`};
   border: none;
   background-color: ${(props: ButtonProps) =>
     props.error ? "salmon" : "gray"};
-  border-radius: 5px;
+  border-radius: ${`${borderRadius}px`};
   cursor: pointer;
   :hover {
     animation: ${(props: ButtonProps) =>
@@ -175,11 +175,11 @@ export const HeadlineWrapper = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 250px;
+  width: ${`${sizingScale[11]}px`};
 `;
 
 export const Text = styled.h5`
-  font-size: 12px;
+  font-size: ${`${fontSizes[0]}px`};
   font-weight: 400;
   color: black;
   margin: 0;

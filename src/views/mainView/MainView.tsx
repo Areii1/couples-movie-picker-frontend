@@ -2,6 +2,8 @@ import React from "react";
 import styled from "styled-components";
 import { Process, Status } from "../../App";
 import { FireMeter } from "../../components/fireMeter/FireMeter";
+import { PrimaryHeadline } from "../../styles/Styles";
+import { sizingScale } from "../../styles/Variables";
 
 type Props = {
   getTrendingMoviesProcess: Process;
@@ -44,22 +46,19 @@ const Wrapper = styled.div`
 `;
 
 const ImageSection = styled.div`
-  margin: -50px 0 0 -50px;
+  margin: ${`${sizingScale[6] * -1}px`} 0 0 ${`${sizingScale[6] * -1}px`};
   text-align: center;
 `;
 
-const Title = styled.h3`
-  font-size: 35px;
+const Title = styled(PrimaryHeadline)`
   color: #808080;
   word-wrap: break-word;
-  width: 400px;
-  margin: 0;
 `;
 
 const DetailsSection = styled.div`
-  margin: 20px 0 0 0;
+  margin: ${`${sizingScale[3]}px`} 0 0 0;
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 400px;
+  width: ${`${sizingScale[13] - sizingScale[6] * 2}px`};
 `;

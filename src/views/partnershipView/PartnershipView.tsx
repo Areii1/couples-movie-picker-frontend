@@ -10,6 +10,8 @@ import {
 import { DetailsSection } from "./detailsSection/DetailsSection";
 import { SearchSection } from "./searchSection/SearchSection";
 import { RequestsListSection } from "./requestsListSection/RequestsListSection";
+import { CardContentWrapper } from "../logIn/LogIn";
+import { fontSizes, sizingScale } from "../../styles/Variables";
 
 type Props = {
   getCurrentAuthenticatedUserProcess: Process;
@@ -38,7 +40,7 @@ export const PartnershipView = (props: Props) => {
     props.getUserItemProcess.status === Status.SUCCESS &&
     props.getUserItemProcess.data.incomingRequests;
   return (
-    <Wrapper>
+    <PartnershipCardContentWrapper>
       <PrimaryHeadline>Partner</PrimaryHeadline>
       {sessionInitialized && (
         <div>
@@ -71,28 +73,27 @@ export const PartnershipView = (props: Props) => {
           )}
         </div>
       )}
-    </Wrapper>
+    </PartnershipCardContentWrapper>
   );
 };
 
-const Wrapper = styled.div`
+const PartnershipCardContentWrapper = styled(CardContentWrapper)`
   text-align: center;
-  width: 400px;
 `;
 
 export const MatchSectionWrapper = styled.div`
-  margin-top: 50px;
+  margin-top: ${`${sizingScale[6]}px`};
   text-align: start;
 `;
 
 export const FoundUserWrapper = styled.div`
   display: flex;
   align-items: center;
-  margin-top: 20px;
-  max-width: 300px;
+  margin-top: ${`${sizingScale[3]}px`};
+  max-width: ${`${sizingScale[11]}px`};
   border: 1px solid lightgray;
   border-radius: 5px;
-  padding: 10px 20px;
+  padding: ${`${sizingScale[2]}px`} ${`${sizingScale[3]}px`};
 `;
 
 type ProfileTextProps = {
@@ -101,10 +102,10 @@ type ProfileTextProps = {
 
 export const ProfileText = styled.p`
   margin: 0;
-  margin-left: 20px;
+  margin-left: ${`${sizingScale[3]}px`};
   color: ${(props: ProfileTextProps) => (props.isPartnered ? "red" : "black")};
   font-size: ${(props: ProfileTextProps) =>
-    props.isPartnered ? "12px" : "16px"};
+    props.isPartnered ? `${fontSizes[0]}px` : `${fontSizes[2]}px`};
 `;
 
 export const ProfileWrapper = styled.div`
@@ -113,6 +114,6 @@ export const ProfileWrapper = styled.div`
 `;
 
 export const ButtonsWrapper = styled.div`
-  margin-left: 20px;
+  margin-left: ${`${sizingScale[3]}px`};
   display: flex;
 `;

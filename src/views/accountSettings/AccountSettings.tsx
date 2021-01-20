@@ -5,7 +5,13 @@ import { Link } from "react-router-dom";
 import styled, { keyframes } from "styled-components";
 import { uploadProfilePicture } from "../../apiService/uploadProfilePicture";
 import { removeProfilePicture } from "../../apiService/removeProfilePicture";
-import { Process, SecondaryHeadline, Status } from "../../App";
+import {
+  GetCurrentSessionProcess,
+  GetUserItemProcess,
+  Process,
+  SecondaryHeadline,
+  Status,
+} from "../../App";
 import { ImageIcon } from "../../components/icons/ImageIcon";
 import { ProfileBall } from "../../components/profileBall/ProfileBall";
 import { Puff } from "../../components/puff/Puff";
@@ -13,10 +19,10 @@ import { Button, ButtonText, LogInPrimaryHeadline } from "../logIn/LogIn";
 import { randomizeProfilePicture } from "../../apiService/randomizeProfilePicture";
 
 type Props = {
-  getCurrentSessionProcess: any;
+  getCurrentSessionProcess: GetCurrentSessionProcess;
   getCurrentAuthenticatedUserProcess: Process;
   initiateSession: () => void;
-  getUserItemProcess: Process;
+  getUserItemProcess: GetUserItemProcess;
   getUserItem: (username: string) => void;
 };
 
@@ -107,7 +113,10 @@ export const AccountSettings = (props: Props) => {
   };
 
   const randomizePicture = async () => {
-    if (props.getCurrentAuthenticatedUserProcess.status === Status.SUCCESS) {
+    if (
+      props.getCurrentAuthenticatedUserProcess.status === Status.SUCCESS &&
+      props.getCurrentSessionProcess.status === Status.SUCCESS
+    ) {
       try {
         setRandomizeProfilePictureProcess({ status: Status.LOADING });
         const randomizeProfilePictureResponse = await randomizeProfilePicture(

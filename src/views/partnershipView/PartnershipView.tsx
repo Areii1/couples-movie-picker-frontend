@@ -1,15 +1,15 @@
 import React from "react";
 import styled from "styled-components";
 import { LogInPrimaryHeadline } from "../logIn/LogIn";
-import { Process, Status } from "../../App";
+import { GetCurrentSessionProcess, GetUserItemProcess, Process, Status } from "../../App";
 import { DetailsSection } from "./detailsSection/DetailsSection";
 import { SearchSection } from "./searchSection/SearchSection";
 import { RequestsListSection } from "./requestsListSection/RequestsListSection";
 
 type Props = {
   getCurrentAuthenticatedUserProcess: Process;
-  getCurrentSessionProcess: Process;
-  getUserItemProcess: Process;
+  getCurrentSessionProcess: GetCurrentSessionProcess;
+  getUserItemProcess: GetUserItemProcess;
   getPairedUserProcess: Process;
   getUserItem: (username: string, jwtToken: string) => void;
   getPairedUser: (username: string, jwtToken: string) => void;
@@ -38,9 +38,6 @@ export const PartnershipView = (props: Props) => {
       {sessionInitialized && (
         <div>
           <DetailsSection
-            isPartnered={isPartnered}
-            requestPending={requestPending}
-            sessionInitialized={sessionInitialized}
             getUserItemProcess={props.getUserItemProcess}
             getCurrentAuthenticatedUserProcess={
               props.getCurrentAuthenticatedUserProcess

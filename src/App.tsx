@@ -5,7 +5,6 @@ import { CSSTransition } from "react-transition-group";
 import { configureAmplify } from "./config/Config";
 import { Route } from "react-router-dom";
 import { getTrendingMovies } from "./apiService/getTrendingMovies";
-import { Auth } from "aws-amplify";
 import { NavigationBar } from "./components/navigationBar/NavigationBar";
 import { MainView } from "./views/mainView/MainView";
 import { LogIn } from "./views/logIn/LogIn";
@@ -13,6 +12,12 @@ import { SignUp } from "./views/signUp/SignUp";
 import { AccountSettings } from "./views/accountSettings/AccountSettings";
 import { getUser } from "./apiService/getUser";
 import { PartnershipView } from "./views/partnershipView/PartnershipView";
+import {
+  getCurrentSession,
+  getCurrentAuthenticatedUser,
+} from "./apiService/getUserInformation";
+import { CognitoUserSession } from "amazon-cognito-identity-js";
+import { UserInfo } from "./types/Types";
 
 configureAmplify();
 
@@ -29,6 +34,18 @@ export type Process =
   | { status: Status.SUCCESS; data: any }
   | { status: Status.ERROR; error: Error };
 
+export type GetCurrentSessionProcess =
+  | { status: Status.INITIAL }
+  | { status: Status.LOADING }
+  | { status: Status.SUCCESS; data: CognitoUserSession }
+  | { status: Status.ERROR; error: Error };
+
+export type GetUserItemProcess =
+  | { status: Status.INITIAL }
+  | { status: Status.LOADING }
+  | { status: Status.SUCCESS; data: UserInfo }
+  | { status: Status.ERROR; error: Error };
+
 export const App = () => {
   const [fireMeterSwitch, setFireMeterSwitch] = React.useState<any>({
     position: 50,
@@ -43,7 +60,7 @@ export const App = () => {
   const [
     getCurrentSessionProcess,
     setGetCurrentSessionProcess,
-  ] = React.useState<Process>({ status: Status.INITIAL });
+  ] = React.useState<GetCurrentSessionProcess>({ status: Status.INITIAL });
 
   const [
     getCurrentAuthenticatedUserProcess,
@@ -55,7 +72,10 @@ export const App = () => {
     setGetPairedUserProcess,
   ] = React.useState<Process>({ status: Status.INITIAL });
 
-  const [getUserItemProcess, setGetUserItemProcess] = React.useState<Process>({
+  const [
+    getUserItemProcess,
+    setGetUserItemProcess,
+  ] = React.useState<GetUserItemProcess>({
     status: Status.INITIAL,
   });
 
@@ -93,14 +113,14 @@ export const App = () => {
   const getUserInfo = async () => {
     try {
       setGetCurrentSessionProcess({ status: Status.LOADING });
-      const getCurrentSessionResponse = await Auth.currentSession();
+      const getCurrentSessionResponse = await getCurrentSession();
       setGetCurrentSessionProcess({
         status: Status.SUCCESS,
         data: getCurrentSessionResponse,
       });
       try {
         setGetCurrentAuthenticatedUserProcess({ status: Status.LOADING });
-        const getCurrentAuthenticatedUserResponse = await Auth.currentAuthenticatedUser();
+        const getCurrentAuthenticatedUserResponse = await getCurrentAuthenticatedUser();
         setGetCurrentAuthenticatedUserProcess({
           status: Status.SUCCESS,
           data: getCurrentAuthenticatedUserResponse,
@@ -206,27 +226,27 @@ export const App = () => {
       getUserItemProcess.status === Status.SUCCESS &&
       getCurrentSessionProcess.status === Status.SUCCESS
     ) {
-      if (
-        getUserItemProcess.data.outgoingRequests ||
-        getUserItemProcess.data.partner
-      ) {
+      if (getUserItemProcess.data.partner) {
         getPairedUser(
-          getUserItemProcess.data.partner
-            ? getUserItemProcess.data.partner.S
-            : getUserItemProcess.data.outgoingRequests.S,
+          getUserItemProcess.data.partner.S,
+          getCurrentSessionProcess.data.getIdToken().getJwtToken()
+        );
+      } else if (getUserItemProcess.data.outgoingRequests) {
+        getPairedUser(
+          getUserItemProcess.data.outgoingRequests.S,
           getCurrentSessionProcess.data.getIdToken().getJwtToken()
         );
       }
     }
   }, [getUserItemProcess.status]);
 
-  console.log(getUserItemProcess, "getUserItemProcess");
-  // console.log(getCurrentSessionProcess, "getCurrentSessionProcess");
+  // console.log(getUserItemProcess, "getUserItemProcess");
+  console.log(getCurrentSessionProcess, "getCurrentSessionProcess");
   // console.log(
   //   getCurrentAuthenticatedUserProcess,
   //   "getCurrentAuthenticatedUserProcess"
   // );
-  console.log(getPairedUserProcess, "getPairedUserProcess");
+  // console.log(getPairedUserProcess, "getPairedUserProcess");
   return (
     <ContentWrapper>
       <NavigationBar

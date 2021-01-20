@@ -1,6 +1,6 @@
 import React, { FormEvent } from "react";
 import styled from "styled-components";
-import { Process, SecondaryHeadline, Status } from "../../../App";
+import { GetCurrentSessionProcess, Process, SecondaryHeadline, Status } from "../../../App";
 import { SearchIcon } from "../../../components/icons/SearchIcon";
 import { Form, InputField } from "../../logIn/LogIn";
 import { getUser } from "../../../apiService/getUser";
@@ -19,7 +19,7 @@ import { AnimateType, HeartIcon } from "../../../components/icons/HeartIcon";
 
 type Props = {
   getCurrentAuthenticatedUserProcess: Process;
-  getCurrentSessionProcess: Process;
+  getCurrentSessionProcess: GetCurrentSessionProcess;
   getUserItemProcess: Process;
   getUserItem: (username: string, jwtToken: string) => void;
 };

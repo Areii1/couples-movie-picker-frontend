@@ -5,7 +5,12 @@ import { HeartIcon } from "../../../components/icons/HeartIcon";
 import { Puff } from "../../../components/puff/Puff";
 import { TransparentButton, Mark } from "../../accountSettings/AccountSettings";
 import { AnimateType } from "../../../components/icons/HeartIcon";
-import { Process, Status, SecondaryHeadline } from "../../../App";
+import {
+  Process,
+  Status,
+  SecondaryHeadline,
+  GetCurrentSessionProcess,
+} from "../../../App";
 import { rejectIncomingRequest } from "../../../apiService/rejectIncomingRequest";
 import { acceptIncomingRequest } from "../../../apiService/acceptIncomingRequest";
 import {
@@ -17,7 +22,7 @@ import {
 
 type Props = {
   getUserItemProcess: Process;
-  getCurrentSessionProcess: Process;
+  getCurrentSessionProcess: GetCurrentSessionProcess;
   getUserItem: (username: string, jwtToken: string) => void;
 };
 

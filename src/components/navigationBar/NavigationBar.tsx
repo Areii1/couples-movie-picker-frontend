@@ -3,13 +3,13 @@ import styled from "styled-components";
 import { Link } from "react-router-dom";
 import { HeartIcon } from "../icons/HeartIcon";
 import { FireIcon } from "../icons/FireIcon";
-import { Process, Status } from "../../App";
+import { GetUserItemProcess, Process, Status } from "../../App";
 import { ProfileBall } from "../profileBall/ProfileBall";
 import { AnimateType } from '../icons/HeartIcon';
 
 type Props = {
   getCurrentAuthenticatedUserProcess: Process;
-  getUserItemProcess: Process;
+  getUserItemProcess: GetUserItemProcess;
 };
 
 export const NavigationBar = (props: Props) => {

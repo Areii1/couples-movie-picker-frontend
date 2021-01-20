@@ -16,6 +16,7 @@ import { TransparentButton } from "../../accountSettingsView/pictureSection/Pict
 import { Puff } from "../../../components/puff/Puff";
 import { bucketUrl } from "../../../config/Config";
 import { SecondaryHeadline } from "../../../styles/Styles";
+import { sizingScale } from "../../../styles/Variables";
 
 type Props = {
   getCurrentAuthenticatedUserProcess: Process;
@@ -179,7 +180,7 @@ export const DetailsSection = (props: Props) => {
                         : undefined
                     }
                     isCurrentUser={false}
-                    size={150}
+                    size={192}
                     animate={false}
                     fontSize={100}
                     showText
@@ -214,7 +215,7 @@ export const DetailsSection = (props: Props) => {
                         : undefined
                     }
                     isCurrentUser={false}
-                    size={150}
+                    size={192}
                     animate={false}
                     fontSize={100}
                     showText={
@@ -267,9 +268,9 @@ const BallOverlay = styled.div`
   position: absolute;
   top: 0;
   left: 0;
-  width: 150px;
-  height: 150px;
-  border-radius: 150px;
+  width: ${`${sizingScale[10]}px`};
+  height: ${`${sizingScale[10]}px`};
+  border-radius: ${`${sizingScale[10]}px`};
   background-color: white;
   opacity: ${(props: BallOverlayProps) => (props.requestPending ? 0.5 : 0.3)};
 `;
@@ -279,8 +280,10 @@ type BallWrapperProps = {
 };
 
 const BallWrapper = styled.div`
-  margin-left: ${(props: BallWrapperProps) => (props.toLeft ? "-20px" : 0)};
-  margin-right: ${(props: BallWrapperProps) => (props.toLeft ? 0 : "-20px")};
+  margin-left: ${(props: BallWrapperProps) =>
+    props.toLeft ? `${sizingScale[5] * -1}px` : 0};
+  margin-right: ${(props: BallWrapperProps) =>
+    props.toLeft ? 0 : `${sizingScale[5] * -1}px`};
 `;
 
 const PartnerBallWrapper = styled(BallWrapper)`
@@ -292,7 +295,7 @@ const TextWrapper = styled.div`
 `;
 
 const Text = styled.p`
-  margin-left: 10px;
+  margin-left: ${`${sizingScale[2]}px`};
   color: blue;
 `;
 
@@ -303,13 +306,13 @@ const IconWrapper = styled.div`
 `;
 
 const MatchSection = styled.div`
-  margin-top: 20px;
+  margin-top: ${`${sizingScale[3]}px`};
   display: flex;
   justify-content: space-between;
 `;
 
 const BallsWrapper = styled.div`
-  width: 260px;
+  width: ${`${sizingScale[10] * 2 - (sizingScale[5] * 2)}px`};
   display: flex;
   align-items: center;
   position: relative;
@@ -318,5 +321,5 @@ const BallsWrapper = styled.div`
 const DeemphasizedSpan = styled.span`
   color: gray;
   font-weight: 300;
-  margin: 0 5px;
+  margin: 0 ${`${sizingScale[1]}px`};
 `;

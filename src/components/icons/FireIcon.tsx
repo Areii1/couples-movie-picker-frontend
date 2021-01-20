@@ -99,15 +99,3 @@ const Svg = styled.svg`
     }
   }
 `;
-
-type SvgProps = {
-  hoverColor: string;
-  fillColor: string;
-  hovering: boolean;
-};
-
-// const Path = styled.path`
-//   background-color: ${(props: PathProps) =>
-//     props.hovering ? props.hoverColor : props.fillColor};
-//   transition: fill 1s;
-// `;

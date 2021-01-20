@@ -20,6 +20,7 @@ import {
   ButtonsWrapper,
 } from "../PartnershipView";
 import { SecondaryHeadline } from "../../../styles/Styles";
+import { sizingScale } from "../../../styles/Variables";
 
 type Props = {
   getUserItemProcess: GetUserItemProcess;
@@ -178,7 +179,7 @@ export const RequestsListSection = (props: Props) => {
 };
 
 const SectionWrapper = styled.div`
-  margin-top: 20px;
+  margin-top: ${`${sizingScale[3]}px`};
   text-align: start;
 `;
 

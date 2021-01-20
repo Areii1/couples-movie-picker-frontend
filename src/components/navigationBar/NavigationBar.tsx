@@ -7,6 +7,7 @@ import { GetUserItemProcess, Process, Status } from "../../App";
 import { ProfileBall } from "../profileBall/ProfileBall";
 import { AnimateType } from '../icons/HeartIcon';
 import { bucketUrl } from '../../config/Config';
+import { borderRadius, sizingScale } from '../../styles/Variables';
 
 type Props = {
   getCurrentAuthenticatedUserProcess: Process;
@@ -24,7 +25,7 @@ export const NavigationBar = (props: Props) => {
       <ListItem>
         <Link to="/" title="like">
           <IconWrapper>
-            <FireIcon size={50} />
+            <FireIcon size={sizingScale[6]} />
           </IconWrapper>
         </Link>
       </ListItem>
@@ -38,7 +39,7 @@ export const NavigationBar = (props: Props) => {
                 : undefined
             }
             isCurrentUser={false}
-            size={50}
+            size={sizingScale[6]}
             animate
             showText
             shadow={false}
@@ -49,7 +50,7 @@ export const NavigationBar = (props: Props) => {
       <ListItem>
         <Link to="/love" title="matches">
           <IconWrapper>
-            <HeartIcon size={50} animate={AnimateType.COLOR} isRed/>
+            <HeartIcon size={sizingScale[6]} animate={AnimateType.COLOR} isRed/>
           </IconWrapper>
         </Link>
       </ListItem>
@@ -62,20 +63,20 @@ const List = styled.ul`
   padding: 0;
   background-color: white;
   display: flex;
-  border-radius: 10px;
-  margin-top: 20px;
+  border-radius: ${`${borderRadius}px`};
+  margin-top: ${`${sizingScale[3]}px`};
   box-shadow: 10px 5px 5px lightgray;
 `;
 
 const ListItem = styled.li`
-  width: 80px;
-  height: 80px;
+  width: ${`${sizingScale[8]}px`};
+  height: ${`${sizingScale[8]}px`};
   display: flex;
   justify-content: center;
   align-items: center;
 `;
 
 const IconWrapper = styled.div`
-  width: 50px;
-  height: 50px;
+  width: ${`${sizingScale[6]}px`};
+  height: ${`${sizingScale[6]}px`};
 `;

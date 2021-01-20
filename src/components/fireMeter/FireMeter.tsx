@@ -2,6 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import { FireIcon } from "../icons/FireIcon";
 import { ReactComponent as ColdIcon } from "../../assets/snowflake.svg";
+import { sizingScale, borderRadius } from "../../styles/Variables";
 
 type Props = {
   fireMeterSwitch: any;
@@ -20,7 +21,7 @@ export const FireMeter = (props: Props) => {
         }
         title="awesome"
       >
-        <FireIcon size={50} />
+        <FireIcon size={sizingScale[6]} />
       </HotIconButton>
       <ColdIconButton
         onClick={() =>
@@ -44,27 +45,27 @@ const Wrapper = styled.div`
   position: relative;
   display: flex;
   justify-content: space-between;
-  margin: 100px auto 0 auto;
-  width: 300px;
-  height: 30px;
+  margin: ${`${sizingScale[8]}px`} auto 0 auto;
+  width: ${`${sizingScale[11]}px`};
+  height: ${`${sizingScale[5]}px`};
   background: rgb(220, 106, 1);
   background: linear-gradient(
     90deg,
     rgba(220, 106, 1, 1) 0%,
     rgba(8, 82, 151, 1) 100%
   );
-  border-radius: 10px;
+  border-radius: ${`${borderRadius}px`};
 `;
 
 const HotIconButton = styled.div`
-  width: 50px;
-  height: 50px;
-  margin: -15px 0 0 -25px;
+  width: ${`${sizingScale[6]}px`};
+  height: ${`${sizingScale[6]}px`};
+  margin: ${`${sizingScale[3] * -1}px`} 0 0 ${`${sizingScale[5] * -1}px`};
   cursor: pointer;
 `;
 
 const ColdIconButton = styled(HotIconButton)`
-  margin: -15px -25px 0 0;
+  margin: ${`${sizingScale[3] * -1}px`} ${`${sizingScale[5] * -1}px`} 0 0;
   cursor: pointer;
 `;
 
@@ -88,9 +89,9 @@ type MeterSwitchButtonProps = {
 };
 
 const MeterSwitchButton = styled.button`
-  width: 50px;
-  height: 50px;
-  border-radius: 50px;
+  width: ${`${sizingScale[6]}px`};
+  height: ${`${sizingScale[6]}px`};
+  border-radius: ${`${sizingScale[6]}px`};
   background-color: white;
   border: ${(props: MeterSwitchButtonProps) =>
     props.fireMeterSwitch.locked ? "2px solid green;" : "1px solid lightgray;"};

@@ -1,7 +1,7 @@
 import React, { FormEvent } from "react";
 import styled, { keyframes } from "styled-components";
-import { Puff } from "../components/puff/Puff";
-import { Status } from "../App";
+import { Puff } from "../../components/puff/Puff";
+import { Status } from "../../App";
 import { Auth } from "aws-amplify";
 import { Link, Redirect } from "react-router-dom";
 

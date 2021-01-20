@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
-import { Process, Status } from "../App";
-import { FireMeter } from "../components/fireMeter/FireMeter";
+import { Process, Status } from "../../App";
+import { FireMeter } from "../../components/fireMeter/FireMeter";
 
 type Props = {
   getTrendingMoviesProcess: Process;

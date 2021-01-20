@@ -1,21 +1,21 @@
 import React, { FormEvent } from "react";
 import styled from "styled-components";
-import { LogInPrimaryHeadline } from "./LogIn";
-import { Process, Status, SecondaryHeadline } from "../App";
-import { ProfileBall } from "../components/profileBall/ProfileBall";
-import { HeartIcon } from "../components/icons/HeartIcon";
-import { Form, InputField } from "./LogIn";
-import { Puff } from "../components/puff/Puff";
-import { getUser } from "../apiService/getUser";
-import { TransparentButton, Mark } from "./AccountSettings";
-import { pairWithUser } from "../apiService/pairWithUser";
-import { SearchIcon } from "../components/icons/SearchIcon";
-import { PendingIcon } from "../components/icons/PendingIcon";
-import { cancelPairingRequest } from "../apiService/cancelPairingRequest";
-import { rejectIncomingRequest } from "../apiService/rejectIncomingRequest";
-import { acceptIncomingRequest } from "../apiService/acceptIncomingRequest";
-import { AnimateType } from "../components/icons/HeartIcon";
-import { breakUpPartnership } from "../apiService/breakUpPartnership";
+import { LogInPrimaryHeadline } from "../logIn/LogIn";
+import { Process, Status, SecondaryHeadline } from "../../App";
+import { ProfileBall } from "../../components/profileBall/ProfileBall";
+import { HeartIcon } from "../../components/icons/HeartIcon";
+import { Form, InputField } from "../logIn/LogIn";
+import { Puff } from "../../components/puff/Puff";
+import { getUser } from "../../apiService/getUser";
+import { TransparentButton, Mark } from "../accountSettings/AccountSettings";
+import { pairWithUser } from "../../apiService/pairWithUser";
+import { SearchIcon } from "../../components/icons/SearchIcon";
+import { PendingIcon } from "../../components/icons/PendingIcon";
+import { cancelPairingRequest } from "../../apiService/cancelPairingRequest";
+import { rejectIncomingRequest } from "../../apiService/rejectIncomingRequest";
+import { acceptIncomingRequest } from "../../apiService/acceptIncomingRequest";
+import { AnimateType } from "../../components/icons/HeartIcon";
+import { breakUpPartnership } from "../../apiService/breakUpPartnership";
 
 type Props = {
   getCurrentAuthenticatedUserProcess: Process;

@@ -1,8 +1,8 @@
 import { Auth } from "aws-amplify";
 import React, { FormEvent } from "react";
 import { Link, Redirect } from "react-router-dom";
-import { Status } from "../App";
-import { Puff } from "../components/puff/Puff";
+import { Status } from "../../App";
+import { Puff } from "../../components/puff/Puff";
 import {
   FormWrapper,
   Form,
@@ -13,7 +13,7 @@ import {
   LogInPrimaryHeadline,
   Text,
   Wrapper,
-} from "./LogIn";
+} from "../logIn/LogIn";
 
 export const SignUp = (props: any) => {
   const [

@@ -3,14 +3,14 @@ import React from "react";
 import { Redirect } from "react-router";
 import { Link } from "react-router-dom";
 import styled, { keyframes } from "styled-components";
-import { uploadProfilePicture } from "../apiService/uploadProfilePicture";
-import { removeProfilePicture } from "../apiService/removeProfilePicture";
-import { Process, SecondaryHeadline, Status } from "../App";
-import { ImageIcon } from "../components/icons/ImageIcon";
-import { ProfileBall } from "../components/profileBall/ProfileBall";
-import { Puff } from "../components/puff/Puff";
-import { Button, ButtonText, LogInPrimaryHeadline } from "./LogIn";
-import { randomizeProfilePicture } from "../apiService/randomizeProfilePicture";
+import { uploadProfilePicture } from "../../apiService/uploadProfilePicture";
+import { removeProfilePicture } from "../../apiService/removeProfilePicture";
+import { Process, SecondaryHeadline, Status } from "../../App";
+import { ImageIcon } from "../../components/icons/ImageIcon";
+import { ProfileBall } from "../../components/profileBall/ProfileBall";
+import { Puff } from "../../components/puff/Puff";
+import { Button, ButtonText, LogInPrimaryHeadline } from "../logIn/LogIn";
+import { randomizeProfilePicture } from "../../apiService/randomizeProfilePicture";
 
 type Props = {
   getCurrentSessionProcess: any;

@@ -13,7 +13,7 @@ import {
   ProfileWrapper,
   ProfileText,
   ButtonsWrapper,
-} from "../MatchesView";
+} from "../PartnershipView";
 
 type Props = {
   getUserItemProcess: Process;

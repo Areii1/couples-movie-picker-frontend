@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { MatchSectionWrapper } from "../MatchesView";
+import { MatchSectionWrapper } from "../PartnershipView";
 import { Process, Status, SecondaryHeadline } from "../../../App";
 import { PendingIcon } from "../../../components/icons/PendingIcon";
 import { ProfileBall } from "../../../components/profileBall/ProfileBall";
@@ -16,6 +16,8 @@ type Props = {
   getPairedUserProcess: Process;
   getCurrentSessionProcess: Process;
   isPartnered: boolean;
+  requestPending: boolean;
+  sessionInitialized: boolean;
   getUserItem: (username: string, jwtToken: string) => void;
   getPairedUser: (username: string, jwtToken: string) => void;
 };
@@ -31,77 +33,130 @@ export const DetailsSection = (props: Props) => {
   ] = React.useState<Process>({ status: Status.INITIAL });
 
   const cancelPairing = async () => {
+    // todo remove props.getUserItemProcess.status === Status.SUCCESS if
     if (
       props.getUserItemProcess.status === Status.SUCCESS &&
-      props.getUserItemProcess.data.outgoingRequests &&
       props.getCurrentSessionProcess.status === Status.SUCCESS
     ) {
-      try {
-        setCancelPairingRequestProcess({ status: Status.LOADING });
-        const cancelPairingResponse = await cancelPairingRequest(
-          props.getUserItemProcess.data.outgoingRequests.S,
-          props.getCurrentSessionProcess.data.getIdToken().getJwtToken()
-        );
-        setCancelPairingRequestProcess({
-          status: Status.SUCCESS,
-          data: cancelPairingResponse,
-        });
-        props.getUserItem(
-          props.getUserItemProcess.data.username.S,
-          props.getCurrentSessionProcess.data.getIdToken().getJwtToken()
-        );
-        props.getPairedUser(
-          props.getUserItemProcess.data.outgoingRequests.S,
-          props.getCurrentSessionProcess.data.getIdToken().getJwtToken()
-        );
-      } catch (cancelPairingError) {
-        setCancelPairingRequestProcess({
-          status: Status.ERROR,
-          error: cancelPairingError,
-        });
+      if (props.sessionInitialized && props.requestPending) {
+        try {
+          setCancelPairingRequestProcess({ status: Status.LOADING });
+          const cancelPairingResponse = await cancelPairingRequest(
+            props.getUserItemProcess.data.outgoingRequests.S,
+            props.getCurrentSessionProcess.data.getIdToken().getJwtToken()
+          );
+          setCancelPairingRequestProcess({
+            status: Status.SUCCESS,
+            data: cancelPairingResponse,
+          });
+          props.getUserItem(
+            props.getUserItemProcess.data.username.S,
+            props.getCurrentSessionProcess.data.getIdToken().getJwtToken()
+          );
+          props.getPairedUser(
+            props.getUserItemProcess.data.outgoingRequests.S,
+            props.getCurrentSessionProcess.data.getIdToken().getJwtToken()
+          );
+        } catch (cancelPairingError) {
+          setCancelPairingRequestProcess({
+            status: Status.ERROR,
+            error: cancelPairingError,
+          });
+        }
       }
     }
   };
 
   const breakUp = async () => {
+    // todo remove props.getUserItemProcess.status === Status.SUCCESS if
     if (
       props.getUserItemProcess.status === Status.SUCCESS &&
-      props.getCurrentSessionProcess.status === Status.SUCCESS &&
-      props.getPairedUserProcess.status === Status.SUCCESS
+      props.getCurrentSessionProcess.status === Status.SUCCESS
     ) {
-      try {
-        setBreakUpPartnershipProcess({ status: Status.LOADING });
-        const acceptIncomingRequestResponse = await breakUpPartnership(
-          props.getUserItemProcess.data.partner.S,
-          props.getCurrentSessionProcess.data.getIdToken().getJwtToken()
-        );
-        setBreakUpPartnershipProcess({
-          status: Status.SUCCESS,
-          data: acceptIncomingRequestResponse,
-        });
-        props.getUserItem(
-          props.getUserItemProcess.data.username.S,
-          props.getCurrentSessionProcess.data.getIdToken().getJwtToken()
-        );
-        props.getPairedUser(
-          props.getPairedUserProcess.data.username.S,
-          props.getCurrentSessionProcess.data.getIdToken().getJwtToken()
-        );
-      } catch (accpetIncomingRequestError) {
-        setBreakUpPartnershipProcess({
-          status: Status.ERROR,
-          error: accpetIncomingRequestError,
-        });
+      if (
+        props.sessionInitialized &&
+        props.getPairedUserProcess.status === Status.SUCCESS &&
+        props.isPartnered
+      ) {
+        try {
+          setBreakUpPartnershipProcess({ status: Status.LOADING });
+          const acceptIncomingRequestResponse = await breakUpPartnership(
+            props.getUserItemProcess.data.partner.S,
+            props.getCurrentSessionProcess.data.getIdToken().getJwtToken()
+          );
+          setBreakUpPartnershipProcess({
+            status: Status.SUCCESS,
+            data: acceptIncomingRequestResponse,
+          });
+          props.getUserItem(
+            props.getUserItemProcess.data.username.S,
+            props.getCurrentSessionProcess.data.getIdToken().getJwtToken()
+          );
+          props.getPairedUser(
+            props.getPairedUserProcess.data.username.S,
+            props.getCurrentSessionProcess.data.getIdToken().getJwtToken()
+          );
+        } catch (accpetIncomingRequestError) {
+          setBreakUpPartnershipProcess({
+            status: Status.ERROR,
+            error: accpetIncomingRequestError,
+          });
+        }
       }
     }
   };
 
-  const requestPending =
-    props.getUserItemProcess.status === Status.SUCCESS &&
-    props.getUserItemProcess.data.outgoingRequests !== undefined;
+  const getTextSection = () => {
+    // todo remove props.getUserItemProcess.status === Status.SUCCESS if
+    if (props.getUserItemProcess.status === Status.SUCCESS) {
+      if (
+        props.isPartnered &&
+        breakUpPartnershipProcess.status === Status.INITIAL
+      ) {
+        return (
+          <TextWrapper>
+            <p>{`${props.getUserItemProcess.data.username.S} loves ${props.getUserItemProcess.data.partner.S}`}</p>
+            <TransparentButton onClick={breakUp} title="break up">
+              <Text>break up</Text>
+            </TransparentButton>
+          </TextWrapper>
+        );
+      } else if (
+        props.requestPending &&
+        cancelPairingRequestProcess.status === Status.INITIAL
+      ) {
+        return (
+          <TextWrapper>
+            <p>
+              {`${props.getUserItemProcess.data.username.S}`}
+              <DeemphasizedSpan>waiting for</DeemphasizedSpan>
+              {`${props.getUserItemProcess.data.outgoingRequests.S}'s`}
+              <DeemphasizedSpan>approval</DeemphasizedSpan>
+            </p>
+            <TransparentButton onClick={cancelPairing} title="cancel">
+              <Text>cancel</Text>
+            </TransparentButton>
+          </TextWrapper>
+        );
+      } else if (!props.isPartnered && !props.requestPending) {
+        return (
+          <p>{`${props.getUserItemProcess.data.username.S} loves nobody`}</p>
+        );
+      } else if (
+        (props.requestPending || props.isPartnered) &&
+        (breakUpPartnershipProcess.status === Status.LOADING ||
+          cancelPairingRequestProcess.status === Status.LOADING)
+      ) {
+        return <Puff size={50} fill="lightblue" />;
+      }
+    }
+  };
+
   return (
+    // todo remove props.getUserItemProcess.status === Status.SUCCESS i
     <MatchSectionWrapper>
-      {props.getUserItemProcess.status === Status.SUCCESS &&
+      {props.sessionInitialized &&
+        props.getUserItemProcess.status === Status.SUCCESS &&
         props.getCurrentAuthenticatedUserProcess.status === Status.SUCCESS && (
           <>
             <SecondaryHeadline>Details</SecondaryHeadline>
@@ -126,7 +181,7 @@ export const DetailsSection = (props: Props) => {
                     shadow
                     border={false}
                   />
-                  <BallOverlay requestPending={requestPending} />
+                  <BallOverlay requestPending={props.requestPending} />
                 </PartnerBallWrapper>
                 <PartnerBallWrapper toLeft>
                   <ProfileBall
@@ -136,7 +191,7 @@ export const DetailsSection = (props: Props) => {
                         : undefined
                     }
                     image={
-                      (requestPending || props.isPartnered) &&
+                      (props.requestPending || props.isPartnered) &&
                       props.getPairedUserProcess.status === Status.SUCCESS &&
                       props.getPairedUserProcess.data.profilePicture
                         ? `https://couplesmoviepickerbacken-profilepicturesbucketa8b-2miadmkpd2b7.s3.eu-central-1.amazonaws.com/${props.getPairedUserProcess.data.profilePicture.S}`
@@ -146,55 +201,25 @@ export const DetailsSection = (props: Props) => {
                     size={150}
                     animate={false}
                     fontSize={100}
-                    showText={!requestPending}
+                    showText={!props.requestPending}
                     shadow
                     border={false}
                   />
-                  <BallOverlay requestPending={requestPending} />
-                  {requestPending && (
+                  <BallOverlay requestPending={props.requestPending} />
+                  {props.requestPending && (
                     <IconWrapper>
                       <PendingIcon animate={false} size={80} />
                     </IconWrapper>
                   )}
                 </PartnerBallWrapper>
                 <IconWrapper>
-                  {!requestPending && (
+                  {!props.requestPending && (
                     <HeartIcon size={80} animate={AnimateType.SCALE} isRed />
                   )}
                 </IconWrapper>
               </BallsWrapper>
             </MatchSection>
-            {props.isPartnered &&
-              breakUpPartnershipProcess.status === Status.INITIAL && (
-                <TextWrapper>
-                  <p>{`${props.getUserItemProcess.data.username.S} loves ${props.getUserItemProcess.data.partner.S}`}</p>
-                  <TransparentButton onClick={breakUp} title="break up">
-                    <Text>break up</Text>
-                  </TransparentButton>
-                </TextWrapper>
-              )}
-            {requestPending &&
-              cancelPairingRequestProcess.status === Status.INITIAL && (
-                <TextWrapper>
-                  <p>
-                    {`${props.getUserItemProcess.data.username.S}`}
-                    <DeemphasizedSpan>waiting for</DeemphasizedSpan>
-                    {`${props.getUserItemProcess.data.outgoingRequests.S}'s`}
-                    <DeemphasizedSpan>approval</DeemphasizedSpan>
-                  </p>
-                  <TransparentButton onClick={cancelPairing} title="cancel">
-                    <Text>cancel</Text>
-                  </TransparentButton>
-                </TextWrapper>
-              )}
-            {!props.isPartnered && !requestPending && (
-              <p>{`${props.getUserItemProcess.data.username.S} loves nobody`}</p>
-            )}
-            {(requestPending || props.isPartnered) &&
-              (breakUpPartnershipProcess.status === Status.LOADING ||
-                cancelPairingRequestProcess.status === Status.LOADING) && (
-                <Puff size={50} fill="lightblue" />
-              )}
+            {getTextSection()}
           </>
         )}
     </MatchSectionWrapper>

@@ -13,7 +13,7 @@ import {
   ProfileWrapper,
   ProfileText,
   ButtonsWrapper
-} from "../MatchesView";
+} from "../PartnershipView";
 import { ProfileBall } from "../../../components/profileBall/ProfileBall";
 import { AnimateType, HeartIcon } from "../../../components/icons/HeartIcon";
 

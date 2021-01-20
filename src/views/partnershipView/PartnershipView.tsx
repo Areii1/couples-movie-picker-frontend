@@ -15,48 +15,60 @@ type Props = {
   getPairedUser: (username: string, jwtToken: string) => void;
 };
 
-export const MatchesView = (props: Props) => {
+export const PartnershipView = (props: Props) => {
   const isPartnered =
     props.getUserItemProcess.status === Status.SUCCESS &&
     props.getUserItemProcess.data.partner !== undefined;
 
+  const requestPending =
+    props.getUserItemProcess.status === Status.SUCCESS &&
+    props.getUserItemProcess.data.outgoingRequests !== undefined;
+
+  const sessionInitialized =
+    props.getCurrentSessionProcess.status === Status.SUCCESS &&
+    props.getUserItemProcess.status === Status.SUCCESS &&
+    props.getCurrentAuthenticatedUserProcess.status === Status.SUCCESS;
+
+  const requestsExist =
+    props.getUserItemProcess.status === Status.SUCCESS &&
+    props.getUserItemProcess.data.incomingRequests;
   return (
     <Wrapper>
       <LogInPrimaryHeadline>Partner</LogInPrimaryHeadline>
-      {props.getUserItemProcess.status === Status.SUCCESS &&
-        props.getCurrentAuthenticatedUserProcess.status === Status.SUCCESS && (
-          <div>
-            <DetailsSection
-              isPartnered={isPartnered}
-              getUserItemProcess={props.getUserItemProcess}
+      {sessionInitialized && (
+        <div>
+          <DetailsSection
+            isPartnered={isPartnered}
+            requestPending={requestPending}
+            sessionInitialized={sessionInitialized}
+            getUserItemProcess={props.getUserItemProcess}
+            getCurrentAuthenticatedUserProcess={
+              props.getCurrentAuthenticatedUserProcess
+            }
+            getPairedUserProcess={props.getPairedUserProcess}
+            getCurrentSessionProcess={props.getCurrentSessionProcess}
+            getUserItem={props.getUserItem}
+            getPairedUser={props.getPairedUser}
+          />
+          {!requestPending && !isPartnered && (
+            <SearchSection
               getCurrentAuthenticatedUserProcess={
                 props.getCurrentAuthenticatedUserProcess
               }
-              getPairedUserProcess={props.getPairedUserProcess}
+              getCurrentSessionProcess={props.getCurrentSessionProcess}
+              getUserItemProcess={props.getUserItemProcess}
+              getUserItem={props.getUserItem}
+            />
+          )}
+          {requestsExist && (
+            <RequestsListSection
+              getUserItemProcess={props.getUserItemProcess}
               getCurrentSessionProcess={props.getCurrentSessionProcess}
               getUserItem={props.getUserItem}
-              getPairedUser={props.getPairedUser}
             />
-            {!props.getUserItemProcess.data.outgoingRequests &&
-              !isPartnered && (
-                <SearchSection
-                  getCurrentAuthenticatedUserProcess={
-                    props.getCurrentAuthenticatedUserProcess
-                  }
-                  getCurrentSessionProcess={props.getCurrentSessionProcess}
-                  getUserItemProcess={props.getUserItemProcess}
-                  getUserItem={props.getUserItem}
-                />
-              )}
-            {props.getUserItemProcess.data.incomingRequests && (
-              <RequestsListSection
-                getUserItemProcess={props.getUserItemProcess}
-                getCurrentSessionProcess={props.getCurrentSessionProcess}
-                getUserItem={props.getUserItem}
-              />
-            )}
-          </div>
-        )}
+          )}
+        </div>
+      )}
     </Wrapper>
   );
 };

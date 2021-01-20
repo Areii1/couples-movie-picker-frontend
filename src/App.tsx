@@ -12,7 +12,7 @@ import { LogIn } from "./views/logIn/LogIn";
 import { SignUp } from "./views/signUp/SignUp";
 import { AccountSettings } from "./views/accountSettings/AccountSettings";
 import { getUser } from "./apiService/getUser";
-import { MatchesView } from "./views/matchesView/MatchesView";
+import { PartnershipView } from "./views/partnershipView/PartnershipView";
 
 configureAmplify();
 
@@ -305,7 +305,7 @@ export const App = () => {
             )}
           </Route>
           <Route exact path="/love">
-            <MatchesView
+            <PartnershipView
               getCurrentAuthenticatedUserProcess={
                 getCurrentAuthenticatedUserProcess
               }

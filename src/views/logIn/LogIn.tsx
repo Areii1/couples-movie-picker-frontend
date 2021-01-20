@@ -45,7 +45,7 @@ export const LogIn = (props: Props) => {
   };
 
   return (
-    <CardContentWrapper>
+    <LoginCardContentWrapper>
       <HeadlineWrapper>
         <LogInPrimaryHeadline>Log in</LogInPrimaryHeadline>
         <Text>
@@ -96,12 +96,18 @@ export const LogIn = (props: Props) => {
         </ContentWrapper>
         {signInProcess.status === Status.SUCCESS && <Redirect to="/user" />}
       </FormWrapper>
-    </CardContentWrapper>
+    </LoginCardContentWrapper>
   );
 };
 
 export const CardContentWrapper = styled.div`
   width: ${`${sizingScale[13] - sizingScale[6] * 2}px`};
+`;
+
+const LoginCardContentWrapper = styled(CardContentWrapper)`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 `;
 
 const ContentWrapper = styled.div`

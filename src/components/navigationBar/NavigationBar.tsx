@@ -7,7 +7,7 @@ import { GetUserItemProcess, Process, Status } from "../../App";
 import { ProfileBall } from "../profileBall/ProfileBall";
 import { AnimateType } from '../icons/HeartIcon';
 import { bucketUrl } from '../../config/Config';
-import { borderRadius, sizingScale } from '../../styles/Variables';
+import { borderRadius, shadowColor, sizingScale } from '../../styles/Variables';
 
 type Props = {
   getCurrentAuthenticatedUserProcess: Process;
@@ -65,7 +65,7 @@ const List = styled.ul`
   display: flex;
   border-radius: ${`${borderRadius}px`};
   margin-top: ${`${sizingScale[3]}px`};
-  box-shadow: 10px 5px 5px lightgray;
+  box-shadow: 10px 5px 5px ${shadowColor};
 `;
 
 const ListItem = styled.li`

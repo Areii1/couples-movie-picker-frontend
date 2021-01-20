@@ -47,14 +47,12 @@ const lighten = (isRed: boolean) => keyframes`
   }
 `;
 
-const scaleSize = (size: number) => keyframes`
+const scaleSize = () => keyframes`
   from {
-    width: ${`${size}px`}
-    height: ${`${size}px`}
+    transform: scale(1, 1);
   }
   to {
-    width: ${`${size * 1.3}px`}
-    height: ${`${size * 1.3}px`}
+    transform: scale(1.3, 1.3);
   }
 `;
 
@@ -69,8 +67,7 @@ const getAnimation = (animate: AnimateType, isRed: boolean, size: number) => {
     }
     case AnimateType.SCALE: {
       return css`
-        /* animation: ${scaleSize(size)} 0.3s linear forwards; */
-        transform: scale(2, 2);
+        animation: ${scaleSize()} 0.3s linear forwards;
       `;
     }
     case AnimateType.NONE: {

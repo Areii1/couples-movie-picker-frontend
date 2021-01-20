@@ -29,3 +29,5 @@ export const fontSizes = [
 ];
 
 export const borderRadius = 5;
+
+export const shadowColor = "#b3b2b2";

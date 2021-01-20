@@ -18,7 +18,7 @@ import {
 } from "./apiService/getUserInformation";
 import { CognitoUserSession } from "amazon-cognito-identity-js";
 import { UserInfo } from "./types/Types";
-import { sizingScale, borderRadius } from "./styles/Variables";
+import { sizingScale, borderRadius, shadowColor } from "./styles/Variables";
 
 configureAmplify();
 
@@ -361,7 +361,7 @@ const MainCard = styled.div`
   display: flex;
   justify-content: start;
   overflow: hidden;
-  box-shadow: 10px 5px 5px #b3b2b2;
+  box-shadow: 10px 5px 5px ${shadowColor};
 `;
 
 const MainCardContentWrapper = styled.div`

@@ -184,7 +184,7 @@ export const DetailsSection = (props: Props) => {
                     animate={false}
                     fontSize={100}
                     showText
-                    shadow
+                    shadow={false}
                     border={false}
                   />
                   <BallOverlay
@@ -225,7 +225,7 @@ export const DetailsSection = (props: Props) => {
                           undefined
                       )
                     }
-                    shadow
+                    shadow={false}
                     border={false}
                   />
                   <BallOverlay
@@ -312,7 +312,7 @@ const MatchSection = styled.div`
 `;
 
 const BallsWrapper = styled.div`
-  width: ${`${sizingScale[10] * 2 - (sizingScale[5] * 2)}px`};
+  width: ${`${sizingScale[10] * 2 - sizingScale[5] * 2}px`};
   display: flex;
   align-items: center;
   position: relative;

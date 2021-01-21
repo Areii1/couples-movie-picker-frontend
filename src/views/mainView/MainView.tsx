@@ -7,12 +7,53 @@ import { sizingScale } from "../../styles/Variables";
 
 type Props = {
   getTrendingMoviesProcess: Process;
-  fireMeterSwitch: any;
-  setFireMeterSwitch: (obj: any) => void;
-  handleSwitchButtonClick: () => void;
 };
 
 export const MainView = (props: Props) => {
+  const [fireMeterSwitch, setFireMeterSwitch] = React.useState<any>({
+    position: 50,
+    locked: false,
+  });
+
+  const keyDownHandler = (event: any) => {
+    if (!fireMeterSwitch.locked) {
+      if (event.key === "ArrowLeft") {
+        setFireMeterSwitch((freshState: any) => {
+          if (freshState.position - 5 <= 0) {
+            return {
+              position: 0,
+              locked: false,
+            };
+          }
+          return {
+            position: freshState.position - 5,
+            locked: false,
+          };
+        });
+      } else if (event.key === "ArrowRight") {
+        setFireMeterSwitch((freshState: any) => {
+          if (freshState.position + 5 >= 100) {
+            return {
+              position: 100,
+              locked: false,
+            };
+          }
+          return {
+            position: freshState.position + 5,
+            locked: false,
+          };
+        });
+      }
+    }
+  };
+
+  React.useEffect(() => {
+    window.addEventListener("keydown", keyDownHandler);
+    return () => {
+      window.removeEventListener("keyDown", keyDownHandler);
+    };
+  }, []);
+
   return (
     <Wrapper>
       {props.getTrendingMoviesProcess.status === Status.SUCCESS && (
@@ -30,9 +71,8 @@ export const MainView = (props: Props) => {
               {props.getTrendingMoviesProcess.data.results[0].original_title}
             </Title>
             <FireMeter
-              fireMeterSwitch={props.fireMeterSwitch}
-              setFireMeterSwitch={props.setFireMeterSwitch}
-              handleSwitchButtonClick={props.handleSwitchButtonClick}
+              fireMeterSwitch={fireMeterSwitch}
+              setFireMeterSwitch={setFireMeterSwitch}
             />
           </DetailsSection>
         </>

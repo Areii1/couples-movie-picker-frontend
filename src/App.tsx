@@ -48,11 +48,6 @@ export type GetUserItemProcess =
   | { status: Status.ERROR; error: Error };
 
 export const App = () => {
-  const [fireMeterSwitch, setFireMeterSwitch] = React.useState<any>({
-    position: 50,
-    locked: false,
-  });
-
   const [
     getTrendingMoviesProcess,
     setGetTrendingMoviesProcess,
@@ -161,48 +156,9 @@ export const App = () => {
     }
   };
 
-  const keyDownHandler = (event: any) => {
-    if (!fireMeterSwitch.locked) {
-      if (event.key === "ArrowLeft") {
-        setFireMeterSwitch((freshState: any) => {
-          if (freshState.position - 5 <= 0) {
-            return {
-              position: 0,
-              locked: false,
-            };
-          }
-          return {
-            position: freshState.position - 5,
-            locked: false,
-          };
-        });
-      } else if (event.key === "ArrowRight") {
-        setFireMeterSwitch((freshState: any) => {
-          if (freshState.position + 5 >= 100) {
-            return {
-              position: 100,
-              locked: false,
-            };
-          }
-          return {
-            position: freshState.position + 5,
-            locked: false,
-          };
-        });
-      }
-    }
-  };
-
-  const handleSwitchButtonClick = () => {
-    setFireMeterSwitch({ position: fireMeterSwitch.position, locked: true });
-  };
 
   React.useEffect(() => {
     initiateSession();
-    window.addEventListener("keydown", keyDownHandler);
-    return () => {
-      window.removeEventListener("keyDown", keyDownHandler);
-    };
   }, []);
 
   React.useEffect(() => {
@@ -267,9 +223,6 @@ export const App = () => {
                 <div className="page">
                   <MainView
                     getTrendingMoviesProcess={getTrendingMoviesProcess}
-                    fireMeterSwitch={fireMeterSwitch}
-                    setFireMeterSwitch={setFireMeterSwitch}
-                    handleSwitchButtonClick={handleSwitchButtonClick}
                   />
                 </div>
               </CSSTransition>

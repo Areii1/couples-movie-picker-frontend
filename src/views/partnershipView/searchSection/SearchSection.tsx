@@ -32,7 +32,7 @@ type Props = {
 };
 
 export const SearchSection = (props: Props) => {
-  const [searchProcess, setSearchProcess] = React.useState<Process>({
+  const [searchProcess, setSearchProcess] = React.useState<GetUserItemProcess>({
     status: Status.INITIAL,
   });
   const [searchFieldValue, setSearchFieldValue] = React.useState<string>("");
@@ -94,6 +94,11 @@ export const SearchSection = (props: Props) => {
       }
     }
   };
+
+  const searchedUserIsTaken =
+    searchProcess.status === Status.SUCCESS &&
+    searchProcess.data.partner !== undefined;
+
   return (
     <MatchSectionWrapper>
       <SecondaryHeadline>Search</SecondaryHeadline>
@@ -133,13 +138,13 @@ export const SearchSection = (props: Props) => {
               shadow={false}
               border={false}
             />
-            <ProfileText isPartnered={searchProcess.data.partner}>
+            <ProfileText isPartnered={searchedUserIsTaken}>
               {searchProcess.data.partner
                 ? `${searchProcess.data.username.S} is already partnered with ${searchProcess.data.partner.S}`
                 : searchProcess.data.username.S}
             </ProfileText>
           </ProfileWrapper>
-          {!searchProcess.data.partner && (
+          {!searchedUserIsTaken && (
             <ButtonsWrapper>
               {pairingProcess.status === Status.INITIAL && (
                 <TransparentButton

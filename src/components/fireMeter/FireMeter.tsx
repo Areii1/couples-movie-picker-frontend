@@ -1,13 +1,12 @@
 import React from "react";
 import styled from "styled-components";
 import { FireIcon } from "../icons/FireIcon";
-import { ReactComponent as ColdIcon } from "../../assets/snowflake.svg";
-import { sizingScale, borderRadius } from "../../styles/Variables";
+import { ColdIcon } from "../icons/ColdIcon";
+import { sizingScale } from "../../styles/Variables";
 
 type Props = {
   fireMeterSwitch: any;
   setFireMeterSwitch: (obj: any) => void;
-  handleSwitchButtonClick: () => void;
 };
 
 export const FireMeter = (props: Props) => {
@@ -31,11 +30,11 @@ export const FireMeter = (props: Props) => {
         }
         title="horrible"
       >
-        <ColdIcon />
+        <ColdIcon size={sizingScale[6]} />
       </ColdIconButton>
       <MeterSwitchButton
         fireMeterSwitch={props.fireMeterSwitch}
-        onClick={props.handleSwitchButtonClick}
+        onClick={() => props.setFireMeterSwitch({ position: props.fireMeterSwitch.position, locked: !props.fireMeterSwitch.locked })}
       />
     </Wrapper>
   );
@@ -54,24 +53,24 @@ const Wrapper = styled.div`
     rgba(220, 106, 1, 1) 0%,
     rgba(8, 82, 151, 1) 100%
   );
-  border-radius: ${`${borderRadius}px`};
+  border-radius: ${`${sizingScale[5]}px`};
 `;
 
 const HotIconButton = styled.div`
   width: ${`${sizingScale[6]}px`};
   height: ${`${sizingScale[6]}px`};
-  margin: ${`${sizingScale[3] * -1}px`} 0 0 ${`${sizingScale[5] * -1}px`};
+  margin: ${`${sizingScale[2] * -1}px`} 0 0 ${`${sizingScale[3] * -1}px`};
   cursor: pointer;
 `;
 
 const ColdIconButton = styled(HotIconButton)`
-  margin: ${`${sizingScale[3] * -1}px`} ${`${sizingScale[5] * -1}px`} 0 0;
+  margin: ${`${sizingScale[2] * -1}px`} ${`${sizingScale[3] * -1}px`} 0 0;
   cursor: pointer;
 `;
 
 const getMeterSwitchPxPosition = (fireMeterSwitchPosition: any) => {
   const meterSwitcCircleRadius = 25;
-  const barMultiplier = 3;
+  const barMultiplier = 2.56;
   const positionIsLowMax = fireMeterSwitchPosition === 100;
   if (positionIsLowMax) {
     const finalPos =

@@ -39,6 +39,7 @@ export const PartnershipView = (props: Props) => {
   const requestsExist =
     props.getUserItemProcess.status === Status.SUCCESS &&
     props.getUserItemProcess.data.incomingRequests;
+
   return (
     <PartnershipCardContentWrapper>
       <PrimaryHeadline>Partner</PrimaryHeadline>

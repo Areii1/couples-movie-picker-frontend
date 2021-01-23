@@ -4,9 +4,12 @@ import { Process, Status } from "../../App";
 import { FireMeter } from "../../components/fireMeter/FireMeter";
 import { PrimaryHeadline } from "../../styles/Styles";
 import { sizingScale } from "../../styles/Variables";
+import { getTrendingMovies } from "../../apiService/getTrendingMovies";
+import { evaluateMovie } from "../../apiService/evaluateMovie";
 
 type Props = {
-  getTrendingMoviesProcess: Process;
+  getCurrentSessionProcess: Process;
+  getUserItemProcess: Process;
 };
 
 export const MainView = (props: Props) => {
@@ -14,6 +17,64 @@ export const MainView = (props: Props) => {
     position: 50,
     locked: false,
   });
+
+  const [
+    getTrendingMoviesProcess,
+    setGetTrendingMoviesProcess,
+  ] = React.useState<Process>({ status: Status.INITIAL });
+
+  const [swipingIndex, setSwipingIndex] = React.useState<number>(0);
+
+  const [likeMovieProcess, setLikeMovieProcess] = React.useState<Process>({
+    status: Status.INITIAL,
+  });
+
+  const getMovies = async () => {
+    try {
+      setGetTrendingMoviesProcess({ status: Status.LOADING });
+      const getTrendingMoviesResponse = await getTrendingMovies();
+      const parsedGetTrendingMoviesResponse = await getTrendingMoviesResponse.json();
+      setGetTrendingMoviesProcess({
+        status: Status.SUCCESS,
+        data: parsedGetTrendingMoviesResponse,
+      });
+    } catch (getTrendingMoviesError) {
+      setGetTrendingMoviesProcess({
+        status: Status.ERROR,
+        error: getTrendingMoviesError,
+      });
+    }
+  };
+
+  const evualuateCurrentItem = async () => {
+    if (
+      props.getCurrentSessionProcess.status === Status.SUCCESS &&
+      getTrendingMoviesProcess.status === Status.SUCCESS
+    ) {
+      try {
+        setLikeMovieProcess({ status: Status.LOADING });
+        const likeMovieResponse = await evaluateMovie(
+          props.getCurrentSessionProcess.data.getIdToken().getJwtToken(),
+          getTrendingMoviesProcess.data.results[swipingIndex].id,
+          fireMeterSwitch.position
+        );
+        setSwipingIndex(swipingIndex + 1);
+        setFireMeterSwitch({ position: 50, locked: false });
+        setLikeMovieProcess({
+          status: Status.SUCCESS,
+          data: likeMovieResponse,
+        });
+      } catch (likeMovieError) {
+        alert("failed to evaluate movie");
+        setSwipingIndex(swipingIndex + 1);
+        setFireMeterSwitch({ position: 50, locked: false });
+        setLikeMovieProcess({
+          status: Status.ERROR,
+          error: likeMovieError,
+        });
+      }
+    }
+  };
 
   const keyDownHandler = (event: any) => {
     if (!fireMeterSwitch.locked) {
@@ -54,31 +115,47 @@ export const MainView = (props: Props) => {
     };
   }, []);
 
-  return (
-    <Wrapper>
-      {props.getTrendingMoviesProcess.status === Status.SUCCESS && (
-        <>
-          <ImageSection>
-            <img
-              src={`https://image.tmdb.org/t/p/w500/${props.getTrendingMoviesProcess.data.results[0].backdrop_path}`}
-              alt={
-                props.getTrendingMoviesProcess.data.results[0].original_title
-              }
-            />
-          </ImageSection>
-          <DetailsSection>
-            <Title>
-              {props.getTrendingMoviesProcess.data.results[0].original_title}
-            </Title>
-            <FireMeter
-              fireMeterSwitch={fireMeterSwitch}
-              setFireMeterSwitch={setFireMeterSwitch}
-            />
-          </DetailsSection>
-        </>
-      )}
-    </Wrapper>
-  );
+  React.useEffect(() => {
+    if (props.getUserItemProcess.status === Status.SUCCESS) {
+      getMovies();
+    }
+  }, [props.getUserItemProcess.status]);
+
+  if (getTrendingMoviesProcess.status === Status.SUCCESS) {
+    const filteredList = getTrendingMoviesProcess.data.results.filter(
+      (movie: any) => {
+        if (props.getUserItemProcess.status === Status.SUCCESS) {
+          return (
+            props.getUserItemProcess.data.likedMovies.L.find(
+              (likedMovie: any) => movie.id === parseInt(likedMovie.M.id.S, 10)
+            ) === undefined
+          );
+        } else {
+          return false;
+        }
+      }
+    );
+    return (
+      <Wrapper>
+        <ImageSection>
+          <Image
+            src={`https://image.tmdb.org/t/p/w500/${filteredList[swipingIndex].backdrop_path}`}
+            alt={filteredList[swipingIndex].original_title}
+          />
+        </ImageSection>
+        <DetailsSection>
+          <Title>{filteredList[swipingIndex].original_title}</Title>
+          <FireMeter
+            fireMeterSwitch={fireMeterSwitch}
+            setFireMeterSwitch={setFireMeterSwitch}
+            evualuateCurrentItem={evualuateCurrentItem}
+          />
+        </DetailsSection>
+      </Wrapper>
+    );
+  } else {
+    return <div />;
+  }
 };
 
 const Wrapper = styled.div`
@@ -101,4 +178,8 @@ const DetailsSection = styled.div`
   flex-direction: column;
   align-items: center;
   width: ${`${sizingScale[13] - sizingScale[6] * 2}px`};
+`;
+
+const Image = styled.img`
+  width: ${`${sizingScale[13]}px`};
 `;

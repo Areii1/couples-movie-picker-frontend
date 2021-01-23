@@ -4,7 +4,6 @@ import "./App.css";
 import { CSSTransition } from "react-transition-group";
 import { configureAmplify } from "./config/Config";
 import { Route } from "react-router-dom";
-import { getTrendingMovies } from "./apiService/getTrendingMovies";
 import { NavigationBar } from "./components/navigationBar/NavigationBar";
 import { MainView } from "./views/mainView/MainView";
 import { LogIn } from "./views/logIn/LogIn";
@@ -49,11 +48,6 @@ export type GetUserItemProcess =
 
 export const App = () => {
   const [
-    getTrendingMoviesProcess,
-    setGetTrendingMoviesProcess,
-  ] = React.useState<Process>({ status: Status.INITIAL });
-
-  const [
     getCurrentSessionProcess,
     setGetCurrentSessionProcess,
   ] = React.useState<GetCurrentSessionProcess>({ status: Status.INITIAL });
@@ -74,11 +68,6 @@ export const App = () => {
   ] = React.useState<GetUserItemProcess>({
     status: Status.INITIAL,
   });
-
-  const initiateSession = async () => {
-    getUserInfo();
-    getMovies();
-  };
 
   const getPairedUser = async (username: string, jwtToken?: string) => {
     try {
@@ -139,26 +128,8 @@ export const App = () => {
     }
   };
 
-  const getMovies = async () => {
-    try {
-      setGetTrendingMoviesProcess({ status: Status.LOADING });
-      const getTrendingMoviesResponse = await getTrendingMovies();
-      const paredGetTrendingMoviesResponse = await getTrendingMoviesResponse.json();
-      setGetTrendingMoviesProcess({
-        status: Status.SUCCESS,
-        data: paredGetTrendingMoviesResponse,
-      });
-    } catch (getTrendingMoviesError) {
-      setGetTrendingMoviesProcess({
-        status: Status.ERROR,
-        error: getTrendingMoviesError,
-      });
-    }
-  };
-
-
   React.useEffect(() => {
-    initiateSession();
+    getUserInfo();
   }, []);
 
   React.useEffect(() => {
@@ -222,7 +193,8 @@ export const App = () => {
               >
                 <div className="page">
                   <MainView
-                    getTrendingMoviesProcess={getTrendingMoviesProcess}
+                    getCurrentSessionProcess={getCurrentSessionProcess}
+                    getUserItemProcess={getUserItemProcess}
                   />
                 </div>
               </CSSTransition>
@@ -237,7 +209,7 @@ export const App = () => {
                 unmountOnExit
               >
                 <div className="page">
-                  <LogIn initiateSession={initiateSession} />
+                  <LogIn initiateSession={getUserInfo} />
                 </div>
               </CSSTransition>
             )}
@@ -270,7 +242,7 @@ export const App = () => {
                     getCurrentAuthenticatedUserProcess={
                       getCurrentAuthenticatedUserProcess
                     }
-                    initiateSession={initiateSession}
+                    initiateSession={getUserInfo}
                     getUserItemProcess={getUserItemProcess}
                     getUserItem={getUserItem}
                   />

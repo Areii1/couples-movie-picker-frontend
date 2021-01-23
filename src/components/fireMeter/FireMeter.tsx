@@ -7,34 +7,32 @@ import { sizingScale } from "../../styles/Variables";
 type Props = {
   fireMeterSwitch: any;
   setFireMeterSwitch: (obj: any) => void;
+  evualuateCurrentItem: () => void;
 };
 
 export const FireMeter = (props: Props) => {
+  const handleHotIconButtonClick = () => {
+    props.setFireMeterSwitch({ position: 0, locked: true });
+    props.evualuateCurrentItem();
+  };
+  const handleColdIconButtonClick = () => {
+    props.setFireMeterSwitch({ position: 100, locked: true });
+    props.evualuateCurrentItem();
+  };
+  const switchButtonClick = () => {
+    props.evualuateCurrentItem();
+  };
   return (
     <Wrapper>
-      <HotIconButton
-        onClick={() =>
-          !props.fireMeterSwitch.locked
-            ? props.setFireMeterSwitch({ position: 0, locked: true })
-            : () => {}
-        }
-        title="awesome"
-      >
+      <HotIconButton onClick={handleHotIconButtonClick} title="awesome">
         <FireIcon size={sizingScale[6]} />
       </HotIconButton>
-      <ColdIconButton
-        onClick={() =>
-          !props.fireMeterSwitch.locked
-            ? props.setFireMeterSwitch({ position: 100, locked: true })
-            : () => {}
-        }
-        title="horrible"
-      >
+      <ColdIconButton onClick={handleColdIconButtonClick} title="horrible">
         <ColdIcon size={sizingScale[6]} />
       </ColdIconButton>
       <MeterSwitchButton
         fireMeterSwitch={props.fireMeterSwitch}
-        onClick={() => props.setFireMeterSwitch({ position: props.fireMeterSwitch.position, locked: !props.fireMeterSwitch.locked })}
+        onClick={switchButtonClick}
       />
     </Wrapper>
   );

@@ -14,6 +14,7 @@ import { CardContentWrapper } from "../logIn/LogIn";
 import { borderRadius, fontSizes, sizingScale } from "../../styles/Variables";
 import { TertiaryHeadline } from "../../styles/Styles";
 import { DownwardArrow } from "../../components/icons/DownwardArrow";
+import { LikedMoviesList, LikedMoviesListItem } from "../../types/Types";
 
 type Props = {
   getCurrentAuthenticatedUserProcess: Process;
@@ -25,6 +26,7 @@ type Props = {
 };
 
 export const PartnershipView = (props: Props) => {
+  const [yourLikesExpanded, setYourLikesExpanded] = React.useState<boolean>();
   const isPartnered =
     props.getUserItemProcess.status === Status.SUCCESS &&
     props.getUserItemProcess.data.partner !== undefined;
@@ -45,6 +47,12 @@ export const PartnershipView = (props: Props) => {
   const userLikedMovies =
     props.getUserItemProcess.status === Status.SUCCESS &&
     props.getUserItemProcess.data.likedMovies;
+
+  const getLikedMovieListItems = (list: LikedMoviesList) => {
+    return list.L.map((listItem: LikedMoviesListItem) => {
+      return <MovieListItem>{listItem}</MovieListItem>;
+    });
+  };
 
   return (
     <PartnershipCardContentWrapper>
@@ -78,12 +86,26 @@ export const PartnershipView = (props: Props) => {
               getUserItem={props.getUserItem}
             />
           )}
-          {userLikedMovies && (
-            <MovieListTriggerButton title="your likes">
-              <TertiaryHeadline>Your likes</TertiaryHeadline>
-              <DownwardArrow size={15} />
-            </MovieListTriggerButton>
-          )}
+          {userLikedMovies &&
+            props.getUserItemProcess.status === Status.SUCCESS &&
+            props.getUserItemProcess.data.likedMovies && (
+              <>
+                <MovieListTriggerButton
+                  title="your likes"
+                  onClick={() => setYourLikesExpanded(!yourLikesExpanded)}
+                >
+                  <TertiaryHeadline>Your likes</TertiaryHeadline>
+                  <DownwardArrow size={15} />
+                </MovieListTriggerButton>
+                {yourLikesExpanded && (
+                  <MovieList>
+                    {getLikedMovieListItems(
+                      props.getUserItemProcess.data.likedMovies
+                    )}
+                  </MovieList>
+                )}
+              </>
+            )}
         </div>
       )}
     </PartnershipCardContentWrapper>
@@ -142,4 +164,14 @@ const MovieListTriggerButton = styled.button`
   display: flex;
   justify-content: space-between;
   cursor: pointer;
+`;
+
+const MovieList = styled.ul`
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+`;
+
+const MovieListItem = styled.li`
+  padding: 0;
 `;

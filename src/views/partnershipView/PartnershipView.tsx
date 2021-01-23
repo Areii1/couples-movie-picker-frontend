@@ -34,7 +34,10 @@ export const PartnershipView = (props: Props) => {
   const [yourLikesExpanded, setYourLikesExpanded] = React.useState<boolean>(
     false
   );
-  const [partnersLikesExpanded, setPartnersLikesExpanded] = React.useState<boolean>(false);
+  const [
+    partnersLikesExpanded,
+    setPartnersLikesExpanded,
+  ] = React.useState<boolean>(false);
   const isPartnered =
     props.getUserItemProcess.status === Status.SUCCESS &&
     props.getUserItemProcess.data.partner !== undefined;
@@ -142,7 +145,9 @@ export const PartnershipView = (props: Props) => {
                     <MovieListWrapper>
                       <MovieListTriggerButton
                         title="partners likes"
-                        onClick={() => setPartnersLikesExpanded(!partnersLikesExpanded)}
+                        onClick={() =>
+                          setPartnersLikesExpanded(!partnersLikesExpanded)
+                        }
                       >
                         <TertiaryHeadline>{`${props.getPairedUserProcess.data.username.S}'s likes`}</TertiaryHeadline>
                         <DownwardArrow size={15} />
@@ -158,6 +163,11 @@ export const PartnershipView = (props: Props) => {
                   )}
               </LikedMoviesWrapper>
             )}
+          <TextWrapper>
+            <Link to="matches">
+              <p>view matched movies</p>
+            </Link>
+          </TextWrapper>
         </div>
       )}
     </PartnershipCardContentWrapper>
@@ -250,4 +260,8 @@ const LikedMoviesWrapper = styled.div`
 
 const MovieListWrapper = styled.div`
   margin-top: ${`${sizingScale[3]}px`};
+`;
+
+const TextWrapper = styled.div`
+  text-align: start;
 `;

@@ -18,6 +18,7 @@ import {
 import { CognitoUserSession } from "amazon-cognito-identity-js";
 import { UserInfo } from "./types/Types";
 import { sizingScale, borderRadius, shadowColor } from "./styles/Variables";
+import { MatchesView } from "./views/matchesView/MatchesView";
 
 configureAmplify();
 
@@ -169,7 +170,7 @@ export const App = () => {
   }, [getUserItemProcess.status]);
 
   // console.log(getUserItemProcess, "getUserItemProcess");
-  console.log(getCurrentSessionProcess, "getCurrentSessionProcess");
+  // console.log(getCurrentSessionProcess, "getCurrentSessionProcess");
   // console.log(
   //   getCurrentAuthenticatedUserProcess,
   //   "getCurrentAuthenticatedUserProcess"
@@ -252,16 +253,48 @@ export const App = () => {
             )}
           </Route>
           <Route exact path="/love">
-            <PartnershipView
-              getCurrentAuthenticatedUserProcess={
-                getCurrentAuthenticatedUserProcess
-              }
-              getUserItemProcess={getUserItemProcess}
-              getCurrentSessionProcess={getCurrentSessionProcess}
-              getPairedUserProcess={getPairedUserProcess}
-              getPairedUser={getPairedUser}
-              getUserItem={getUserItem}
-            />
+            {({ match }) => (
+              <CSSTransition
+                in={match !== null}
+                timeout={300}
+                classNames="page"
+                unmountOnExit
+              >
+                <div className="page">
+                  <PartnershipView
+                    getCurrentAuthenticatedUserProcess={
+                      getCurrentAuthenticatedUserProcess
+                    }
+                    getUserItemProcess={getUserItemProcess}
+                    getCurrentSessionProcess={getCurrentSessionProcess}
+                    getPairedUserProcess={getPairedUserProcess}
+                    getPairedUser={getPairedUser}
+                    getUserItem={getUserItem}
+                  />
+                </div>
+              </CSSTransition>
+            )}
+          </Route>
+          <Route exact path="/matches">
+            {({ match }) => (
+              <CSSTransition
+                in={match !== null}
+                timeout={300}
+                classNames="page"
+                unmountOnExit
+              >
+                <div className="page">
+                  <MatchesView
+                    getCurrentAuthenticatedUserProcess={
+                      getCurrentAuthenticatedUserProcess
+                    }
+                    getUserItemProcess={getUserItemProcess}
+                    getCurrentSessionProcess={getCurrentSessionProcess}
+                    getPairedUserProcess={getPairedUserProcess}
+                  />
+                </div>
+              </CSSTransition>
+            )}
           </Route>
         </MainCardContentWrapper>
       </MainCard>

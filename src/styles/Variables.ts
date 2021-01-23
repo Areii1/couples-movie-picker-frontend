@@ -15,6 +15,8 @@ export const sizingScale = [
   512,
   640,
   768,
+  950,
+  1200,
 ];
 
 export const fontSizes = [

@@ -1,5 +1,5 @@
 import React from "react";
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 import { CardContentWrapper } from "../logIn/LogIn";
 import {
   GetUserItemProcess,
@@ -10,6 +10,7 @@ import {
 import { LikedMoviesListItem } from "../../types/Types";
 import { getTrendingMovies } from "../../apiService/getTrendingMovies";
 import { sizingScale } from "../../styles/Variables";
+import { Link } from "react-router-dom";
 
 type Props = {
   getPairedUserProcess: GetUserItemProcess;
@@ -91,10 +92,13 @@ export const MatchesView = (props: Props) => {
     const matchesListItems = matchedMoviesDetails.map((movie: any) => {
       return (
         <MatchesListItem>
-          <Image
-            src={`https://image.tmdb.org/t/p/w342/${movie.backdrop_path}`}
-            alt={`${movie.title}`}
-          />
+          <Link to={`movie/${movie.id}`} title={`${movie.title}`}>
+            <ImageOverlay />
+            <Image
+              src={`https://image.tmdb.org/t/p/w342/${movie.backdrop_path}`}
+              alt={`${movie.title}`}
+            />
+          </Link>
         </MatchesListItem>
       );
     });
@@ -117,12 +121,36 @@ const MatchesList = styled.ul`
   margin: ${`${sizingScale[6] * -1}px`} 0 0 ${`${sizingScale[6] * -1}px`};
 `;
 
+const ImageOverlay = styled.div`
+  width: 256px;
+  height: 190px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: white;
+  opacity: 0;
+`;
+
+const hoverLighten = keyframes`
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 0.3;
+  }
+`;
+
 const MatchesListItem = styled.li`
   padding: 0;
   margin: 0;
   width: 256px;
   height: 190px;
-  border: 1px solid white;
+  position: relative;
+  :hover {
+    div {
+      animation: ${hoverLighten} 0.3s linear forwards;
+    }
+  }
 `;
 
 const Image = styled.img`

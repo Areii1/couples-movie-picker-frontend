@@ -19,6 +19,7 @@ import { CognitoUserSession } from "amazon-cognito-identity-js";
 import { UserInfo } from "./types/Types";
 import { sizingScale, borderRadius, shadowColor } from "./styles/Variables";
 import { MatchesView } from "./views/matchesView/MatchesView";
+import { MovieView } from "./views/movieView/MovieView";
 
 configureAmplify();
 
@@ -296,6 +297,24 @@ export const App = () => {
               </CSSTransition>
             )}
           </Route>
+          <Route exact path="/movie/:id">
+            {({ match }) => (
+              <CSSTransition
+                in={match !== null}
+                timeout={300}
+                classNames="page"
+                unmountOnExit
+              >
+                <div className="page">
+                  <MovieView
+                    getUserItemProcess={getUserItemProcess}
+                    getCurrentSessionProcess={getCurrentSessionProcess}
+                    getUserItem={getUserItem}
+                  />
+                </div>
+              </CSSTransition>
+            )}
+          </Route>
         </MainCardContentWrapper>
       </MainCard>
     </ContentWrapper>
@@ -316,7 +335,7 @@ const MainCard = styled.div`
   margin: ${`${sizingScale[6]}px`} 0;
   border-radius: ${`${borderRadius}px`};
   padding: ${`${sizingScale[6]}px`};
-  min-height: ${`${sizingScale[14]}px`};
+  min-height: ${`${sizingScale[17]}px`};
   display: flex;
   justify-content: start;
   overflow: hidden;

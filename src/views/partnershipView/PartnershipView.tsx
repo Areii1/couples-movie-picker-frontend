@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { PrimaryHeadline } from "../../styles/Styles";
+import { PrimaryHeadline, SecondaryHeadline } from "../../styles/Styles";
 import {
   GetCurrentSessionProcess,
   GetUserItemProcess,
@@ -121,53 +121,60 @@ export const PartnershipView = (props: Props) => {
             props.getPairedUserProcess.status === Status.SUCCESS &&
             props.getPairedUserProcess.data.likedMovies && (
               <LikedMoviesWrapper>
-                {props.getUserItemProcess.status === Status.SUCCESS &&
-                  props.getUserItemProcess.data.likedMovies && (
-                    <MovieListWrapper>
-                      <MovieListTriggerButton
-                        title="your likes"
-                        onClick={() => setYourLikesExpanded(!yourLikesExpanded)}
-                      >
-                        <TertiaryHeadline>your likes</TertiaryHeadline>
-                        <DownwardArrow size={15} />
-                      </MovieListTriggerButton>
-                      {yourLikesExpanded && (
-                        <MovieList>
-                          {getLikedMovieListItems(
-                            props.getUserItemProcess.data.likedMovies
-                          )}
-                        </MovieList>
-                      )}
-                    </MovieListWrapper>
-                  )}
-                {props.getPairedUserProcess.status === Status.SUCCESS &&
-                  props.getPairedUserProcess.data.likedMovies && (
-                    <MovieListWrapper>
-                      <MovieListTriggerButton
-                        title="partners likes"
-                        onClick={() =>
-                          setPartnersLikesExpanded(!partnersLikesExpanded)
-                        }
-                      >
-                        <TertiaryHeadline>{`${props.getPairedUserProcess.data.username.S}'s likes`}</TertiaryHeadline>
-                        <DownwardArrow size={15} />
-                      </MovieListTriggerButton>
-                      {partnersLikesExpanded && (
-                        <MovieList>
-                          {getLikedMovieListItems(
-                            props.getPairedUserProcess.data.likedMovies
-                          )}
-                        </MovieList>
-                      )}
-                    </MovieListWrapper>
-                  )}
+                <SecondaryHeadline>Likes</SecondaryHeadline>
+                <>
+                  {props.getUserItemProcess.status === Status.SUCCESS &&
+                    props.getUserItemProcess.data.likedMovies && (
+                      <MovieListWrapper>
+                        <MovieListTriggerButton
+                          title="your likes"
+                          onClick={() =>
+                            setYourLikesExpanded(!yourLikesExpanded)
+                          }
+                        >
+                          <TertiaryHeadline>your likes</TertiaryHeadline>
+                          <DownwardArrow size={15} />
+                        </MovieListTriggerButton>
+                        {yourLikesExpanded && (
+                          <MovieList>
+                            {getLikedMovieListItems(
+                              props.getUserItemProcess.data.likedMovies
+                            )}
+                          </MovieList>
+                        )}
+                      </MovieListWrapper>
+                    )}
+                  {props.getPairedUserProcess.status === Status.SUCCESS &&
+                    props.getPairedUserProcess.data.likedMovies && (
+                      <MovieListWrapper>
+                        <MovieListTriggerButton
+                          title="partners likes"
+                          onClick={() =>
+                            setPartnersLikesExpanded(!partnersLikesExpanded)
+                          }
+                        >
+                          <TertiaryHeadline>{`${props.getPairedUserProcess.data.username.S}'s likes`}</TertiaryHeadline>
+                          <DownwardArrow size={15} />
+                        </MovieListTriggerButton>
+                        {partnersLikesExpanded && (
+                          <MovieList>
+                            {getLikedMovieListItems(
+                              props.getPairedUserProcess.data.likedMovies
+                            )}
+                          </MovieList>
+                        )}
+                      </MovieListWrapper>
+                    )}
+                </>
+                {isPartnered && (
+                  // <TextWrapper>
+                    <Link to="matches">
+                      <p>view matched movies</p>
+                    </Link>
+                  // </TextWrapper>
+                )}
               </LikedMoviesWrapper>
             )}
-          <TextWrapper>
-            <Link to="matches">
-              <p>view matched movies</p>
-            </Link>
-          </TextWrapper>
         </div>
       )}
     </PartnershipCardContentWrapper>
@@ -256,12 +263,13 @@ const Text = styled.p`
 
 const LikedMoviesWrapper = styled.div`
   margin-top: ${`${sizingScale[5]}px`};
+  text-align: start;
 `;
 
 const MovieListWrapper = styled.div`
   margin-top: ${`${sizingScale[3]}px`};
 `;
 
-const TextWrapper = styled.div`
-  text-align: start;
-`;
+// const TextWrapper = styled.div`
+//   text-align: start;
+// `;

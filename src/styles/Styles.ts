@@ -15,4 +15,9 @@ export const SecondaryHeadline = styled.h3`
   color: black;
 `;
 
-export const TertiaryHeadline = styled.h5``;
+export const TertiaryHeadline = styled.h5`
+  font-size: ${`${fontSizes[2]}px`};
+  margin: 0;
+  font-weight: 400;
+  color: black;
+`;

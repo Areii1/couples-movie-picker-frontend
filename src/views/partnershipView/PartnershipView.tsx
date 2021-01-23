@@ -11,7 +11,9 @@ import { DetailsSection } from "./detailsSection/DetailsSection";
 import { SearchSection } from "./searchSection/SearchSection";
 import { RequestsListSection } from "./requestsListSection/RequestsListSection";
 import { CardContentWrapper } from "../logIn/LogIn";
-import { fontSizes, sizingScale } from "../../styles/Variables";
+import { borderRadius, fontSizes, sizingScale } from "../../styles/Variables";
+import { TertiaryHeadline } from "../../styles/Styles";
+import { DownwardArrow } from "../../components/icons/DownwardArrow";
 
 type Props = {
   getCurrentAuthenticatedUserProcess: Process;
@@ -39,6 +41,10 @@ export const PartnershipView = (props: Props) => {
   const requestsExist =
     props.getUserItemProcess.status === Status.SUCCESS &&
     props.getUserItemProcess.data.incomingRequests;
+
+  const userLikedMovies =
+    props.getUserItemProcess.status === Status.SUCCESS &&
+    props.getUserItemProcess.data.likedMovies;
 
   return (
     <PartnershipCardContentWrapper>
@@ -71,6 +77,12 @@ export const PartnershipView = (props: Props) => {
               getCurrentSessionProcess={props.getCurrentSessionProcess}
               getUserItem={props.getUserItem}
             />
+          )}
+          {userLikedMovies && (
+            <MovieListTriggerButton title="your likes">
+              <TertiaryHeadline>Your likes</TertiaryHeadline>
+              <DownwardArrow size={15} />
+            </MovieListTriggerButton>
           )}
         </div>
       )}
@@ -117,4 +129,17 @@ export const ProfileWrapper = styled.div`
 export const ButtonsWrapper = styled.div`
   margin-left: ${`${sizingScale[3]}px`};
   display: flex;
+`;
+
+const MovieListTriggerButton = styled.button`
+  margin-top: ${`${sizingScale[6]}px`};
+  width: 100%;
+  background-color: white;
+  padding: ${`${sizingScale[2]}px`} ${`${sizingScale[3]}px`};
+  text-align: start;
+  border-radius: ${`${borderRadius}px`};
+  border: 1px solid gray;
+  display: flex;
+  justify-content: space-between;
+  cursor: pointer;
 `;

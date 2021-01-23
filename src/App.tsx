@@ -195,6 +195,7 @@ export const App = () => {
                   <MainView
                     getCurrentSessionProcess={getCurrentSessionProcess}
                     getUserItemProcess={getUserItemProcess}
+                    getUserItem={getUserItem}
                   />
                 </div>
               </CSSTransition>

@@ -10,6 +10,7 @@ import { evaluateMovie } from "../../apiService/evaluateMovie";
 type Props = {
   getCurrentSessionProcess: Process;
   getUserItemProcess: Process;
+  getUserItem: (username: string, jwtToken: string) => void;
 };
 
 export const MainView = (props: Props) => {
@@ -46,7 +47,7 @@ export const MainView = (props: Props) => {
     }
   };
 
-  const evualuateCurrentItem = async () => {
+  const evualuateItem = async (movieId: string) => {
     if (
       props.getCurrentSessionProcess.status === Status.SUCCESS &&
       getTrendingMoviesProcess.status === Status.SUCCESS
@@ -55,7 +56,7 @@ export const MainView = (props: Props) => {
         setLikeMovieProcess({ status: Status.LOADING });
         const likeMovieResponse = await evaluateMovie(
           props.getCurrentSessionProcess.data.getIdToken().getJwtToken(),
-          getTrendingMoviesProcess.data.results[swipingIndex].id,
+          movieId,
           fireMeterSwitch.position
         );
         setSwipingIndex(swipingIndex + 1);
@@ -109,6 +110,15 @@ export const MainView = (props: Props) => {
   };
 
   React.useEffect(() => {
+    if (
+      props.getUserItemProcess.status === Status.SUCCESS &&
+      props.getCurrentSessionProcess.status === Status.SUCCESS
+    ) {
+      props.getUserItem(
+        props.getUserItemProcess.data.username.S,
+        props.getCurrentSessionProcess.data.getIdToken().getJwtToken()
+      );
+    }
     window.addEventListener("keydown", keyDownHandler);
     return () => {
       window.removeEventListener("keyDown", keyDownHandler);
@@ -121,7 +131,10 @@ export const MainView = (props: Props) => {
     }
   }, [props.getUserItemProcess.status]);
 
-  if (getTrendingMoviesProcess.status === Status.SUCCESS) {
+  if (
+    getTrendingMoviesProcess.status === Status.SUCCESS &&
+    props.getUserItemProcess.status === Status.SUCCESS
+  ) {
     const filteredList = getTrendingMoviesProcess.data.results.filter(
       (movie: any) => {
         if (props.getUserItemProcess.status === Status.SUCCESS) {
@@ -148,7 +161,7 @@ export const MainView = (props: Props) => {
           <FireMeter
             fireMeterSwitch={fireMeterSwitch}
             setFireMeterSwitch={setFireMeterSwitch}
-            evualuateCurrentItem={evualuateCurrentItem}
+            evualuateItem={() => evualuateItem(filteredList[swipingIndex].id)}
           />
         </DetailsSection>
       </Wrapper>

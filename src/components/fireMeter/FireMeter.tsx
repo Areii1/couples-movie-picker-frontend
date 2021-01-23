@@ -7,20 +7,20 @@ import { sizingScale } from "../../styles/Variables";
 type Props = {
   fireMeterSwitch: any;
   setFireMeterSwitch: (obj: any) => void;
-  evualuateCurrentItem: () => void;
+  evualuateItem: () => void;
 };
 
 export const FireMeter = (props: Props) => {
   const handleHotIconButtonClick = () => {
     props.setFireMeterSwitch({ position: 0, locked: true });
-    props.evualuateCurrentItem();
+    props.evualuateItem();
   };
   const handleColdIconButtonClick = () => {
     props.setFireMeterSwitch({ position: 100, locked: true });
-    props.evualuateCurrentItem();
+    props.evualuateItem();
   };
   const switchButtonClick = () => {
-    props.evualuateCurrentItem();
+    props.evualuateItem();
   };
   return (
     <Wrapper>

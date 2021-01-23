@@ -137,17 +137,21 @@ export const MainView = (props: Props) => {
   ) {
     const filteredList = getTrendingMoviesProcess.data.results.filter(
       (movie: any) => {
-        if (props.getUserItemProcess.status === Status.SUCCESS) {
+        if (
+          props.getUserItemProcess.status === Status.SUCCESS &&
+          props.getUserItemProcess.data.likedMovies
+        ) {
           return (
             props.getUserItemProcess.data.likedMovies.L.find(
               (likedMovie: any) => movie.id === parseInt(likedMovie.M.id.S, 10)
             ) === undefined
           );
         } else {
-          return false;
+          return true;
         }
       }
     );
+    console.log(filteredList, 'filteredList');
     return (
       <Wrapper>
         <ImageSection>

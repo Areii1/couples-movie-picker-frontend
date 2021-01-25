@@ -9,48 +9,48 @@ type Props = {
 
 export const FireIcon = (props: Props) => {
   const scorePercent = (props.score * 2) / 100;
-
+console.log(scorePercent, '')
   //most intense rgb(255, 101, 54)
   //least intense rgb(253, 186, 166)"
   const firstPath = {
     // 255 - 253 = 2
-    red: Math.floor(scorePercent * 2) + 253,
+    red: 255 - Math.floor(scorePercent * 2),
     // 186 - 101 = 85
-    green: Math.floor(scorePercent * 85) + 101,
+    green: 186 - Math.floor(scorePercent * 85),
     // 166 - 54 = 112
-    blue: Math.floor(scorePercent * 112) + 54,
+    blue: 166 - Math.floor(scorePercent * 112),
   };
   //most intense  rgb(255, 66, 29)
   //least intense  rgb(252, 145, 124)
   const secondPath = {
     // 255 - 252 = 3
-    red: Math.floor(scorePercent * 3) + 252,
+    red: 255 - Math.floor(scorePercent * 3),
     // 145 - 66 = 89
-    green: Math.floor(scorePercent * 81) + 66,
+    green: 145 - Math.floor(scorePercent * 81),
     // 124 - 29 = 95
-    blue: Math.floor(scorePercent * 95) + 29,
+    blue: 124 - Math.floor(scorePercent * 95),
   };
 
   //most intense rgb(251, 191, 0)
   //least intense rgb(250, 220, 124)"
   const thirdPath = {
     // 251 - 250 = 1
-    red: Math.floor(scorePercent * 1) + 250,
+    red: 251 - Math.floor(scorePercent * 1),
     // 220 - 191 = 29
-    green: Math.floor(scorePercent * 29) + 191,
+    green: 220 - Math.floor(scorePercent * 29),
     // 124 - 0 = 124
-    blue: Math.floor(scorePercent * 112) + 0,
+    blue: 124 - Math.floor(scorePercent * 112),
   };
 
   //most intense rgb(255, 169, 0)
   //least intense rgb(253, 227, 174)"
   const fourthPath = {
     // 255 - 253 = 2
-    red: Math.floor(scorePercent * 2) + 253,
+    red: 255 - Math.floor(scorePercent * 2),
     // 227 - 169 = 58
-    green: Math.floor(scorePercent * 58) + 169,
+    green: 227 - Math.floor(scorePercent * 58),
     // 174 - 0 = 174
-    blue: Math.floor(scorePercent * 174) + 0,
+    blue: 174 - Math.floor(scorePercent * 174),
   };
 
   console.log(firstPath, "firstPath");

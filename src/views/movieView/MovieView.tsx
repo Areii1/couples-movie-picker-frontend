@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { Process, Status } from "../../App";
-import { fontSizes, sizingScale } from "../../styles/Variables";
+import { borderRadius, fontSizes, sizingScale } from "../../styles/Variables";
 import { getMovieDetails } from "../../apiService/getMovieDetails";
 import { useParams } from "react-router-dom";
 import {
@@ -9,12 +9,12 @@ import {
   SecondaryHeadline,
   TertiaryHeadline,
 } from "../../styles/Styles";
-import { LikedMoviesListItem } from '../../types/Types';
+import { LikedMoviesListItem } from "../../types/Types";
 import { CardContentWrapper } from "../logIn/LogIn";
-import { HeartIcon } from "../../components/icons/HeartIcon";
-import { TransparentButton } from "../accountSettingsView/pictureSection/PictureSection";
 import { FireIcon } from "../../components/icons/FireIcon";
 import { ColdIcon } from "../../components/icons/ColdIcon";
+import { ProfileBall } from "../../components/profileBall/ProfileBall";
+import { bucketUrl } from "../../config/Config";
 
 type Props = {
   getCurrentSessionProcess: Process;
@@ -27,7 +27,6 @@ interface ParamTypes {
 }
 
 export const MovieView = (props: Props) => {
-  console.log(props, "props");
   const [
     getMovieDetailsProcess,
     setGetMovieDetailsProcess,
@@ -62,24 +61,23 @@ export const MovieView = (props: Props) => {
     }
   }, [props.getUserItemProcess.status]);
 
-  // const getEvaluatedMovieItem = () => {
-  //   if (props.getUserItemProcess.status === Status.SUCCESS) {
-  //     const evaluatedMovieItem = props.getUserItemProcess.data.likedMovies.L.find((likedMovie: LikedMoviesListItem) => likedMovie.M.id.S === getMovieDetailsProcess.data.id)
-  //     return evaluatedMovieItem;
-  //   } else {
-  //     return undefined;
-  //   }
-  // }
-
-  console.log(getMovieDetailsProcess, "getMovieDetailsProcess");
   if (
     getMovieDetailsProcess.status === Status.SUCCESS &&
     props.getUserItemProcess.status === Status.SUCCESS
   ) {
     const evaluatedMovieItem = props.getUserItemProcess.data.likedMovies.L.find(
-      (likedMovie: LikedMoviesListItem) =>
-        likedMovie.M.id.S === getMovieDetailsProcess.data.id
+      (likedMovie: LikedMoviesListItem) => {
+        console.log(
+          likedMovie.M.id.S,
+          getMovieDetailsProcess.data.id,
+          likedMovie.M.id.S === getMovieDetailsProcess.data.id
+        );
+        return (
+          parseInt(likedMovie.M.id.S, 10) === getMovieDetailsProcess.data.id
+        );
+      }
     );
+    console.log(evaluatedMovieItem, "evaluatedMovieItem");
     return (
       <Wrapper>
         <ImageSection>
@@ -89,21 +87,10 @@ export const MovieView = (props: Props) => {
           />
         </ImageSection>
         <MovieViewCardContentWrapper>
-          <HeadlineWrapper>
-            <PrimaryHeadline>
-              {getMovieDetailsProcess.data.original_title}
-            </PrimaryHeadline>
-            {evaluatedMovieItem && (
-              <>
-                {evaluatedMovieItem.M.score.N > 50 && (
-                  <FireIcon size={30} score={evaluatedMovieItem.M.score.N} />
-                )}
-                {evaluatedMovieItem.M.score.N <= 50 && (
-                  <ColdIcon size={30} score={evaluatedMovieItem.M.score.N} />
-                )}
-              </>
-            )}
-          </HeadlineWrapper>
+          <PrimaryHeadline>
+            {getMovieDetailsProcess.data.original_title}
+          </PrimaryHeadline>
+
           <InfoList>
             <InfoListItem>
               <InfoListItemText>
@@ -123,6 +110,47 @@ export const MovieView = (props: Props) => {
               </InfoListItemText>
             </InfoListItem>
           </InfoList>
+          {evaluatedMovieItem && (
+            <UserEvaluatedItemWrapper>
+              <UserEvaluatedItemWrapperContentWrapper>
+                <ProfileBall
+                  image={
+                    props.getUserItemProcess.status === Status.SUCCESS &&
+                    props.getUserItemProcess.data.profilePicture
+                      ? `${bucketUrl}/${props.getUserItemProcess.data.profilePicture.S}`
+                      : undefined
+                  }
+                  isCurrentUser={false}
+                  size={30}
+                  animate={false}
+                  showText
+                  shadow={false}
+                  border={false}
+                />
+                <IconWrapper>
+                  {parseInt(evaluatedMovieItem.M.score.N, 10) >= 50 && (
+                    <FireIcon
+                      size={30}
+                      score={parseInt(evaluatedMovieItem.M.score.N, 10) - 50}
+                    />
+                  )}
+                  <IconText
+                    score={parseInt(evaluatedMovieItem.M.score.N, 10) - 50}
+                  >
+                    {evaluatedMovieItem.M.score.N}
+                  </IconText>
+                </IconWrapper>
+                <IconWrapper>
+                  {evaluatedMovieItem.M.score.N < 50 && (
+                    <ColdIcon
+                      size={30}
+                      score={parseInt(evaluatedMovieItem.M.score.N, 10)}
+                    />
+                  )}
+                </IconWrapper>
+              </UserEvaluatedItemWrapperContentWrapper>
+            </UserEvaluatedItemWrapper>
+          )}
           <MovieViewSection>
             <SecondaryHeadline>Overview</SecondaryHeadline>
             <Text>{getMovieDetailsProcess.data.overview}</Text>
@@ -198,7 +226,38 @@ const InfoListItem = styled.li`
   margin: 0 ${`${sizingScale[1]}px`};
 `;
 
-const HeadlineWrapper = styled.div`
+const IconWrapper = styled.div`
   display: flex;
-  text-align: center;
+  align-items: center;
+`;
+
+type IconTextProps = {
+  score: number;
+};
+const getRedColor = (score: number) => {
+  return 255 - Math.floor(score * 2);
+};
+const getGreenColor = (score: number) => {
+  return 186 - Math.floor(score * 85);
+};
+const getBlueColor = (score: number) => {
+  return 166 - Math.floor(score * 112);
+};
+const IconText = styled.h5`
+  margin: 0;
+  color: ${(props: IconTextProps) =>
+    `rgb(${getRedColor(props.score / 50)},${getGreenColor(
+      props.score / 50
+    )},${getBlueColor(props.score / 50)})`};
+`;
+
+const UserEvaluatedItemWrapper = styled.div`
+  display: inline-block;
+  padding: ${`${sizingScale[2]}px`} ${`${sizingScale[3]}px`};
+  border-radius: ${`${borderRadius}px`};
+  border: 1px solid lightgray;
+`;
+
+const UserEvaluatedItemWrapperContentWrapper = styled.div`
+  display: flex;
 `;

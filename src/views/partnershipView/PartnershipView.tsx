@@ -225,8 +225,8 @@ export const ButtonsWrapper = styled.div`
 const MovieListTriggerButton = styled.button`
   width: 100%;
   background-color: white;
-  padding: ${`${sizingScale[2]}px`} ${`${sizingScale[3]}px`};
   text-align: start;
+  padding: ${`${sizingScale[2]}px`} ${`${sizingScale[3]}px`};
   border-radius: ${`${borderRadius}px`};
   border: 1px solid gray;
   display: flex;

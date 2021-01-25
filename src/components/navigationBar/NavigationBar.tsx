@@ -25,7 +25,7 @@ export const NavigationBar = (props: Props) => {
       <ListItem>
         <Link to="/" title="like">
           <IconWrapper>
-            <FireIcon size={sizingScale[6]} score={0} />
+            <FireIcon size={sizingScale[6]} score={50} />
           </IconWrapper>
         </Link>
       </ListItem>

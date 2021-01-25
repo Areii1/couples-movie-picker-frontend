@@ -25,7 +25,7 @@ export const FireMeter = (props: Props) => {
   return (
     <Wrapper>
       <HotIconButton onClick={handleHotIconButtonClick} title="awesome">
-        <FireIcon size={sizingScale[6]} />
+        <FireIcon size={sizingScale[6]} score={25} />
       </HotIconButton>
       <ColdIconButton onClick={handleColdIconButtonClick} title="horrible">
         <ColdIcon size={sizingScale[6]} />

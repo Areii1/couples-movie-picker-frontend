@@ -9,7 +9,12 @@ import {
   SecondaryHeadline,
   TertiaryHeadline,
 } from "../../styles/Styles";
+import { LikedMoviesListItem } from '../../types/Types';
 import { CardContentWrapper } from "../logIn/LogIn";
+import { HeartIcon } from "../../components/icons/HeartIcon";
+import { TransparentButton } from "../accountSettingsView/pictureSection/PictureSection";
+import { FireIcon } from "../../components/icons/FireIcon";
+import { ColdIcon } from "../../components/icons/ColdIcon";
 
 type Props = {
   getCurrentSessionProcess: Process;
@@ -57,10 +62,13 @@ export const MovieView = (props: Props) => {
     }
   }, [props.getUserItemProcess.status]);
 
-  // const getGenresList = (genres: any[]) => {
-  //   return genres.map((genre: any) => {
-  //     <
-  //   })
+  // const getEvaluatedMovieItem = () => {
+  //   if (props.getUserItemProcess.status === Status.SUCCESS) {
+  //     const evaluatedMovieItem = props.getUserItemProcess.data.likedMovies.L.find((likedMovie: LikedMoviesListItem) => likedMovie.M.id.S === getMovieDetailsProcess.data.id)
+  //     return evaluatedMovieItem;
+  //   } else {
+  //     return undefined;
+  //   }
   // }
 
   console.log(getMovieDetailsProcess, "getMovieDetailsProcess");
@@ -68,6 +76,10 @@ export const MovieView = (props: Props) => {
     getMovieDetailsProcess.status === Status.SUCCESS &&
     props.getUserItemProcess.status === Status.SUCCESS
   ) {
+    const evaluatedMovieItem = props.getUserItemProcess.data.likedMovies.L.find(
+      (likedMovie: LikedMoviesListItem) =>
+        likedMovie.M.id.S === getMovieDetailsProcess.data.id
+    );
     return (
       <Wrapper>
         <ImageSection>
@@ -77,9 +89,21 @@ export const MovieView = (props: Props) => {
           />
         </ImageSection>
         <MovieViewCardContentWrapper>
-          <PrimaryHeadline>
-            {getMovieDetailsProcess.data.original_title}
-          </PrimaryHeadline>
+          <HeadlineWrapper>
+            <PrimaryHeadline>
+              {getMovieDetailsProcess.data.original_title}
+            </PrimaryHeadline>
+            {evaluatedMovieItem && (
+              <>
+                {evaluatedMovieItem.M.score.N > 50 && (
+                  <FireIcon size={30} score={evaluatedMovieItem.M.score.N} />
+                )}
+                {evaluatedMovieItem.M.score.N <= 50 && (
+                  <ColdIcon size={30} score={evaluatedMovieItem.M.score.N} />
+                )}
+              </>
+            )}
+          </HeadlineWrapper>
           <InfoList>
             <InfoListItem>
               <InfoListItemText>
@@ -172,4 +196,9 @@ const InfoList = styled.ul`
 const InfoListItem = styled.li`
   padding: 0;
   margin: 0 ${`${sizingScale[1]}px`};
+`;
+
+const HeadlineWrapper = styled.div`
+  display: flex;
+  text-align: center;
 `;

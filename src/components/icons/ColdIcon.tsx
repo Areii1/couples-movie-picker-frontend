@@ -3,6 +3,7 @@ import styled, { keyframes } from "styled-components";
 
 type Props = {
   size: number;
+  score?: number;
 };
 
 export const ColdIcon = (props: Props) => {

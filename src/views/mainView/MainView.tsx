@@ -151,7 +151,6 @@ export const MainView = (props: Props) => {
         }
       }
     );
-    console.log(filteredList, 'filteredList');
     return (
       <Wrapper>
         <ImageSection>

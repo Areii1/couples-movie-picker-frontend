@@ -3,13 +3,11 @@ import styled, { keyframes } from "styled-components";
 
 type Props = {
   size: number;
-  // 1 - 50
   score: number;
 };
 
 export const FireIcon = (props: Props) => {
   const scorePercent = (props.score * 2) / 100;
-console.log(scorePercent, '')
   //most intense rgb(255, 101, 54)
   //least intense rgb(253, 186, 166)"
   const firstPath = {
@@ -53,10 +51,6 @@ console.log(scorePercent, '')
     blue: 174 - Math.floor(scorePercent * 174),
   };
 
-  console.log(firstPath, "firstPath");
-  console.log(secondPath, "second");
-  console.log(thirdPath, "thirdPath");
-  console.log(fourthPath, "fourthPath");
   return (
     <Svg
       version="1.1"
@@ -69,8 +63,6 @@ console.log(scorePercent, '')
       xmlSpace="preserve"
     >
       <path
-        // rgb(255, 101, 54)
-        // fill="rgb(253, 186, 166)"
         fill={`rgb(${firstPath.red},${firstPath.green},${firstPath.blue})`}
         d="M54.211,249.7c0,0,20.228,29.717,62.624,54.871c0,0-30.705-259.502,169.358-304.571
       c-51.257,188.121,65.2,241.174,107.651,141.786c70.893,94.651,17.066,177.229,17.066,177.229
@@ -78,24 +70,18 @@ console.log(scorePercent, '')
       S47.262,418.545,47.262,303.262C47.262,284.744,49.686,266.794,54.211,249.7z"
       />
       <path
-        // " rgb(255, 66, 29)"
-        // fill=" rgb(252, 145, 124)"
         fill={`rgb(${secondPath.red},${secondPath.green},${secondPath.blue})`}
         d="M464.398,291.445c0,0-24.418,31.758-53.487,27.57c0,0,53.827-82.578-17.066-177.229
       C351.394,241.174,234.937,188.121,286.194,0C275.479,2.414,265.431,5.447,256,9.018V512c115.283,0,208.738-93.455,208.738-208.738
       C464.738,299.295,464.616,295.357,464.398,291.445z"
       />
       <path
-        // rgb(251, 191, 0)"
-        // fill="rgb(250, 220, 124)"
         fill={`rgb(${thirdPath.red},${thirdPath.green},${thirdPath.blue})`}
         d="M164.456,420.456C164.456,471.014,205.442,512,256,512s91.544-40.986,91.544-91.544
       c0-27.061-11.741-51.379-30.408-68.138c-35.394,48.085-85.832-24.856-46.524-78.122
       C270.612,274.196,164.456,287.499,164.456,420.456z"
       />
       <path
-        // "rgb(255, 169, 0)"
-        // fill="rgb(253, 227, 174)"
         fill={`rgb(${fourthPath.red},${fourthPath.green},${fourthPath.blue})`}
         d="M347.544,420.456c0-27.061-11.741-51.379-30.408-68.138c-35.394,48.085-85.832-24.856-46.524-78.122
       c0,0-5.768,0.725-14.612,3.516V512C306.558,512,347.544,471.014,347.544,420.456z"

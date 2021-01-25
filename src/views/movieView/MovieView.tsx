@@ -11,6 +11,8 @@ import {
 } from "../../styles/Styles";
 import { CardContentWrapper } from "../logIn/LogIn";
 import { UserEvaluationItem } from "./userEvaluationItem/UserEvaluationItem";
+import { getEvaluatedMovieItem } from "./MovieViewUtilityFunctions";
+import { AnimateType, HeartIcon } from "../../components/icons/HeartIcon";
 
 type Props = {
   getCurrentSessionProcess: Process;
@@ -57,10 +59,62 @@ export const MovieView = (props: Props) => {
     }
   }, [props.getUserItemProcess.status]);
 
+  const getGenresStr = () => {
+    if (getMovieDetailsProcess.status === Status.SUCCESS) {
+      if (getMovieDetailsProcess.data.genres.length > 3) {
+        const filteredList = getMovieDetailsProcess.data.genres.filter(
+          (detail: any, index: number) => index < 3
+        );
+        return filteredList.map((genre: any) => genre.name).join(", ");
+      } else {
+        return getMovieDetailsProcess.data.genres
+          .map((genre: any) => genre.name)
+          .join(", ");
+      }
+    } else {
+      return "";
+    }
+  };
+
+  const getRuntimeStr = () => {
+    if (getMovieDetailsProcess.status === Status.SUCCESS) {
+      if (getMovieDetailsProcess.data.runtime > 60) {
+        const hours = Math.floor(getMovieDetailsProcess.data.runtime / 60);
+        const minutes = getMovieDetailsProcess.data.runtime - hours * 60;
+        return `${hours}h${minutes}min`;
+      } else {
+        return `${getMovieDetailsProcess.data.runtime}min`;
+      }
+    }
+  };
+
+  const getIsMatched = () => {
+    const userEvaluatedItem = getEvaluatedMovieItem(
+      props.getUserItemProcess,
+      getMovieDetailsProcess
+    );
+    console.log(userEvaluatedItem, "userEvaluatedItem");
+    const partnerEvaluatedItem = getEvaluatedMovieItem(
+      props.getPairedUserProcess,
+      getMovieDetailsProcess
+    );
+    console.log(partnerEvaluatedItem, "partnerEvaluatedItem");
+    if (userEvaluatedItem !== undefined && partnerEvaluatedItem !== undefined) {
+      return (
+        parseInt(userEvaluatedItem.M.score.N, 10) >= 50 &&
+        parseInt(partnerEvaluatedItem.M.score.N, 10) >= 50
+      );
+    } else {
+      return false;
+    }
+  };
+
   if (
     getMovieDetailsProcess.status === Status.SUCCESS &&
     props.getUserItemProcess.status === Status.SUCCESS
   ) {
+    const movieIsMatched = getIsMatched();
+    console.log(movieIsMatched, "movieIsMatched");
     return (
       <Wrapper>
         <ImageSection>
@@ -76,31 +130,42 @@ export const MovieView = (props: Props) => {
 
           <InfoList>
             <InfoListItem>
-              <InfoListItemText>
-                {`${getMovieDetailsProcess.data.runtime}min`}
+              <InfoListItemText title={getRuntimeStr()}>
+                {getRuntimeStr()}
               </InfoListItemText>
             </InfoListItem>
             <InfoListItem>
-              <InfoListItemText>
-                {getMovieDetailsProcess.data.genres
-                  .map((genre: any) => genre.name)
-                  .join(", ")}
-              </InfoListItemText>
+              <InfoListItemText>{getGenresStr()}</InfoListItemText>
             </InfoListItem>
             <InfoListItem>
-              <InfoListItemText>
-                {getMovieDetailsProcess.data.release_date}
+              <InfoListItemText
+                title={getMovieDetailsProcess.data.release_date}
+              >
+                {getMovieDetailsProcess.data.release_date.split("-")[0]}
               </InfoListItemText>
             </InfoListItem>
           </InfoList>
-          <UserEvaluationItem
-            getMovieDetailsProcess={getMovieDetailsProcess}
-            getUserItemProcess={props.getUserItemProcess}
-          />
-          <UserEvaluationItem
-            getMovieDetailsProcess={getMovieDetailsProcess}
-            getUserItemProcess={props.getPairedUserProcess}
-          />
+          <UserEvaluationWrapper>
+            <UserEvaluationItemWrapper>
+              {movieIsMatched && (
+                <HeartIcon size={40} isRed={false} animate={AnimateType.NONE} />
+              )}
+              <MovieTertiaryHeadline>Matched</MovieTertiaryHeadline>
+            </UserEvaluationItemWrapper>
+            <UserEvaluationItemWrapper>
+              <UserEvaluationItem
+                getMovieDetailsProcess={getMovieDetailsProcess}
+                getUserItemProcess={props.getUserItemProcess}
+              />
+            </UserEvaluationItemWrapper>
+            <UserEvaluationItemWrapper>
+              <UserEvaluationItem
+                getMovieDetailsProcess={getMovieDetailsProcess}
+                getUserItemProcess={props.getPairedUserProcess}
+              />
+            </UserEvaluationItemWrapper>
+          </UserEvaluationWrapper>
+
           <MovieViewSection>
             <SecondaryHeadline>Overview</SecondaryHeadline>
             <Text>{getMovieDetailsProcess.data.overview}</Text>
@@ -169,9 +234,22 @@ const MovieTertiaryHeadline = styled(TertiaryHeadline)`
 const InfoList = styled.ul`
   list-style-type: none;
   display: flex;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
 `;
 
 const InfoListItem = styled.li`
   padding: 0;
   margin: 0 ${`${sizingScale[1]}px`};
+`;
+
+const UserEvaluationWrapper = styled.div`
+  margin-top: ${`${sizingScale[6]}px`};
+  display: flex;
+  align-items: center;
+`;
+
+const UserEvaluationItemWrapper = styled.div`
+  margin-right: ${`${sizingScale[3]}px`};
 `;

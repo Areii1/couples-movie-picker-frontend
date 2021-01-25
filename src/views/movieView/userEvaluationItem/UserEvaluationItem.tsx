@@ -5,8 +5,8 @@ import { FireIcon } from "../../../components/icons/FireIcon";
 import { ColdIcon } from "../../../components/icons/ColdIcon";
 import { ProfileBall } from "../../../components/profileBall/ProfileBall";
 import { bucketUrl } from "../../../config/Config";
-import { LikedMoviesListItem } from "../../../types/Types";
 import { borderRadius, sizingScale } from "../../../styles/Variables";
+import { getEvaluatedMovieItem } from "../MovieViewUtilityFunctions";
 
 type Props = {
   getUserItemProcess: GetUserItemProcess;
@@ -19,17 +19,9 @@ export const UserEvaluationItem = (props: Props) => {
     props.getMovieDetailsProcess.status === Status.SUCCESS &&
     props.getUserItemProcess.data.likedMovies
   ) {
-    const evaluatedMovieItem = props.getUserItemProcess.data.likedMovies.L.find(
-      (likedMovie: LikedMoviesListItem) => {
-        if (props.getMovieDetailsProcess.status === Status.SUCCESS) {
-          return (
-            parseInt(likedMovie.M.id.S, 10) ===
-            props.getMovieDetailsProcess.data.id
-          );
-        } else {
-          return false;
-        }
-      }
+    const evaluatedMovieItem = getEvaluatedMovieItem(
+      props.getUserItemProcess,
+      props.getMovieDetailsProcess
     );
     if (evaluatedMovieItem !== undefined) {
       return (

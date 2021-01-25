@@ -310,6 +310,7 @@ export const App = () => {
                     getUserItemProcess={getUserItemProcess}
                     getCurrentSessionProcess={getCurrentSessionProcess}
                     getUserItem={getUserItem}
+                    getPairedUserProcess={getPairedUserProcess}
                   />
                 </div>
               </CSSTransition>

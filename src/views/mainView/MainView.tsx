@@ -14,11 +14,6 @@ type Props = {
 };
 
 export const MainView = (props: Props) => {
-  const [fireMeterSwitch, setFireMeterSwitch] = React.useState<any>({
-    position: 50,
-    locked: false,
-  });
-
   const [
     getTrendingMoviesProcess,
     setGetTrendingMoviesProcess,
@@ -47,63 +42,32 @@ export const MainView = (props: Props) => {
     }
   };
 
-  const evualuateItem = async (movieId: string) => {
+  const evaluateItem = async (movieId: string, score: number) => {
     if (
       props.getCurrentSessionProcess.status === Status.SUCCESS &&
-      getTrendingMoviesProcess.status === Status.SUCCESS
+      getTrendingMoviesProcess.status === Status.SUCCESS &&
+      likeMovieProcess.status !== Status.LOADING
     ) {
       try {
         setLikeMovieProcess({ status: Status.LOADING });
         const likeMovieResponse = await evaluateMovie(
           props.getCurrentSessionProcess.data.getIdToken().getJwtToken(),
           movieId,
-          fireMeterSwitch.position
+          score
         );
+        console.log(likeMovieResponse, "likeMovieResponse");
         setSwipingIndex(swipingIndex + 1);
-        setFireMeterSwitch({ position: 50, locked: false });
         setLikeMovieProcess({
           status: Status.SUCCESS,
           data: likeMovieResponse,
         });
       } catch (likeMovieError) {
+        console.log(likeMovieError, "likeMovieError");
         alert("failed to evaluate movie");
         setSwipingIndex(swipingIndex + 1);
-        setFireMeterSwitch({ position: 50, locked: false });
         setLikeMovieProcess({
           status: Status.ERROR,
           error: likeMovieError,
-        });
-      }
-    }
-  };
-
-  const keyDownHandler = (event: any) => {
-    if (!fireMeterSwitch.locked) {
-      if (event.key === "ArrowLeft") {
-        setFireMeterSwitch((freshState: any) => {
-          if (freshState.position - 5 <= 0) {
-            return {
-              position: 0,
-              locked: false,
-            };
-          }
-          return {
-            position: freshState.position - 5,
-            locked: false,
-          };
-        });
-      } else if (event.key === "ArrowRight") {
-        setFireMeterSwitch((freshState: any) => {
-          if (freshState.position + 5 >= 100) {
-            return {
-              position: 100,
-              locked: false,
-            };
-          }
-          return {
-            position: freshState.position + 5,
-            locked: false,
-          };
         });
       }
     }
@@ -119,10 +83,6 @@ export const MainView = (props: Props) => {
         props.getCurrentSessionProcess.data.getIdToken().getJwtToken()
       );
     }
-    window.addEventListener("keydown", keyDownHandler);
-    return () => {
-      window.removeEventListener("keyDown", keyDownHandler);
-    };
   }, []);
 
   React.useEffect(() => {
@@ -153,20 +113,24 @@ export const MainView = (props: Props) => {
     );
     return (
       <Wrapper>
-        <ImageSection>
-          <Image
-            src={`https://image.tmdb.org/t/p/w500/${filteredList[swipingIndex].backdrop_path}`}
-            alt={filteredList[swipingIndex].original_title}
-          />
-        </ImageSection>
-        <DetailsSection>
-          <Title>{filteredList[swipingIndex].original_title}</Title>
-          <FireMeter
-            fireMeterSwitch={fireMeterSwitch}
-            setFireMeterSwitch={setFireMeterSwitch}
-            evualuateItem={() => evualuateItem(filteredList[swipingIndex].id)}
-          />
-        </DetailsSection>
+        {filteredList.length > 0 && (
+          <div>
+            <ImageSection>
+              <Image
+                src={`https://image.tmdb.org/t/p/w500/${filteredList[swipingIndex].backdrop_path}`}
+                alt={filteredList[swipingIndex].original_title}
+              />
+            </ImageSection>
+            <DetailsSection>
+              <Title>{filteredList[swipingIndex].original_title}</Title>
+              <FireMeter
+                evaluateItem={evaluateItem}
+                movieId={filteredList[swipingIndex].id}
+              />
+            </DetailsSection>
+          </div>
+        )}
+        {filteredList.length === 0 && <h5>everything swiped</h5>}
       </Wrapper>
     );
   } else {

@@ -84,6 +84,7 @@ export const PartnershipView = (props: Props) => {
     });
   };
 
+  console.log(props, "props");
   return (
     <PartnershipCardContentWrapper>
       <PrimaryHeadline>Partner</PrimaryHeadline>
@@ -117,9 +118,7 @@ export const PartnershipView = (props: Props) => {
             />
           )}
           {props.getUserItemProcess.status === Status.SUCCESS &&
-            props.getUserItemProcess.data.likedMovies &&
-            props.getPairedUserProcess.status === Status.SUCCESS &&
-            props.getPairedUserProcess.data.likedMovies && (
+            props.getUserItemProcess.data.likedMovies && (
               <LikedMoviesWrapper>
                 <SecondaryHeadline>Likes</SecondaryHeadline>
                 <>
@@ -166,13 +165,13 @@ export const PartnershipView = (props: Props) => {
                       </MovieListWrapper>
                     )}
                 </>
-                {isPartnered && (
-                  // <TextWrapper>
+                {isPartnered &&
+                  props.getPairedUserProcess.status === Status.SUCCESS &&
+                  props.getPairedUserProcess.data.likedMovies && (
                     <Link to="matches">
                       <p>view matched movies</p>
                     </Link>
-                  // </TextWrapper>
-                )}
+                  )}
               </LikedMoviesWrapper>
             )}
         </div>
@@ -269,7 +268,3 @@ const LikedMoviesWrapper = styled.div`
 const MovieListWrapper = styled.div`
   margin-top: ${`${sizingScale[3]}px`};
 `;
-
-// const TextWrapper = styled.div`
-//   text-align: start;
-// `;

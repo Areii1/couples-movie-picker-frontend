@@ -48,9 +48,6 @@ export const UserEvaluationItem = (props: Props) => {
                   score={parseInt(evaluatedMovieItem.M.score.N, 10) - 50}
                 />
               )}
-              <IconText score={parseInt(evaluatedMovieItem.M.score.N, 10) - 50}>
-                {evaluatedMovieItem.M.score.N}
-              </IconText>
             </IconWrapper>
             <IconWrapper>
               {parseInt(evaluatedMovieItem.M.score.N) < 50 && (
@@ -60,6 +57,9 @@ export const UserEvaluationItem = (props: Props) => {
                 />
               )}
             </IconWrapper>
+            <IconText score={parseInt(evaluatedMovieItem.M.score.N, 10) - 50}>
+              {evaluatedMovieItem.M.score.N}
+            </IconText>
           </UserEvaluatedItemWrapperContentWrapper>
         </UserEvaluatedItemWrapper>
       );
@@ -105,4 +105,5 @@ const UserEvaluatedItemWrapper = styled.div`
 
 const UserEvaluatedItemWrapperContentWrapper = styled.div`
   display: flex;
+  align-items: center;
 `;

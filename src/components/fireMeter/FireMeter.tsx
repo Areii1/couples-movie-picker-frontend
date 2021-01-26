@@ -1,12 +1,14 @@
 import React from "react";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import { FireIcon } from "../icons/FireIcon";
 import { ColdIcon } from "../icons/ColdIcon";
 import { sizingScale } from "../../styles/Variables";
+import { Process, Status } from "../../App";
 
 type Props = {
   evaluateItem: (movieId: string, score: number) => void;
   movieId: string;
+  likeMovieProcess: Process;
 };
 
 export const FireMeter = (props: Props) => {
@@ -19,15 +21,14 @@ export const FireMeter = (props: Props) => {
   const [startingScore, setStartingScore] = React.useState<number>(50);
 
   const handleHotIconButtonClick = () => {
-    setScore(50);
+    setScore(0);
     props.evaluateItem(props.movieId, 0);
   };
   const handleColdIconButtonClick = () => {
-    setScore(50);
+    setScore(100);
     props.evaluateItem(props.movieId, 100);
   };
   const switchButtonClick = () => {
-    setScore(50);
     props.evaluateItem(props.movieId, score);
   };
 
@@ -38,7 +39,7 @@ export const FireMeter = (props: Props) => {
   };
 
   const handleOnMouseUp = (event: any) => {
-    setScore(50);
+    setIsDragging(false);
     props.evaluateItem(props.movieId, score);
   };
 
@@ -97,15 +98,31 @@ export const FireMeter = (props: Props) => {
       document.onmousemove = () => {};
     };
   }, []);
+
+  React.useEffect(() => {
+    if (props.likeMovieProcess.status === Status.SUCCESS) {
+      setScore(50);
+    }
+  }, [props.likeMovieProcess.status])
+  
   return (
     <Wrapper
       onMouseUp={handleOnMouseUp}
       onMouseLeave={() => setIsDragging(false)}
+      isLoading={props.likeMovieProcess.status === Status.LOADING}
     >
-      <ColdIconButton onClick={handleHotIconButtonClick} title="awesome">
+      <ColdIconButton
+        onClick={handleHotIconButtonClick}
+        title="awesome"
+        disabled={props.likeMovieProcess.status === Status.LOADING}
+      >
         <ColdIcon size={sizingScale[6]} />
       </ColdIconButton>
-      <HotIconButton onClick={handleColdIconButtonClick} title="horrible">
+      <HotIconButton
+        onClick={handleColdIconButtonClick}
+        title="horrible"
+        disabled={props.likeMovieProcess.status === Status.LOADING}
+      >
         <FireIcon size={sizingScale[6]} score={50} />
       </HotIconButton>
       <MeterSwitchButton
@@ -113,11 +130,32 @@ export const FireMeter = (props: Props) => {
         onMouseDown={handleOnMouseDown}
         isDragging={isDragging}
         score={score}
+        disabled={props.likeMovieProcess.status === Status.LOADING}
       >
         <h5>{score}</h5>
       </MeterSwitchButton>
     </Wrapper>
   );
+};
+
+type WrapperProps = {
+  isLoading: boolean;
+};
+
+const getWrapperBackground = (isLoading: boolean) => {
+  if (isLoading) {
+    return css`
+      background: gray;
+    `;
+  } else {
+    return css`
+      background: linear-gradient(
+        90deg,
+        rgba(8, 82, 151, 1) 0%,
+        rgba(220, 106, 1, 1) 100%
+      );
+    `;
+  }
 };
 
 const Wrapper = styled.div`
@@ -127,20 +165,17 @@ const Wrapper = styled.div`
   margin: ${`${sizingScale[8]}px`} auto 0 auto;
   width: ${`${sizingScale[11]}px`};
   height: ${`${sizingScale[5]}px`};
-  background: rgb(220, 106, 1);
-  background: linear-gradient(
-    90deg,
-    rgba(8, 82, 151, 1) 0%,
-    rgba(220, 106, 1, 1) 100%
-  );
+  ${(props: WrapperProps) => getWrapperBackground(props.isLoading)}
   border-radius: ${`${sizingScale[5]}px`};
 `;
 
-const ColdIconButton = styled.div`
+const ColdIconButton = styled.button`
   width: ${`${sizingScale[6]}px`};
   height: ${`${sizingScale[6]}px`};
   margin: ${`${sizingScale[2] * -1}px`} 0 0 ${`${sizingScale[3] * -1}px`};
   cursor: pointer;
+  border: none;
+  background-color: transparent;
 `;
 
 const HotIconButton = styled(ColdIconButton)`
@@ -166,6 +201,7 @@ const getMeterSwitchPxPosition = (fireMeterSwitchPosition: any) => {
 type MeterSwitchButtonProps = {
   isDragging: boolean;
   score: number;
+  disabled: boolean;
 };
 
 const MeterSwitchButton = styled.button`

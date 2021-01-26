@@ -148,9 +148,22 @@ export const MovieView = (props: Props) => {
           <UserEvaluationWrapper>
             <UserEvaluationItemWrapper>
               {movieIsMatched && (
-                <HeartIcon size={40} isRed={false} animate={AnimateType.NONE} />
+                <>
+                  <HeartIcon
+                    size={40}
+                    isRed={false}
+                    animate={AnimateType.NONE}
+                  />
+                  <MovieTertiaryHeadline color="green">
+                    Matched
+                  </MovieTertiaryHeadline>
+                </>
               )}
-              <MovieTertiaryHeadline>Matched</MovieTertiaryHeadline>
+              {!movieIsMatched && (
+                <MovieTertiaryHeadline color="salmon">
+                  Not matched
+                </MovieTertiaryHeadline>
+              )}
             </UserEvaluationItemWrapper>
             <UserEvaluationItemWrapper>
               <UserEvaluationItem
@@ -173,7 +186,9 @@ export const MovieView = (props: Props) => {
           <MovieViewSection>
             <SecondaryHeadline>Details</SecondaryHeadline>
             <DetailItemWrapper>
-              <MovieTertiaryHeadline>duration</MovieTertiaryHeadline>
+              <MovieTertiaryHeadline color="gray">
+                duration
+              </MovieTertiaryHeadline>
               <Text>{getMovieDetailsProcess.data.runtime}</Text>
             </DetailItemWrapper>
           </MovieViewSection>
@@ -227,8 +242,12 @@ const InfoListItemText = styled.h6`
   color: gray;
 `;
 
+type HeadlineProps = {
+  color: string;
+};
+
 const MovieTertiaryHeadline = styled(TertiaryHeadline)`
-  color: gray;
+  color: ${(props: HeadlineProps) => props.color};
 `;
 
 const InfoList = styled.ul`

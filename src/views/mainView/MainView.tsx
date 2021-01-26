@@ -126,6 +126,7 @@ export const MainView = (props: Props) => {
               <FireMeter
                 evaluateItem={evaluateItem}
                 movieId={filteredList[swipingIndex].id}
+                likeMovieProcess={likeMovieProcess}
               />
             </DetailsSection>
           </div>

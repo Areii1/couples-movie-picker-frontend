@@ -22,11 +22,11 @@ export const FireMeter = (props: Props) => {
 
   const handleHotIconButtonClick = () => {
     setScore(0);
-    props.evaluateItem(props.movieId, 0);
+    props.evaluateItem(props.movieId, 100);
   };
   const handleColdIconButtonClick = () => {
     setScore(100);
-    props.evaluateItem(props.movieId, 100);
+    props.evaluateItem(props.movieId, 0);
   };
   const switchButtonClick = () => {
     props.evaluateItem(props.movieId, score);

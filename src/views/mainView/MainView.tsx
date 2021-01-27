@@ -3,9 +3,10 @@ import styled, { keyframes, css } from "styled-components";
 import { Process, Status } from "../../App";
 import { FireMeter } from "../../components/fireMeter/FireMeter";
 import { PrimaryHeadline } from "../../styles/Styles";
-import { sizingScale } from "../../styles/Variables";
+import { borderRadius, sizingScale } from "../../styles/Variables";
 import { getTrendingMovies } from "../../apiService/getTrendingMovies";
 import { evaluateMovie } from "../../apiService/evaluateMovie";
+import { AnimateType, HeartIcon } from "../../components/icons/HeartIcon";
 
 type Props = {
   getCurrentSessionProcess: Process;
@@ -122,21 +123,61 @@ export const MainView = (props: Props) => {
         }
       }
     );
+
+    const getImageSrc = () => {
+      if (likeMovieProcess.status === Status.LOADING) {
+        if (filteredList[swipingIndex + 1] !== undefined) {
+          return `https://image.tmdb.org/t/p/w500/${
+            filteredList[swipingIndex + 1].backdrop_path
+          }`;
+        } else {
+          return "";
+        }
+      } else {
+        return `https://image.tmdb.org/t/p/w500/${filteredList[swipingIndex].backdrop_path}`;
+      }
+    };
+
+    const getImageAlt = () => {
+      if (likeMovieProcess.status === Status.LOADING) {
+        if (filteredList[swipingIndex + 1] !== undefined) {
+          return filteredList[swipingIndex + 1].original_title;
+        } else {
+          return "";
+        }
+      } else {
+        return filteredList[swipingIndex].original_title;
+      }
+    };
+
     return (
       <Wrapper>
         {filteredList.length > 0 && (
           <div>
             <ImageSection>
-              <Image
-                src={`https://image.tmdb.org/t/p/w500/${filteredList[swipingIndex].backdrop_path}`}
-                alt={filteredList[swipingIndex].original_title}
-                isLoading={likeMovieProcess.status === Status.LOADING}
-                score={
-                  likeMovieProcess.status === Status.LOADING
-                    ? likeMovieProcess.score
-                    : 50
-                }
-              />
+              <Image src={getImageSrc()} alt={getImageAlt()} />
+              {likeMovieProcess.status === Status.LOADING && (
+                <SwipingImageWrapper score={likeMovieProcess.score}>
+                  <SwipingImageContentWrapper>
+                    <SwipingImageIconWrapper>
+                      {likeMovieProcess.score >= 50 && (
+                        <HeartIcon
+                          size={sizingScale[8]}
+                          isRed={false}
+                          animate={AnimateType.NONE}
+                        />
+                      )}
+                      {likeMovieProcess.score < 50 && (
+                        <SwipingMark>✕</SwipingMark>
+                      )}
+                    </SwipingImageIconWrapper>
+                    <Image
+                      src={`https://image.tmdb.org/t/p/w500/${filteredList[swipingIndex].backdrop_path}`}
+                      alt={filteredList[swipingIndex].original_title}
+                    />
+                  </SwipingImageContentWrapper>
+                </SwipingImageWrapper>
+              )}
             </ImageSection>
             <DetailsSection>
               <Title>{filteredList[swipingIndex].original_title}</Title>
@@ -162,7 +203,6 @@ const Wrapper = styled.div`
 
 const ImageSection = styled.div`
   margin: ${`${sizingScale[6] * -1}px`} 0 0 ${`${sizingScale[6] * -1}px`};
-  text-align: center;
   height: ${`${sizingScale[11]}px`};
   position: relative;
 `;
@@ -200,37 +240,66 @@ const slideImageLeft = keyframes`
     opacity: 1;
   }
   to {
-    top: ${`${sizingScale[3] * -1}px`};
+    top: ${`${sizingScale[4] * -1}px`};
     left: ${`${sizingScale[12] * -1}px`};
     opacity: 0;
   }
 `;
 
-type ImageProps = {
-  isLoading: boolean;
-  score: number;
-};
-
-const getAnimation = (isLoading: boolean, score: number) => {
-  if (isLoading) {
-    if (score >= 50) {
-      return css`
-        animation: ${slideImageRight} 0.5s linear forwards;
-      `;
-    } else {
-      return css`
-        animation: ${slideImageLeft} 0.5s linear forwards;
-      `;
-    }
+const getAnimation = (score: number) => {
+  if (score >= 50) {
+    return css`
+      animation: ${slideImageRight} 0.5s linear forwards;
+    `;
+  } else {
+    return css`
+      animation: ${slideImageLeft} 0.5s linear forwards;
+    `;
   }
 };
 
+const fadeOut = keyframes`
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+`;
+
 const Image = styled.img`
+  border-top-left-radius: ${`${borderRadius}px`};
+  border-top-right-radius: ${`${borderRadius}px`};
+  max-height: ${`${sizingScale[11]}px`};
+  width: ${`${sizingScale[13]}px`};
+`;
+
+type SwipingImageWrapperProps = {
+  score: number;
+};
+
+const SwipingImageWrapper = styled.div`
   position: absolute;
   top: 0;
   left: 0;
-  z-index: 5;
-  max-height: ${`${sizingScale[11]}px`};
+  height: ${`${sizingScale[11]}px`};
   width: ${`${sizingScale[13]}px`};
-  ${(props: ImageProps) => getAnimation(props.isLoading, props.score)}
+  ${(props: SwipingImageWrapperProps) => getAnimation(props.score)}
+`;
+
+const SwipingImageIconWrapper = styled.div`
+  position: absolute;
+  top: ${`calc(50% - ${sizingScale[8] / 2}px)`};
+  left: ${`calc(50% - ${sizingScale[8] / 2}px)`};
+  animation: ${fadeOut} 0.5s linear forwards;
+`;
+
+const SwipingImageContentWrapper = styled.div`
+  position: relative;
+`;
+
+const SwipingMark = styled.h5`
+  color: salmon;
+  font-size: ${`${sizingScale[10]}px`};
+  margin: 0;
 `;

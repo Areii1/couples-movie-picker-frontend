@@ -339,7 +339,6 @@ const MainCard = styled.div`
   min-height: ${`${sizingScale[17]}px`};
   display: flex;
   justify-content: start;
-  overflow: hidden;
   box-shadow: 10px 5px 5px ${shadowColor};
 `;
 

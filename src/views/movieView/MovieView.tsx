@@ -10,9 +10,7 @@ import {
   TertiaryHeadline,
 } from "../../styles/Styles";
 import { CardContentWrapper } from "../logIn/LogIn";
-import { UserEvaluationItem } from "./userEvaluationItem/UserEvaluationItem";
-import { getEvaluatedMovieItem } from "./MovieViewUtilityFunctions";
-import { AnimateType, HeartIcon } from "../../components/icons/HeartIcon";
+import { MovieEvaluationSection } from "./movieEvaluationSection/MovieEvaluationSection";
 
 type Props = {
   getCurrentSessionProcess: Process;
@@ -88,33 +86,10 @@ export const MovieView = (props: Props) => {
     }
   };
 
-  const getIsMatched = () => {
-    const userEvaluatedItem = getEvaluatedMovieItem(
-      props.getUserItemProcess,
-      getMovieDetailsProcess
-    );
-    console.log(userEvaluatedItem, "userEvaluatedItem");
-    const partnerEvaluatedItem = getEvaluatedMovieItem(
-      props.getPairedUserProcess,
-      getMovieDetailsProcess
-    );
-    console.log(partnerEvaluatedItem, "partnerEvaluatedItem");
-    if (userEvaluatedItem !== undefined && partnerEvaluatedItem !== undefined) {
-      return (
-        parseInt(userEvaluatedItem.M.score.N, 10) >= 50 &&
-        parseInt(partnerEvaluatedItem.M.score.N, 10) >= 50
-      );
-    } else {
-      return false;
-    }
-  };
-
   if (
     getMovieDetailsProcess.status === Status.SUCCESS &&
     props.getUserItemProcess.status === Status.SUCCESS
   ) {
-    const movieIsMatched = getIsMatched();
-    console.log(movieIsMatched, "movieIsMatched");
     return (
       <Wrapper>
         <ImageSection>
@@ -145,40 +120,11 @@ export const MovieView = (props: Props) => {
               </InfoListItemText>
             </InfoListItem>
           </InfoList>
-          <UserEvaluationWrapper>
-            <UserEvaluationItemWrapper>
-              {movieIsMatched && (
-                <>
-                  <HeartIcon
-                    size={40}
-                    isRed={false}
-                    animate={AnimateType.NONE}
-                  />
-                  <MovieTertiaryHeadline color="green">
-                    Matched
-                  </MovieTertiaryHeadline>
-                </>
-              )}
-              {!movieIsMatched && (
-                <MovieTertiaryHeadline color="salmon">
-                  Not matched
-                </MovieTertiaryHeadline>
-              )}
-            </UserEvaluationItemWrapper>
-            <UserEvaluationItemWrapper>
-              <UserEvaluationItem
-                getMovieDetailsProcess={getMovieDetailsProcess}
-                getUserItemProcess={props.getUserItemProcess}
-              />
-            </UserEvaluationItemWrapper>
-            <UserEvaluationItemWrapper>
-              <UserEvaluationItem
-                getMovieDetailsProcess={getMovieDetailsProcess}
-                getUserItemProcess={props.getPairedUserProcess}
-              />
-            </UserEvaluationItemWrapper>
-          </UserEvaluationWrapper>
-
+          <MovieEvaluationSection
+            getMovieDetailsProcess={getMovieDetailsProcess}
+            getPairedUserProcess={props.getPairedUserProcess}
+            getUserItemProcess={props.getUserItemProcess}
+          />
           <MovieViewSection>
             <SecondaryHeadline>Overview</SecondaryHeadline>
             <Text>{getMovieDetailsProcess.data.overview}</Text>
@@ -246,7 +192,7 @@ type HeadlineProps = {
   color: string;
 };
 
-const MovieTertiaryHeadline = styled(TertiaryHeadline)`
+export const MovieTertiaryHeadline = styled(TertiaryHeadline)`
   color: ${(props: HeadlineProps) => props.color};
 `;
 
@@ -261,14 +207,4 @@ const InfoList = styled.ul`
 const InfoListItem = styled.li`
   padding: 0;
   margin: 0 ${`${sizingScale[1]}px`};
-`;
-
-const UserEvaluationWrapper = styled.div`
-  margin-top: ${`${sizingScale[6]}px`};
-  display: flex;
-  align-items: center;
-`;
-
-const UserEvaluationItemWrapper = styled.div`
-  margin-right: ${`${sizingScale[3]}px`};
 `;

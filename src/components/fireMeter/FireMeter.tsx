@@ -21,11 +21,11 @@ export const FireMeter = (props: Props) => {
   const [startingScore, setStartingScore] = React.useState<number>(50);
 
   const handleHotIconButtonClick = () => {
-    setScore(0);
+    setScore(100);
     props.evaluateItem(props.movieId, 100);
   };
   const handleColdIconButtonClick = () => {
-    setScore(100);
+    setScore(0);
     props.evaluateItem(props.movieId, 0);
   };
   const switchButtonClick = () => {
@@ -103,8 +103,8 @@ export const FireMeter = (props: Props) => {
     if (props.likeMovieProcess.status === Status.SUCCESS) {
       setScore(50);
     }
-  }, [props.likeMovieProcess.status])
-  
+  }, [props.likeMovieProcess.status]);
+
   return (
     <Wrapper
       onMouseUp={handleOnMouseUp}
@@ -112,18 +112,18 @@ export const FireMeter = (props: Props) => {
       isLoading={props.likeMovieProcess.status === Status.LOADING}
     >
       <ColdIconButton
-        onClick={handleHotIconButtonClick}
-        title="awesome"
+        onClick={handleColdIconButtonClick}
+        title="horrible"
         disabled={props.likeMovieProcess.status === Status.LOADING}
       >
         <ColdIcon size={sizingScale[6]} />
       </ColdIconButton>
       <HotIconButton
-        onClick={handleColdIconButtonClick}
-        title="horrible"
+        onClick={handleHotIconButtonClick}
+        title="awesome"
         disabled={props.likeMovieProcess.status === Status.LOADING}
       >
-        <FireIcon size={sizingScale[6]} score={50} />
+        <FireIcon size={sizingScale[6]} score={score} />
       </HotIconButton>
       <MeterSwitchButton
         onClick={switchButtonClick}

@@ -7,6 +7,7 @@ import { borderRadius, sizingScale } from "../../styles/Variables";
 import { getTrendingMovies } from "../../apiService/getTrendingMovies";
 import { evaluateMovie } from "../../apiService/evaluateMovie";
 import { AnimateType, HeartIcon } from "../../components/icons/HeartIcon";
+import { Link } from "react-router-dom";
 
 type Props = {
   getCurrentSessionProcess: Process;
@@ -162,7 +163,7 @@ export const MainView = (props: Props) => {
                     <SwipingImageIconWrapper>
                       {likeMovieProcess.score >= 50 && (
                         <HeartIcon
-                          size={sizingScale[8]}
+                          size={sizingScale[10]}
                           isRed={false}
                           animate={AnimateType.NONE}
                         />
@@ -180,7 +181,9 @@ export const MainView = (props: Props) => {
               )}
             </ImageSection>
             <DetailsSection>
-              <Title>{filteredList[swipingIndex].original_title}</Title>
+              <Link to={`movie/${filteredList[swipingIndex].id}`}>
+                <Title>{filteredList[swipingIndex].original_title}</Title>
+              </Link>
               <FireMeter
                 evaluateItem={evaluateItem}
                 movieId={filteredList[swipingIndex].id}
@@ -289,17 +292,19 @@ const SwipingImageWrapper = styled.div`
 
 const SwipingImageIconWrapper = styled.div`
   position: absolute;
-  top: ${`calc(50% - ${sizingScale[8] / 2}px)`};
-  left: ${`calc(50% - ${sizingScale[8] / 2}px)`};
+  top: ${`calc(50% - ${sizingScale[10] / 2}px)`};
+  left: ${`calc(50% - ${sizingScale[10] / 2}px)`};
   animation: ${fadeOut} 0.5s linear forwards;
 `;
 
 const SwipingImageContentWrapper = styled.div`
   position: relative;
+  display: inline-block;
 `;
 
 const SwipingMark = styled.h5`
-  color: salmon;
+  color: red;
   font-size: ${`${sizingScale[10]}px`};
-  margin: 0;
+  margin: -40px 0 0 0;
+  vertical-align: text-top;
 `;

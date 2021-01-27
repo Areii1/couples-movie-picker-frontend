@@ -5,7 +5,10 @@ export const getEvaluatedMovieItem = (
   getUserItemProcess: Process,
   getMovieDetailsProcess: Process
 ) => {
-  if (getUserItemProcess.status === Status.SUCCESS) {
+  if (
+    getUserItemProcess.status === Status.SUCCESS &&
+    getUserItemProcess.data.likedMovies
+  ) {
     return getUserItemProcess.data.likedMovies.L.find(
       (likedMovie: LikedMoviesListItem) => {
         if (getMovieDetailsProcess.status === Status.SUCCESS) {

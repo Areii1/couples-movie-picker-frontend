@@ -11,6 +11,8 @@ import {
 } from "../../styles/Styles";
 import { CardContentWrapper } from "../logIn/LogIn";
 import { MovieEvaluationSection } from "./movieEvaluationSection/MovieEvaluationSection";
+import { evaluateMovie } from "../../apiService/evaluateMovie";
+import { LikeMovieProcess } from "../mainView/MainView";
 
 type Props = {
   getCurrentSessionProcess: Process;
@@ -27,6 +29,14 @@ export const MovieView = (props: Props) => {
     getMovieDetailsProcess,
     setGetMovieDetailsProcess,
   ] = React.useState<Process>({ status: Status.INITIAL });
+
+  const [
+    likeMovieProcess,
+    setLikeMovieProcess,
+  ] = React.useState<LikeMovieProcess>({
+    status: Status.INITIAL,
+  });
+
   const { id } = useParams<ParamTypes>();
 
   const getMovie = async () => {
@@ -48,6 +58,40 @@ export const MovieView = (props: Props) => {
       }
     } else {
       return;
+    }
+  };
+
+  const evaluateItem = async (movieId: string, score: number) => {
+    if (
+      props.getCurrentSessionProcess.status === Status.SUCCESS &&
+      getMovieDetailsProcess.status === Status.SUCCESS &&
+      props.getUserItemProcess.status === Status.SUCCESS &&
+      likeMovieProcess.status !== Status.LOADING
+    ) {
+      try {
+        setLikeMovieProcess({ status: Status.LOADING, score });
+        const likeMovieResponse = await evaluateMovie(
+          props.getCurrentSessionProcess.data.getIdToken().getJwtToken(),
+          movieId,
+          score
+        );
+        console.log(likeMovieResponse, "likeMovieResponse");
+        setLikeMovieProcess({
+          status: Status.SUCCESS,
+          data: likeMovieResponse,
+        });
+        props.getUserItem(
+          props.getUserItemProcess.data.username.S,
+          props.getCurrentSessionProcess.data.getIdToken().getJwtToken()
+        );
+      } catch (likeMovieError) {
+        console.log(likeMovieError, "likeMovieError");
+        alert("failed to evaluate movie");
+        setLikeMovieProcess({
+          status: Status.ERROR,
+          error: likeMovieError,
+        });
+      }
     }
   };
 
@@ -102,7 +146,6 @@ export const MovieView = (props: Props) => {
           <PrimaryHeadline>
             {getMovieDetailsProcess.data.original_title}
           </PrimaryHeadline>
-
           <InfoList>
             <InfoListItem>
               <InfoListItemText title={getRuntimeStr()}>
@@ -124,12 +167,14 @@ export const MovieView = (props: Props) => {
             getMovieDetailsProcess={getMovieDetailsProcess}
             getPairedUserProcess={props.getPairedUserProcess}
             getUserItemProcess={props.getUserItemProcess}
+            evaluateItem={evaluateItem}
+            likeMovieProcess={likeMovieProcess}
           />
           <MovieViewSection>
             <SecondaryHeadline>Overview</SecondaryHeadline>
             <Text>{getMovieDetailsProcess.data.overview}</Text>
           </MovieViewSection>
-          <MovieViewSection>
+          {/* <MovieViewSection>
             <SecondaryHeadline>Details</SecondaryHeadline>
             <DetailItemWrapper>
               <MovieTertiaryHeadline color="gray">
@@ -137,7 +182,7 @@ export const MovieView = (props: Props) => {
               </MovieTertiaryHeadline>
               <Text>{getMovieDetailsProcess.data.runtime}</Text>
             </DetailItemWrapper>
-          </MovieViewSection>
+          </MovieViewSection> */}
         </MovieViewCardContentWrapper>
       </Wrapper>
     );
@@ -169,10 +214,10 @@ const Image = styled.img`
   width: ${`${sizingScale[13]}px`};
 `;
 
-const DetailItemWrapper = styled.div`
-  margin-top: 10px;
-  display: flex;
-`;
+// const DetailItemWrapper = styled.div`
+//   margin-top: 10px;
+//   display: flex;
+// `;
 
 const Text = styled.p`
   margin: 0;

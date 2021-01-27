@@ -7,14 +7,19 @@ import { MovieTertiaryHeadline } from "../MovieView";
 import { getEvaluatedMovieItem } from "../MovieViewUtilityFunctions";
 import { sizingScale } from "../../../styles/Variables";
 import { FireMeter } from "../../../components/fireMeter/FireMeter";
+import { LikeMovieProcess } from "../../mainView/MainView";
 
 type Props = {
   getMovieDetailsProcess: Process;
   getPairedUserProcess: GetUserItemProcess;
   getUserItemProcess: GetUserItemProcess;
+  evaluateItem: (movieId: string, score: number) => void;
+  likeMovieProcess: LikeMovieProcess;
 };
 
 export const MovieEvaluationSection = (props: Props) => {
+  const [evaluating, setEvaluating] = React.useState<boolean>(false);
+
   const getIsMatched = () => {
     const userEvaluatedItem = getEvaluatedMovieItem(
       props.getUserItemProcess,
@@ -25,7 +30,6 @@ export const MovieEvaluationSection = (props: Props) => {
       props.getPairedUserProcess,
       props.getMovieDetailsProcess
     );
-    console.log(partnerEvaluatedItem, "partnerEvaluatedItem");
     if (userEvaluatedItem !== undefined && partnerEvaluatedItem !== undefined) {
       return (
         parseInt(userEvaluatedItem.M.score.N, 10) >= 50 &&
@@ -36,61 +40,83 @@ export const MovieEvaluationSection = (props: Props) => {
     }
   };
 
+  React.useEffect(() => {
+    if (
+      props.likeMovieProcess.status === Status.SUCCESS ||
+      props.likeMovieProcess.status === Status.ERROR
+    ) {
+      setEvaluating(false);
+    }
+  }, [props.likeMovieProcess.status]);
+
   const movieIsMatched = getIsMatched();
   const userEvaluatedMovieItem = getEvaluatedMovieItem(
     props.getUserItemProcess,
     props.getMovieDetailsProcess
   );
   const partnerEvaluatedMovieItem = getEvaluatedMovieItem(
-    props.getUserItemProcess,
+    props.getPairedUserProcess,
     props.getMovieDetailsProcess
   );
   return (
     <UserEvaluationWrapper>
       {props.getPairedUserProcess.status === Status.SUCCESS &&
         props.getUserItemProcess.status === Status.SUCCESS &&
+        props.getMovieDetailsProcess.status === Status.SUCCESS &&
+        (!userEvaluatedMovieItem || evaluating) && (
+          <FireMeterWrapper>
+            <FireMeter
+              evaluateItem={props.evaluateItem}
+              movieId={props.getMovieDetailsProcess.data.id}
+              likeMovieProcess={props.likeMovieProcess}
+            />
+          </FireMeterWrapper>
+        )}
+      {props.getPairedUserProcess.status === Status.SUCCESS &&
+        props.getUserItemProcess.status === Status.SUCCESS &&
         userEvaluatedMovieItem && (
           <>
-            <UserEvaluationItemWrapper>
-              {movieIsMatched && (
-                <>
-                  <HeartIcon
-                    size={40}
-                    isRed={false}
-                    animate={AnimateType.NONE}
-                  />
-                  <MovieTertiaryHeadline color="green">
-                    Matched
+            {!evaluating && (
+              <UserEvaluationItemWrapper>
+                {movieIsMatched && (
+                  <>
+                    <HeartIcon
+                      size={40}
+                      isRed={false}
+                      animate={AnimateType.NONE}
+                    />
+                    <MovieTertiaryHeadline color="green">
+                      Matched
+                    </MovieTertiaryHeadline>
+                  </>
+                )}
+                {!movieIsMatched && (
+                  <MovieTertiaryHeadline color="salmon">
+                    Not matched
                   </MovieTertiaryHeadline>
-                </>
-              )}
-              {!movieIsMatched && (
-                <MovieTertiaryHeadline color="salmon">
-                  Not matched
-                </MovieTertiaryHeadline>
-              )}
-            </UserEvaluationItemWrapper>
-            <UserEvaluationItemWrapper>
-              <UserEvaluationItem
-                getMovieDetailsProcess={props.getMovieDetailsProcess}
-                getUserItemProcess={props.getUserItemProcess}
-                evaluatedMovieItem={userEvaluatedMovieItem}
-              />
-            </UserEvaluationItemWrapper>
-            <UserEvaluationItemWrapper>
-              <UserEvaluationItem
-                getMovieDetailsProcess={props.getMovieDetailsProcess}
-                getUserItemProcess={props.getPairedUserProcess}
-                evaluatedMovieItem={partnerEvaluatedMovieItem}
-              />
-            </UserEvaluationItemWrapper>
+                )}
+              </UserEvaluationItemWrapper>
+            )}
+            {!evaluating && (
+              <UserEvaluationItemWrapper>
+                <UserEvaluationItem
+                  getMovieDetailsProcess={props.getMovieDetailsProcess}
+                  getUserItemProcess={props.getUserItemProcess}
+                  evaluatedMovieItem={userEvaluatedMovieItem}
+                  updateEvaluating={setEvaluating}
+                />
+              </UserEvaluationItemWrapper>
+            )}
+            {partnerEvaluatedMovieItem && (
+              <UserEvaluationItemWrapper>
+                <UserEvaluationItem
+                  getMovieDetailsProcess={props.getMovieDetailsProcess}
+                  getUserItemProcess={props.getPairedUserProcess}
+                  evaluatedMovieItem={partnerEvaluatedMovieItem}
+                />
+              </UserEvaluationItemWrapper>
+            )}
           </>
-        )}
-        {props.getPairedUserProcess.status === Status.SUCCESS &&
-        props.getUserItemProcess.status === Status.SUCCESS &&
-        !userEvaluatedMovieItem && (
-          <h5>sad</h5>
-          // <FireMeter />
         )}
     </UserEvaluationWrapper>
   );
@@ -104,4 +130,8 @@ const UserEvaluationWrapper = styled.div`
 
 const UserEvaluationItemWrapper = styled.div`
   margin-right: ${`${sizingScale[3]}px`};
+`;
+
+const FireMeterWrapper = styled.div`
+  margin: auto;
 `;

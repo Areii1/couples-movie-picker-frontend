@@ -3,12 +3,13 @@ import styled, { css } from "styled-components";
 import { FireIcon } from "../icons/FireIcon";
 import { ColdIcon } from "../icons/ColdIcon";
 import { sizingScale } from "../../styles/Variables";
-import { Process, Status } from "../../App";
+import { Status } from "../../App";
+import { LikeMovieProcess } from "../../views/mainView/MainView";
 
 type Props = {
   evaluateItem: (movieId: string, score: number) => void;
+  likeMovieProcess: LikeMovieProcess;
   movieId: string;
-  likeMovieProcess: Process;
 };
 
 export const FireMeter = (props: Props) => {
@@ -62,16 +63,7 @@ export const FireMeter = (props: Props) => {
       });
     }
   };
-
-  // console.log(
-  //   mouseXPosition,
-  //   "mouseXPosition",
-  //   mouseXStartPosition,
-  //   "mouseXStartPosition",
-  //   props.fireMeterSwitch.position,
-  //   isDragging,
-  //   "isDragging"
-  // );
+  
   const handleMouseMove = (event: any) => {
     setMouseXPosition(event.pageX);
   };
@@ -162,7 +154,6 @@ const Wrapper = styled.div`
   position: relative;
   display: flex;
   justify-content: space-between;
-  margin: ${`${sizingScale[8]}px`} auto 0 auto;
   width: ${`${sizingScale[11]}px`};
   height: ${`${sizingScale[5]}px`};
   ${(props: WrapperProps) => getWrapperBackground(props.isLoading)}

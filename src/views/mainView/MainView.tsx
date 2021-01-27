@@ -15,7 +15,7 @@ type Props = {
   getUserItem: (username: string, jwtToken: string) => void;
 };
 
-type LikeMovieProcess =
+export type LikeMovieProcess =
   | {
       status: Status.INITIAL;
     }
@@ -184,11 +184,13 @@ export const MainView = (props: Props) => {
               <Link to={`movie/${filteredList[swipingIndex].id}`}>
                 <Title>{filteredList[swipingIndex].original_title}</Title>
               </Link>
-              <FireMeter
-                evaluateItem={evaluateItem}
-                movieId={filteredList[swipingIndex].id}
-                likeMovieProcess={likeMovieProcess}
-              />
+              <FireMeterWrapper>
+                <FireMeter
+                  evaluateItem={evaluateItem}
+                  movieId={filteredList[swipingIndex].id}
+                  likeMovieProcess={likeMovieProcess}
+                />
+              </FireMeterWrapper>
             </DetailsSection>
           </div>
         )}
@@ -307,4 +309,8 @@ const SwipingMark = styled.h5`
   font-size: ${`${sizingScale[10]}px`};
   margin: -40px 0 0 0;
   vertical-align: text-top;
+`;
+
+const FireMeterWrapper = styled.div`
+  margin: ${`${sizingScale[8]}px`} auto 0 auto;
 `;

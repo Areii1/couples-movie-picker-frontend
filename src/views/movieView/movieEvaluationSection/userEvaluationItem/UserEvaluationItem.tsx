@@ -6,11 +6,13 @@ import { ColdIcon } from "../../../../components/icons/ColdIcon";
 import { ProfileBall } from "../../../../components/profileBall/ProfileBall";
 import { bucketUrl } from "../../../../config/Config";
 import { borderRadius, sizingScale } from "../../../../styles/Variables";
+import { TransparentButton } from "../../../accountSettingsView/pictureSection/PictureSection";
 
 type Props = {
   getUserItemProcess: GetUserItemProcess;
   getMovieDetailsProcess: Process;
   evaluatedMovieItem: any;
+  updateEvaluating?: (value: boolean) => void;
 };
 
 export const UserEvaluationItem = (props: Props) => {
@@ -32,20 +34,25 @@ export const UserEvaluationItem = (props: Props) => {
           border={false}
         />
         <IconWrapper>
-          {parseInt(props.evaluatedMovieItem.M.score.N, 10) >= 50 && (
-            <FireIcon
-              size={30}
-              score={parseInt(props.evaluatedMovieItem.M.score.N, 10) - 50}
-            />
-          )}
-        </IconWrapper>
-        <IconWrapper>
-          {parseInt(props.evaluatedMovieItem.M.score.N) < 50 && (
-            <ColdIcon
-              size={30}
-              score={parseInt(props.evaluatedMovieItem.M.score.N, 10)}
-            />
-          )}
+          <TransparentButton
+            onClick={() =>
+              props.updateEvaluating ? props.updateEvaluating(true) : {}
+            }
+            title="reevaluate movie"
+          >
+            {parseInt(props.evaluatedMovieItem.M.score.N, 10) >= 50 && (
+              <FireIcon
+                size={30}
+                score={parseInt(props.evaluatedMovieItem.M.score.N, 10) - 50}
+              />
+            )}
+            {parseInt(props.evaluatedMovieItem.M.score.N) < 50 && (
+              <ColdIcon
+                size={30}
+                score={parseInt(props.evaluatedMovieItem.M.score.N, 10)}
+              />
+            )}
+          </TransparentButton>
         </IconWrapper>
         <IconText score={parseInt(props.evaluatedMovieItem.M.score.N, 10) - 50}>
           {props.evaluatedMovieItem.M.score.N}

@@ -1,5 +1,5 @@
 import React from "react";
-import styled from "styled-components";
+import styled, { keyframes, css } from "styled-components";
 import { Process, Status } from "../../App";
 import { FireMeter } from "../../components/fireMeter/FireMeter";
 import { PrimaryHeadline } from "../../styles/Styles";
@@ -13,6 +13,14 @@ type Props = {
   getUserItem: (username: string, jwtToken: string) => void;
 };
 
+type LikeMovieProcess =
+  | {
+      status: Status.INITIAL;
+    }
+  | { status: Status.LOADING; score: number }
+  | { status: Status.SUCCESS; data: any }
+  | { status: Status.ERROR; error: any };
+
 export const MainView = (props: Props) => {
   const [
     getTrendingMoviesProcess,
@@ -21,7 +29,10 @@ export const MainView = (props: Props) => {
 
   const [swipingIndex, setSwipingIndex] = React.useState<number>(0);
 
-  const [likeMovieProcess, setLikeMovieProcess] = React.useState<Process>({
+  const [
+    likeMovieProcess,
+    setLikeMovieProcess,
+  ] = React.useState<LikeMovieProcess>({
     status: Status.INITIAL,
   });
 
@@ -49,7 +60,7 @@ export const MainView = (props: Props) => {
       likeMovieProcess.status !== Status.LOADING
     ) {
       try {
-        setLikeMovieProcess({ status: Status.LOADING });
+        setLikeMovieProcess({ status: Status.LOADING, score });
         const likeMovieResponse = await evaluateMovie(
           props.getCurrentSessionProcess.data.getIdToken().getJwtToken(),
           movieId,
@@ -119,6 +130,12 @@ export const MainView = (props: Props) => {
               <Image
                 src={`https://image.tmdb.org/t/p/w500/${filteredList[swipingIndex].backdrop_path}`}
                 alt={filteredList[swipingIndex].original_title}
+                isLoading={likeMovieProcess.status === Status.LOADING}
+                score={
+                  likeMovieProcess.status === Status.LOADING
+                    ? likeMovieProcess.score
+                    : 50
+                }
               />
             </ImageSection>
             <DetailsSection>
@@ -146,6 +163,8 @@ const Wrapper = styled.div`
 const ImageSection = styled.div`
   margin: ${`${sizingScale[6] * -1}px`} 0 0 ${`${sizingScale[6] * -1}px`};
   text-align: center;
+  height: ${`${sizingScale[11]}px`};
+  position: relative;
 `;
 
 const Title = styled(PrimaryHeadline)`
@@ -161,6 +180,57 @@ const DetailsSection = styled.div`
   width: ${`${sizingScale[13] - sizingScale[6] * 2}px`};
 `;
 
+const slideImageRight = keyframes`
+  from {
+    left: 0;
+    top: 0;
+    opacity: 1;
+  }
+  to {
+    top: ${`${sizingScale[5] * -1}px`};
+    left: ${`${sizingScale[12]}px`};
+    opacity: 0.3
+  }
+`;
+
+const slideImageLeft = keyframes`
+  from {
+    top: 0;
+    left: 0;
+    opacity: 1;
+  }
+  to {
+    top: ${`${sizingScale[3] * -1}px`};
+    left: ${`${sizingScale[12] * -1}px`};
+    opacity: 0;
+  }
+`;
+
+type ImageProps = {
+  isLoading: boolean;
+  score: number;
+};
+
+const getAnimation = (isLoading: boolean, score: number) => {
+  if (isLoading) {
+    if (score >= 50) {
+      return css`
+        animation: ${slideImageRight} 0.5s linear forwards;
+      `;
+    } else {
+      return css`
+        animation: ${slideImageLeft} 0.5s linear forwards;
+      `;
+    }
+  }
+};
+
 const Image = styled.img`
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 5;
+  max-height: ${`${sizingScale[11]}px`};
   width: ${`${sizingScale[13]}px`};
+  ${(props: ImageProps) => getAnimation(props.isLoading, props.score)}
 `;

@@ -1,4 +1,5 @@
 import React from "react";
+import { toast } from "react-toastify";
 import styled, { keyframes } from "styled-components";
 import { uploadProfilePicture } from "../../../apiService/uploadProfilePicture";
 import { removeProfilePicture } from "../../../apiService/removeProfilePicture";
@@ -71,7 +72,7 @@ export const PictureSection = (props: Props) => {
           status: Status.SUCCESS,
           data: uploadPictureResponse,
         });
-        alert("uploaded profile picture");
+        toast.success("uploaded profile picture");
         setQueryingUpdatedItem(true);
         props.getUserItem(
           props.getCurrentAuthenticatedUserProcess.data.username
@@ -96,7 +97,7 @@ export const PictureSection = (props: Props) => {
           status: Status.SUCCESS,
           data: uploadPictureResponse,
         });
-        alert("removed profile picture");
+        toast.success("removed profile picture");
         setQueryingUpdatedItem(true);
         props.getUserItem(
           props.getCurrentAuthenticatedUserProcess.data.username
@@ -124,7 +125,7 @@ export const PictureSection = (props: Props) => {
           status: Status.SUCCESS,
           data: randomizeProfilePictureResponse,
         });
-        alert("changed profile picture");
+        toast.success("changed profile picture");
         setQueryingUpdatedItem(true);
         props.getUserItem(
           props.getCurrentAuthenticatedUserProcess.data.username

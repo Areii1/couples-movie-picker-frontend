@@ -1,5 +1,6 @@
 import React, { FormEvent } from "react";
 import styled, { keyframes } from "styled-components";
+import { toast } from "react-toastify";
 import { Puff } from "../../components/puff/Puff";
 import { Status } from "../../App";
 import { Auth } from "aws-amplify";
@@ -36,11 +37,11 @@ export const LogIn = (props: Props) => {
         setSignInProcess({ status: Status.SUCCESS, data: loginResponse });
         props.initiateSession();
       } catch (loginError) {
-        alert("could not login");
+        toast.error("could not login");
         setSignInProcess({ status: Status.ERROR, error: loginError });
       }
     } else {
-      alert("username or password missing");
+      toast.info("username or password missing");
     }
   };
 

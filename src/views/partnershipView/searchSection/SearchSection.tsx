@@ -1,5 +1,6 @@
 import React, { FormEvent } from "react";
 import styled from "styled-components";
+import { toast } from "react-toastify";
 import {
   GetCurrentSessionProcess,
   GetUserItemProcess,
@@ -61,10 +62,10 @@ export const SearchSection = (props: Props) => {
       } catch (searchForUserError) {
         setSearchFieldValue("");
         setSearchProcess({ status: Status.ERROR, error: searchForUserError });
-        alert(`did not find user "${searchFieldValue}"`);
+        toast.error(`did not find user "${searchFieldValue}"`);
       }
     } else {
-      alert("form not complete");
+      toast.error("form not complete");
     }
   };
 

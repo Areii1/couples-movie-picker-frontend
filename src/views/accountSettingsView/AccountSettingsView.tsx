@@ -1,8 +1,9 @@
-import { Auth } from "aws-amplify";
 import React from "react";
+import styled from "styled-components";
+import { toast } from "react-toastify";
+import { Auth } from "aws-amplify";
 import { Redirect } from "react-router";
 import { Link } from "react-router-dom";
-import styled from "styled-components";
 import {
   GetCurrentSessionProcess,
   GetUserItemProcess,
@@ -37,14 +38,14 @@ export const AccountSettingsView = (props: Props) => {
         status: Status.SUCCESS,
         data: signOutResponse,
       });
-      alert("logged out");
+      toast.success('logged out');
       props.initiateSession();
     } catch (signOutError) {
       setSignOutProcess({
         status: Status.ERROR,
         error: signOutError,
       });
-      alert("could not log out");
+      toast.error("could not log out")
     }
   };
 

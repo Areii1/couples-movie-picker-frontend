@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import { toast } from "react-toastify";
 import { GetUserItemProcess, Process, Status } from "../../App";
 import { fontSizes, sizingScale } from "../../styles/Variables";
 import { getMovieDetails } from "../../apiService/getMovieDetails";
@@ -86,7 +87,7 @@ export const MovieView = (props: Props) => {
         );
       } catch (likeMovieError) {
         console.log(likeMovieError, "likeMovieError");
-        alert("failed to evaluate movie");
+        toast.error("failed to evaluate movie");
         setLikeMovieProcess({
           status: Status.ERROR,
           error: likeMovieError,

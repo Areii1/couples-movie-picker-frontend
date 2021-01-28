@@ -7,6 +7,7 @@ import {
   GetCurrentSessionProcess,
   GetUserItemProcess,
 } from "../../../App";
+import { toast } from "react-toastify";
 import { PendingIcon } from "../../../components/icons/PendingIcon";
 import { ProfileBall } from "../../../components/profileBall/ProfileBall";
 import { AnimateType, HeartIcon } from "../../../components/icons/HeartIcon";
@@ -63,13 +64,14 @@ export const DetailsSection = (props: Props) => {
           props.getCurrentSessionProcess.data.getIdToken().getJwtToken()
         );
       } catch (cancelPairingError) {
+        toast.error("could not cancel pairing");
         setCancelPairingRequestProcess({
           status: Status.ERROR,
           error: cancelPairingError,
         });
       }
     } else {
-      alert("can't cancel");
+      toast.info("can't cancel");
     }
   };
 
@@ -100,13 +102,14 @@ export const DetailsSection = (props: Props) => {
           props.getCurrentSessionProcess.data.getIdToken().getJwtToken()
         );
       } catch (accpetIncomingRequestError) {
+        toast.error("could not break up partnership");
         setBreakUpPartnershipProcess({
           status: Status.ERROR,
           error: accpetIncomingRequestError,
         });
       }
     } else {
-      alert("can't break up");
+      toast.info("can't break up");
     }
   };
 

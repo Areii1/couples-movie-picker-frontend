@@ -1,4 +1,5 @@
 import { Auth } from "aws-amplify";
+import { toast } from "react-toastify";
 import React, { FormEvent } from "react";
 import { Link, Redirect } from "react-router-dom";
 import { Status } from "../../App";
@@ -13,7 +14,7 @@ import {
   Text,
   CardContentWrapper,
 } from "../logIn/LogIn";
-import { PrimaryHeadline } from '../../styles/Styles';
+import { PrimaryHeadline } from "../../styles/Styles";
 
 export const SignUp = () => {
   const [
@@ -40,10 +41,10 @@ export const SignUp = () => {
         setSignUpProcess({ status: Status.SUCCESS, data: signUpResponse });
       } catch (signupError) {
         setSignUpProcess({ status: Status.ERROR, error: signupError });
-        alert("could not register user");
+        toast.error("could not register user");
       }
     } else {
-      alert("username or password field missing");
+      toast.info("username or password field missing");
     }
   };
 

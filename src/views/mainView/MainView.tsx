@@ -1,5 +1,7 @@
 import React from "react";
 import styled, { keyframes, css } from "styled-components";
+import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 import { Process, Status } from "../../App";
 import { FireMeter } from "../../components/fireMeter/FireMeter";
 import { PrimaryHeadline } from "../../styles/Styles";
@@ -7,7 +9,6 @@ import { borderRadius, sizingScale } from "../../styles/Variables";
 import { getTrendingMovies } from "../../apiService/getTrendingMovies";
 import { evaluateMovie } from "../../apiService/evaluateMovie";
 import { AnimateType, HeartIcon } from "../../components/icons/HeartIcon";
-import { Link } from "react-router-dom";
 
 type Props = {
   getCurrentSessionProcess: Process;
@@ -76,7 +77,7 @@ export const MainView = (props: Props) => {
         });
       } catch (likeMovieError) {
         console.log(likeMovieError, "likeMovieError");
-        alert("failed to evaluate movie");
+        toast.error("failed to evaluate movie");
         setSwipingIndex(swipingIndex + 1);
         setLikeMovieProcess({
           status: Status.ERROR,
@@ -150,6 +151,10 @@ export const MainView = (props: Props) => {
         return filteredList[swipingIndex].original_title;
       }
     };
+
+    // const notifySuccess = (message: string) => toast.success(message);
+    // const notifyError = (message: string) => toast.error(message);
+    // const notifyInfo = (message: string) => toast.info(message);
 
     return (
       <Wrapper>

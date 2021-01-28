@@ -14,6 +14,7 @@ type Props = {
   getCurrentSessionProcess: Process;
   getUserItemProcess: Process;
   getUserItem: (username: string, jwtToken: string) => void;
+  getCurrentAuthenticatedUserProcess: Process;
 };
 
 export type LikeMovieProcess =
@@ -39,6 +40,8 @@ export const MainView = (props: Props) => {
     status: Status.INITIAL,
   });
 
+  const [viewRefreshing, setViewRefreshing] = React.useState<boolean>(false);
+
   const getMovies = async () => {
     try {
       setGetTrendingMoviesProcess({ status: Status.LOADING });
@@ -49,7 +52,7 @@ export const MainView = (props: Props) => {
         data: parsedGetTrendingMoviesResponse,
       });
     } catch (getTrendingMoviesError) {
-      toast.error('Could not fetch movies list');
+      toast.error("Could not fetch movies list");
       setGetTrendingMoviesProcess({
         status: Status.ERROR,
         error: getTrendingMoviesError,
@@ -104,12 +107,24 @@ export const MainView = (props: Props) => {
     }
   }, [props.getUserItemProcess.status]);
 
-  if (
-    getTrendingMoviesProcess.status === Status.SUCCESS &&
-    props.getUserItemProcess.status === Status.SUCCESS
-  ) {
-    const filteredList = getTrendingMoviesProcess.data.results.filter(
-      (movie: any) => {
+  React.useEffect(() => {
+    if (props.getCurrentSessionProcess.status === Status.LOADING) {
+      setViewRefreshing(true);
+    }
+  }, [props.getCurrentSessionProcess.status]);
+
+  React.useEffect(() => {
+    if (
+      getTrendingMoviesProcess.status === Status.SUCCESS &&
+      viewRefreshing
+    ) {
+      setViewRefreshing(false);
+    }
+  }, [getTrendingMoviesProcess.status]);
+
+  const getFilteredList = () => {
+    if (getTrendingMoviesProcess.status === Status.SUCCESS) {
+      return getTrendingMoviesProcess.data.results.filter((movie: any) => {
         if (
           props.getUserItemProcess.status === Status.SUCCESS &&
           props.getUserItemProcess.data.likedMovies
@@ -122,88 +137,102 @@ export const MainView = (props: Props) => {
         } else {
           return true;
         }
-      }
-    );
+      });
+    } else {
+      return [];
+    }
+  };
 
-    const getImageSrc = () => {
-      if (likeMovieProcess.status === Status.LOADING) {
-        if (filteredList[swipingIndex + 1] !== undefined) {
-          return `https://image.tmdb.org/t/p/w500/${
-            filteredList[swipingIndex + 1].backdrop_path
-          }`;
-        } else {
-          return "";
-        }
+  const getImageSrc = () => {
+    if (likeMovieProcess.status === Status.LOADING) {
+      if (filteredList[swipingIndex + 1] !== undefined) {
+        return `https://image.tmdb.org/t/p/w500/${
+          filteredList[swipingIndex + 1].backdrop_path
+        }`;
       } else {
-        return `https://image.tmdb.org/t/p/w500/${filteredList[swipingIndex].backdrop_path}`;
+        return "";
       }
-    };
+    } else {
+      return `https://image.tmdb.org/t/p/w500/${filteredList[swipingIndex].backdrop_path}`;
+    }
+  };
 
-    const getImageAlt = () => {
-      if (likeMovieProcess.status === Status.LOADING) {
-        if (filteredList[swipingIndex + 1] !== undefined) {
-          return filteredList[swipingIndex + 1].original_title;
-        } else {
-          return "";
-        }
+  const getImageAlt = () => {
+    if (likeMovieProcess.status === Status.LOADING) {
+      if (filteredList[swipingIndex + 1] !== undefined) {
+        return filteredList[swipingIndex + 1].original_title;
       } else {
-        return filteredList[swipingIndex].original_title;
+        return "";
       }
-    };
+    } else {
+      return filteredList[swipingIndex].original_title;
+    }
+  };
 
-    // const notifySuccess = (message: string) => toast.success(message);
-    // const notifyError = (message: string) => toast.error(message);
-    // const notifyInfo = (message: string) => toast.info(message);
+  const viewInitialized =
+    props.getCurrentAuthenticatedUserProcess.status === Status.SUCCESS &&
+    props.getCurrentSessionProcess.status === Status.SUCCESS &&
+    props.getUserItemProcess.status === Status.SUCCESS &&
+    getTrendingMoviesProcess.status === Status.SUCCESS;
 
-    return (
-      <Wrapper>
-        {filteredList.length > 0 && (
-          <div>
-            <ImageSection>
-              <Image src={getImageSrc()} alt={getImageAlt()} />
-              {likeMovieProcess.status === Status.LOADING && (
-                <SwipingImageWrapper score={likeMovieProcess.score}>
-                  <SwipingImageContentWrapper>
-                    <SwipingImageIconWrapper>
-                      {likeMovieProcess.score >= 50 && (
-                        <HeartIcon
-                          size={sizingScale[10]}
-                          isRed={false}
-                          animate={AnimateType.NONE}
-                        />
-                      )}
-                      {likeMovieProcess.score < 50 && (
-                        <SwipingMark>✕</SwipingMark>
-                      )}
-                    </SwipingImageIconWrapper>
-                    <Image
-                      src={`https://image.tmdb.org/t/p/w500/${filteredList[swipingIndex].backdrop_path}`}
-                      alt={filteredList[swipingIndex].original_title}
-                    />
-                  </SwipingImageContentWrapper>
-                </SwipingImageWrapper>
-              )}
-            </ImageSection>
-            <DetailsSection>
-              <Link to={`movie/${filteredList[swipingIndex].id}`}>
-                <Title>{filteredList[swipingIndex].original_title}</Title>
-              </Link>
-              <FireMeterWrapper>
-                <FireMeter
-                  evaluateItem={evaluateItem}
-                  movieId={filteredList[swipingIndex].id}
-                  likeMovieProcess={likeMovieProcess}
-                />
-              </FireMeterWrapper>
-            </DetailsSection>
-          </div>
-        )}
-        {filteredList.length === 0 && <h5>everything swiped</h5>}
-      </Wrapper>
-    );
-  } else {
-    return <div />;
-  }
+  const filteredList = getFilteredList();
+  console.log(viewRefreshing, 'viewRefreshing');
+  return (
+    <Wrapper>
+      {viewRefreshing && (
+        <div>
+          <ImagePlaceholder />
+          <TitlePlaceholder />
+        </div>
+      )}
+      {viewInitialized && !viewRefreshing && (
+        <>
+          {filteredList.length > 0 && (
+            <div>
+              <ImageSection>
+                <Image src={getImageSrc()} alt={getImageAlt()} />
+                {likeMovieProcess.status === Status.LOADING && (
+                  <SwipingImageWrapper score={likeMovieProcess.score}>
+                    <SwipingImageContentWrapper>
+                      <SwipingImageIconWrapper>
+                        {likeMovieProcess.score >= 50 && (
+                          <HeartIcon
+                            size={sizingScale[10]}
+                            isRed={false}
+                            animate={AnimateType.NONE}
+                          />
+                        )}
+                        {likeMovieProcess.score < 50 && (
+                          <SwipingMark>✕</SwipingMark>
+                        )}
+                      </SwipingImageIconWrapper>
+                      <Image
+                        src={`https://image.tmdb.org/t/p/w500/${filteredList[swipingIndex].backdrop_path}`}
+                        alt={filteredList[swipingIndex].original_title}
+                      />
+                    </SwipingImageContentWrapper>
+                  </SwipingImageWrapper>
+                )}
+              </ImageSection>
+              <DetailsSection>
+                <Link to={`movie/${filteredList[swipingIndex].id}`}>
+                  <Title>{filteredList[swipingIndex].original_title}</Title>
+                </Link>
+                <FireMeterWrapper>
+                  <FireMeter
+                    evaluateItem={evaluateItem}
+                    movieId={filteredList[swipingIndex].id}
+                    likeMovieProcess={likeMovieProcess}
+                  />
+                </FireMeterWrapper>
+              </DetailsSection>
+            </div>
+          )}
+          {filteredList.length === 0 && <h5>everything swiped</h5>}
+        </>
+      )}
+    </Wrapper>
+  );
 };
 
 const Wrapper = styled.div`
@@ -219,6 +248,13 @@ const ImageSection = styled.div`
 const Title = styled(PrimaryHeadline)`
   color: #808080;
   word-wrap: break-word;
+`;
+
+const TitlePlaceholder = styled.div`
+  margin: ${`${sizingScale[6]}px auto 0 auto`};
+  height: ${`${sizingScale[5]}px`};
+  width: ${`${sizingScale[10]}px`};
+  background-color: #e9e9e9;
 `;
 
 const DetailsSection = styled.div`
@@ -281,6 +317,13 @@ const Image = styled.img`
   border-top-right-radius: ${`${borderRadius}px`};
   max-height: ${`${sizingScale[11]}px`};
   width: ${`${sizingScale[13]}px`};
+`;
+
+const ImagePlaceholder = styled.div`
+  height: ${`${sizingScale[11]}px`};
+  width: ${`${sizingScale[12]}px`};
+  margin: auto;
+  background-color: #e9e9e9;
 `;
 
 type SwipingImageWrapperProps = {

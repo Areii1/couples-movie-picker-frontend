@@ -204,6 +204,7 @@ export const App = () => {
                   getCurrentSessionProcess={getCurrentSessionProcess}
                   getUserItemProcess={getUserItemProcess}
                   getUserItem={getUserItem}
+                  getCurrentAuthenticatedUserProcess={getCurrentAuthenticatedUserProcess}
                 />
               </div>
             </CSSTransition>

@@ -38,14 +38,13 @@ export const AccountSettingsView = (props: Props) => {
         status: Status.SUCCESS,
         data: signOutResponse,
       });
-      toast.success('logged out');
       props.initiateSession();
     } catch (signOutError) {
       setSignOutProcess({
         status: Status.ERROR,
         error: signOutError,
       });
-      toast.error("could not log out")
+      toast.error("Could not log out")
     }
   };
 

@@ -72,12 +72,13 @@ export const PictureSection = (props: Props) => {
           status: Status.SUCCESS,
           data: uploadPictureResponse,
         });
-        toast.success("uploaded profile picture");
+        toast.success("Uploaded profile picture");
         setQueryingUpdatedItem(true);
         props.getUserItem(
           props.getCurrentAuthenticatedUserProcess.data.username
         );
       } catch (uploadPictureError) {
+        toast.error('Could not upload profile picture');
         setUploadPictureProcess({
           status: Status.ERROR,
           error: uploadPictureError,
@@ -97,12 +98,13 @@ export const PictureSection = (props: Props) => {
           status: Status.SUCCESS,
           data: uploadPictureResponse,
         });
-        toast.success("removed profile picture");
+        toast.success("Removed profile picture");
         setQueryingUpdatedItem(true);
         props.getUserItem(
           props.getCurrentAuthenticatedUserProcess.data.username
         );
       } catch (uploadPictureError) {
+        toast.error('Could not remove profile picture');
         setRemovePictureProcess({
           status: Status.ERROR,
           error: uploadPictureError,
@@ -125,12 +127,13 @@ export const PictureSection = (props: Props) => {
           status: Status.SUCCESS,
           data: randomizeProfilePictureResponse,
         });
-        toast.success("changed profile picture");
+        toast.success("Changed profile picture");
         setQueryingUpdatedItem(true);
         props.getUserItem(
           props.getCurrentAuthenticatedUserProcess.data.username
         );
       } catch (randomizeProfilePictureError) {
+        toast.error('Could not change profile picture');
         setRandomizeProfilePictureProcess({
           status: Status.ERROR,
           error: randomizeProfilePictureError,

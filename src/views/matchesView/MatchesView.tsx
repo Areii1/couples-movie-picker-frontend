@@ -11,6 +11,7 @@ import { LikedMoviesListItem } from "../../types/Types";
 import { getTrendingMovies } from "../../apiService/getTrendingMovies";
 import { sizingScale } from "../../styles/Variables";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 
 type Props = {
   getPairedUserProcess: GetUserItemProcess;
@@ -35,6 +36,7 @@ export const MatchesView = (props: Props) => {
         data: parsedGetTrendingMoviesResponse,
       });
     } catch (getTrendingMoviesError) {
+      toast.error('Could not fetch movies list');
       setGetTrendingMoviesProcess({
         status: Status.ERROR,
         error: getTrendingMoviesError,

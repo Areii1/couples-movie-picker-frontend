@@ -41,10 +41,10 @@ export const SignUp = () => {
         setSignUpProcess({ status: Status.SUCCESS, data: signUpResponse });
       } catch (signupError) {
         setSignUpProcess({ status: Status.ERROR, error: signupError });
-        toast.error("could not register user");
+        toast.error("Could not register user");
       }
     } else {
-      toast.info("username or password field missing");
+      toast.info("Username or password field missing");
     }
   };
 

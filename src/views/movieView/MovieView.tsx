@@ -45,13 +45,13 @@ export const MovieView = (props: Props) => {
       try {
         setGetMovieDetailsProcess({ status: Status.LOADING });
         const getMovieDetailsResponse = await getMovieDetails(id);
-        console.log(getMovieDetailsResponse, "getMovieDetailsResponse");
         const parsedGetMovieDetailsResponse = await getMovieDetailsResponse.json();
         setGetMovieDetailsProcess({
           status: Status.SUCCESS,
           data: parsedGetMovieDetailsResponse,
         });
       } catch (getMovieDetailsError) {
+        toast.error("Could not get movie details");
         setGetMovieDetailsProcess({
           status: Status.ERROR,
           error: getMovieDetailsError,
@@ -76,7 +76,6 @@ export const MovieView = (props: Props) => {
           movieId,
           score
         );
-        console.log(likeMovieResponse, "likeMovieResponse");
         setLikeMovieProcess({
           status: Status.SUCCESS,
           data: likeMovieResponse,
@@ -86,8 +85,7 @@ export const MovieView = (props: Props) => {
           props.getCurrentSessionProcess.data.getIdToken().getJwtToken()
         );
       } catch (likeMovieError) {
-        console.log(likeMovieError, "likeMovieError");
-        toast.error("failed to evaluate movie");
+        toast.error("Failed to evaluate movie");
         setLikeMovieProcess({
           status: Status.ERROR,
           error: likeMovieError,

@@ -20,7 +20,7 @@ import { UserInfo } from "./types/Types";
 import { sizingScale } from "./styles/Variables";
 import { MatchesView } from "./views/matchesView/MatchesView";
 import { MovieView } from "./views/movieView/MovieView";
-import { ToastContainer } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 configureAmplify();
@@ -82,6 +82,7 @@ export const App = () => {
         data: getPairedUserResponse,
       });
     } catch (getUserError) {
+      toast.error('Could not get partnered user information')
       setGetPairedUserProcess({ status: Status.ERROR, error: getUserError });
     }
   };
@@ -95,6 +96,7 @@ export const App = () => {
         data: getUserResponse,
       });
     } catch (getUserError) {
+      toast.error('Could not get user information')
       setGetUserItemProcess({ status: Status.ERROR, error: getUserError });
     }
   };
@@ -119,12 +121,14 @@ export const App = () => {
           getCurrentSessionResponse.getIdToken().getJwtToken()
         );
       } catch (getCurrentAuthenticatedUserError) {
+        toast.error('Could not get user information');
         setGetCurrentAuthenticatedUserProcess({
           status: Status.ERROR,
           error: getCurrentAuthenticatedUserError,
         });
       }
     } catch (getCurrentSessionError) {
+      toast.error('Could not initiate session');
       setGetCurrentSessionProcess({
         status: Status.ERROR,
         error: getCurrentSessionError,
@@ -333,7 +337,7 @@ export const App = () => {
 };
 
 const ContentWrapper = styled.div`
-  margin: auto;
+  margin: 0 auto ${`${sizingScale[9]}px`} auto;
   width: ${`${sizingScale[13]}px`};
   display: flex;
   flex-direction: column;

@@ -3,7 +3,10 @@ import styled from "styled-components";
 import { ProfileBall } from "../../../components/profileBall/ProfileBall";
 import { HeartIcon } from "../../../components/icons/HeartIcon";
 import { Puff } from "../../../components/puff/Puff";
-import { TransparentButton, Mark } from "../../accountSettingsView/pictureSection/PictureSection";
+import {
+  TransparentButton,
+  Mark,
+} from "../../accountSettingsView/pictureSection/PictureSection";
 import { AnimateType } from "../../../components/icons/HeartIcon";
 import {
   Process,
@@ -21,6 +24,7 @@ import {
 } from "../PartnershipView";
 import { SecondaryHeadline } from "../../../styles/Styles";
 import { sizingScale } from "../../../styles/Variables";
+import { toast } from "react-toastify";
 
 type Props = {
   getUserItemProcess: GetUserItemProcess;
@@ -59,11 +63,13 @@ export const RequestsListSection = (props: Props) => {
             status: Status.SUCCESS,
             data: rejectIncomingRequestResponse,
           });
+          toast.success("Rejected request");
           props.getUserItem(
             props.getUserItemProcess.data.username.S,
             props.getCurrentSessionProcess.data.getIdToken().getJwtToken()
           );
         } catch (rejectIncomingRequestError) {
+          toast.error("Could not reject request");
           setRejectIncomingRequestProcess({
             status: Status.ERROR,
             error: rejectIncomingRequestError,
@@ -88,6 +94,7 @@ export const RequestsListSection = (props: Props) => {
             acceptUsername,
             props.getCurrentSessionProcess.data.getIdToken().getJwtToken()
           );
+          toast.success(`Partnered with ${acceptUsername}`);
           setAcceptIncomingRequestProcess({
             status: Status.SUCCESS,
             data: acceptIncomingRequestResponse,
@@ -97,6 +104,7 @@ export const RequestsListSection = (props: Props) => {
             props.getCurrentSessionProcess.data.getIdToken().getJwtToken()
           );
         } catch (accpetIncomingRequestError) {
+          toast.error("Could not accept request");
           setAcceptIncomingRequestProcess({
             status: Status.ERROR,
             error: accpetIncomingRequestError,

@@ -37,11 +37,11 @@ export const LogIn = (props: Props) => {
         setSignInProcess({ status: Status.SUCCESS, data: loginResponse });
         props.initiateSession();
       } catch (loginError) {
-        toast.error("could not login");
+        toast.error("Could not login");
         setSignInProcess({ status: Status.ERROR, error: loginError });
       }
     } else {
-      toast.info("username or password missing");
+      toast.info("Username or password missing");
     }
   };
 

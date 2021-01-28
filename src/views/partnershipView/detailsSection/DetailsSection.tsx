@@ -51,6 +51,7 @@ export const DetailsSection = (props: Props) => {
           props.getUserItemProcess.data.outgoingRequests.S,
           props.getCurrentSessionProcess.data.getIdToken().getJwtToken()
         );
+        toast.success("Cancelled pairing request");
         setCancelPairingRequestProcess({
           status: Status.SUCCESS,
           data: cancelPairingResponse,
@@ -64,7 +65,7 @@ export const DetailsSection = (props: Props) => {
           props.getCurrentSessionProcess.data.getIdToken().getJwtToken()
         );
       } catch (cancelPairingError) {
-        toast.error("could not cancel pairing");
+        toast.error("Could not cancel pairing");
         setCancelPairingRequestProcess({
           status: Status.ERROR,
           error: cancelPairingError,
@@ -93,6 +94,7 @@ export const DetailsSection = (props: Props) => {
           status: Status.SUCCESS,
           data: acceptIncomingRequestResponse,
         });
+        toast.success("Broke up partnership");
         props.getUserItem(
           props.getUserItemProcess.data.username.S,
           props.getCurrentSessionProcess.data.getIdToken().getJwtToken()
@@ -102,7 +104,7 @@ export const DetailsSection = (props: Props) => {
           props.getCurrentSessionProcess.data.getIdToken().getJwtToken()
         );
       } catch (accpetIncomingRequestError) {
-        toast.error("could not break up partnership");
+        toast.error("Could not break up partnership");
         setBreakUpPartnershipProcess({
           status: Status.ERROR,
           error: accpetIncomingRequestError,

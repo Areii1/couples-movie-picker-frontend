@@ -62,10 +62,10 @@ export const SearchSection = (props: Props) => {
       } catch (searchForUserError) {
         setSearchFieldValue("");
         setSearchProcess({ status: Status.ERROR, error: searchForUserError });
-        toast.error(`did not find user "${searchFieldValue}"`);
+        toast.error(`Did not find user "${searchFieldValue}"`);
       }
     } else {
-      toast.error("form not complete");
+      toast.error("Form not complete");
     }
   };
 
@@ -82,6 +82,7 @@ export const SearchSection = (props: Props) => {
           searchProcess.data.username.S,
           props.getCurrentSessionProcess.data.getIdToken().getJwtToken()
         );
+        toast.success(`Send request to ${searchProcess.data.username.S}`);
         setPairingProcess({
           status: Status.SUCCESS,
           data: pairWithUserResponse,
@@ -91,6 +92,7 @@ export const SearchSection = (props: Props) => {
           props.getCurrentSessionProcess.data.getIdToken().getJwtToken()
         );
       } catch (pairWithUserError) {
+        toast.error("Could not complete request");
         setPairingProcess({ status: Status.ERROR, error: pairWithUserError });
       }
     }

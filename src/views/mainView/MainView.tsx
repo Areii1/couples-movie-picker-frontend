@@ -49,6 +49,7 @@ export const MainView = (props: Props) => {
         data: parsedGetTrendingMoviesResponse,
       });
     } catch (getTrendingMoviesError) {
+      toast.error('Could not fetch movies list');
       setGetTrendingMoviesProcess({
         status: Status.ERROR,
         error: getTrendingMoviesError,
@@ -69,15 +70,13 @@ export const MainView = (props: Props) => {
           movieId,
           score
         );
-        console.log(likeMovieResponse, "likeMovieResponse");
         setSwipingIndex(swipingIndex + 1);
         setLikeMovieProcess({
           status: Status.SUCCESS,
           data: likeMovieResponse,
         });
       } catch (likeMovieError) {
-        console.log(likeMovieError, "likeMovieError");
-        toast.error("failed to evaluate movie");
+        toast.error("Failed to evaluate movie");
         setSwipingIndex(swipingIndex + 1);
         setLikeMovieProcess({
           status: Status.ERROR,

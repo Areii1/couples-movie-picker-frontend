@@ -126,6 +126,7 @@ const UserEvaluationWrapper = styled.div`
   margin-top: ${`${sizingScale[6]}px`};
   display: flex;
   align-items: center;
+  justify-content: space-between;
 `;
 
 const UserEvaluationItemWrapper = styled.div`

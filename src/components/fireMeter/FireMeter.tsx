@@ -63,7 +63,7 @@ export const FireMeter = (props: Props) => {
       });
     }
   };
-  
+
   const handleMouseMove = (event: any) => {
     setMouseXPosition(event.pageX);
   };
@@ -100,7 +100,6 @@ export const FireMeter = (props: Props) => {
   return (
     <Wrapper
       onMouseUp={handleOnMouseUp}
-      onMouseLeave={() => setIsDragging(false)}
       isLoading={props.likeMovieProcess.status === Status.LOADING}
     >
       <ColdIconButton

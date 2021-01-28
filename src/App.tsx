@@ -183,141 +183,143 @@ export const App = () => {
         getCurrentAuthenticatedUserProcess={getCurrentAuthenticatedUserProcess}
         getUserItemProcess={getUserItemProcess}
       />
-      <MainCard>
-        <MainCardContentWrapper>
-          <Route exact path="/">
-            {({ match }) => (
-              <CSSTransition
-                in={match !== null}
-                timeout={1000}
-                classNames="page"
-                unmountOnExit
-              >
-                <div className="page">
-                  <MainView
-                    getCurrentSessionProcess={getCurrentSessionProcess}
-                    getUserItemProcess={getUserItemProcess}
-                    getUserItem={getUserItem}
-                  />
-                </div>
-              </CSSTransition>
-            )}
-          </Route>
-          <Route exact path="/login">
-            {({ match }) => (
-              <CSSTransition
-                in={match !== null}
-                timeout={300}
-                classNames="page"
-                unmountOnExit
-              >
-                <div className="page">
-                  <LogIn initiateSession={getUserInfo} />
-                </div>
-              </CSSTransition>
-            )}
-          </Route>
-          <Route exact path="/signup">
-            {({ match }) => (
-              <CSSTransition
-                in={match !== null}
-                timeout={300}
-                classNames="page"
-                unmountOnExit
-              >
-                <div className="page">
-                  <SignUp />
-                </div>
-              </CSSTransition>
-            )}
-          </Route>
-          <Route exact path="/user">
-            {({ match }) => (
-              <CSSTransition
-                in={match !== null}
-                timeout={300}
-                classNames="page"
-                unmountOnExit
-              >
-                <div className="page">
-                  <AccountSettingsView
-                    getCurrentSessionProcess={getCurrentSessionProcess}
-                    getCurrentAuthenticatedUserProcess={
-                      getCurrentAuthenticatedUserProcess
-                    }
-                    initiateSession={getUserInfo}
-                    getUserItemProcess={getUserItemProcess}
-                    getUserItem={getUserItem}
-                  />
-                </div>
-              </CSSTransition>
-            )}
-          </Route>
-          <Route exact path="/love">
-            {({ match }) => (
-              <CSSTransition
-                in={match !== null}
-                timeout={300}
-                classNames="page"
-                unmountOnExit
-              >
-                <div className="page">
-                  <PartnershipView
-                    getCurrentAuthenticatedUserProcess={
-                      getCurrentAuthenticatedUserProcess
-                    }
-                    getUserItemProcess={getUserItemProcess}
-                    getCurrentSessionProcess={getCurrentSessionProcess}
-                    getPairedUserProcess={getPairedUserProcess}
-                    getPairedUser={getPairedUser}
-                    getUserItem={getUserItem}
-                  />
-                </div>
-              </CSSTransition>
-            )}
-          </Route>
-          <Route exact path="/matches">
-            {({ match }) => (
-              <CSSTransition
-                in={match !== null}
-                timeout={300}
-                classNames="page"
-                unmountOnExit
-              >
-                <div className="page">
-                  <MatchesView
-                    getCurrentAuthenticatedUserProcess={
-                      getCurrentAuthenticatedUserProcess
-                    }
-                    getUserItemProcess={getUserItemProcess}
-                    getCurrentSessionProcess={getCurrentSessionProcess}
-                    getPairedUserProcess={getPairedUserProcess}
-                  />
-                </div>
-              </CSSTransition>
-            )}
-          </Route>
-          <Route exact path="/movie/:id">
-            {({ match }) => (
-              <CSSTransition
-                in={match !== null}
-                timeout={300}
-                classNames="page"
-                unmountOnExit
-              >
-                <div className="page">
-                  <MovieView
-                    getUserItemProcess={getUserItemProcess}
-                    getCurrentSessionProcess={getCurrentSessionProcess}
-                    getUserItem={getUserItem}
-                    getPairedUserProcess={getPairedUserProcess}
-                  />
-                </div>
-              </CSSTransition>
-            )}
-          </Route>
-        </MainCardContentWrapper>
-      </MainCard>
+      {/* <MainCard>
+        <MainCardContentWrapper> */}
+      <div className="container">
+        <Route exact path="/">
+          {({ match }) => (
+            <CSSTransition
+              in={match !== null}
+              timeout={1000}
+              classNames="page"
+              unmountOnExit
+            >
+              <div className="page">
+                <MainView
+                  getCurrentSessionProcess={getCurrentSessionProcess}
+                  getUserItemProcess={getUserItemProcess}
+                  getUserItem={getUserItem}
+                />
+              </div>
+            </CSSTransition>
+          )}
+        </Route>
+        <Route exact path="/login">
+          {({ match }) => (
+            <CSSTransition
+              in={match !== null}
+              timeout={300}
+              classNames="page"
+              unmountOnExit
+            >
+              <div className="page">
+                <LogIn initiateSession={getUserInfo} />
+              </div>
+            </CSSTransition>
+          )}
+        </Route>
+        <Route exact path="/signup">
+          {({ match }) => (
+            <CSSTransition
+              in={match !== null}
+              timeout={300}
+              classNames="page"
+              unmountOnExit
+            >
+              <div className="page">
+                <SignUp />
+              </div>
+            </CSSTransition>
+          )}
+        </Route>
+        <Route exact path="/user">
+          {({ match }) => (
+            <CSSTransition
+              in={match !== null}
+              timeout={300}
+              classNames="page"
+              unmountOnExit
+            >
+              <div className="page">
+                <AccountSettingsView
+                  getCurrentSessionProcess={getCurrentSessionProcess}
+                  getCurrentAuthenticatedUserProcess={
+                    getCurrentAuthenticatedUserProcess
+                  }
+                  initiateSession={getUserInfo}
+                  getUserItemProcess={getUserItemProcess}
+                  getUserItem={getUserItem}
+                />
+              </div>
+            </CSSTransition>
+          )}
+        </Route>
+        <Route exact path="/love">
+          {({ match }) => (
+            <CSSTransition
+              in={match !== null}
+              timeout={300}
+              classNames="page"
+              unmountOnExit
+            >
+              <div className="page">
+                <PartnershipView
+                  getCurrentAuthenticatedUserProcess={
+                    getCurrentAuthenticatedUserProcess
+                  }
+                  getUserItemProcess={getUserItemProcess}
+                  getCurrentSessionProcess={getCurrentSessionProcess}
+                  getPairedUserProcess={getPairedUserProcess}
+                  getPairedUser={getPairedUser}
+                  getUserItem={getUserItem}
+                />
+              </div>
+            </CSSTransition>
+          )}
+        </Route>
+        <Route exact path="/matches">
+          {({ match }) => (
+            <CSSTransition
+              in={match !== null}
+              timeout={300}
+              classNames="page"
+              unmountOnExit
+            >
+              <div className="page">
+                <MatchesView
+                  getCurrentAuthenticatedUserProcess={
+                    getCurrentAuthenticatedUserProcess
+                  }
+                  getUserItemProcess={getUserItemProcess}
+                  getCurrentSessionProcess={getCurrentSessionProcess}
+                  getPairedUserProcess={getPairedUserProcess}
+                />
+              </div>
+            </CSSTransition>
+          )}
+        </Route>
+        <Route exact path="/movie/:id">
+          {({ match }) => (
+            <CSSTransition
+              in={match !== null}
+              timeout={300}
+              classNames="page"
+              unmountOnExit
+            >
+              <div className="page">
+                <MovieView
+                  getUserItemProcess={getUserItemProcess}
+                  getCurrentSessionProcess={getCurrentSessionProcess}
+                  getUserItem={getUserItem}
+                  getPairedUserProcess={getPairedUserProcess}
+                />
+              </div>
+            </CSSTransition>
+          )}
+        </Route>
+      </div>
+      {/* </MainCardContentWrapper>
+      </MainCard> */}
     </ContentWrapper>
   );
 };
@@ -327,25 +329,56 @@ const ContentWrapper = styled.div`
   width: ${`${sizingScale[13]}px`};
   display: flex;
   flex-direction: column;
-  align-items: center;
 `;
 
-const MainCard = styled.div`
-  width: 100%;
-  background-color: white;
-  margin: ${`${sizingScale[6]}px`} 0;
-  border-radius: ${`${borderRadius}px`};
-  padding: ${`${sizingScale[6]}px`};
-  min-height: ${`${sizingScale[17]}px`};
-  display: flex;
-  justify-content: start;
-  box-shadow: 10px 5px 5px ${shadowColor};
-`;
+// const MainCard = styled.div`
+//   width: 100%;
+//   background-color: white;
+//   margin: ${`${sizingScale[6]}px`} 0;
+//   border-radius: ${`${borderRadius}px`};
+//   padding: ${`${sizingScale[6]}px`};
+//   min-height: ${`${sizingScale[17]}px`};
+//   display: flex;
+//   justify-content: start;
+//   box-shadow: 10px 5px 5px ${shadowColor};
+// `;
 
-const MainCardContentWrapper = styled.div`
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: start;
-`;
+// const MainCardContentWrapper = styled.div`
+//   position: relative;
+//   display: flex;
+//   flex-direction: column;
+//   align-items: center;
+//   justify-content: start;
+// `;
+
+// .container {
+//   position: relative;
+// }
+
+// .page {
+//   position: absolute;
+//   left: 0;
+//   right: 0;
+// }
+
+// .page-enter {
+//   opacity: 0;
+//   transform: scale(1.1);
+// }
+
+// .page-enter-active {
+//   opacity: 1;
+//   transform: scale(1);
+//   transition: opacity 300ms, transform 300ms;
+// }
+
+// .page-exit {
+//   opacity: 1;
+//   transform: scale(1);
+// }
+
+// .page-exit-active {
+//   opacity: 0;
+//   transform: scale(0.9);
+//   transition: opacity 300ms, transform 300ms;
+// }

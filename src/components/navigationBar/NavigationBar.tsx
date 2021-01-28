@@ -59,12 +59,13 @@ export const NavigationBar = (props: Props) => {
 };
 
 const List = styled.ul`
+  width: ${`${sizingScale[11]}px`};
   list-style-type: none;
   padding: 0;
   background-color: white;
   display: flex;
   border-radius: ${`${borderRadius}px`};
-  margin-top: ${`${sizingScale[3]}px`};
+  margin: ${`${sizingScale[3]}px`} auto 0 auto;
   box-shadow: 10px 5px 5px ${shadowColor};
 `;
 

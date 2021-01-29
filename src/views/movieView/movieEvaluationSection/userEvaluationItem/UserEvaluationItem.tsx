@@ -7,12 +7,14 @@ import { ProfileBall } from "../../../../components/profileBall/ProfileBall";
 import { bucketUrl } from "../../../../config/Config";
 import { borderRadius, sizingScale } from "../../../../styles/Variables";
 import { TransparentButton } from "../../../accountSettingsView/pictureSection/PictureSection";
+import { EvaluationItemUseCase } from "../MovieEvaluationSection";
 
 type Props = {
   getUserItemProcess: GetUserItemProcess;
   getMovieDetailsProcess: Process;
   evaluatedMovieItem: any;
   updateEvaluating?: (value: boolean) => void;
+  useCase: EvaluationItemUseCase;
 };
 
 export const UserEvaluationItem = (props: Props) => {
@@ -33,13 +35,35 @@ export const UserEvaluationItem = (props: Props) => {
           shadow={false}
           border={false}
         />
-        <IconWrapper>
-          <TransparentButton
-            onClick={() =>
-              props.updateEvaluating ? props.updateEvaluating(true) : {}
-            }
-            title="reevaluate movie"
-          >
+        {props.useCase === EvaluationItemUseCase.USER && (
+          <IconWrapper>
+            <TransparentButton
+              onClick={() =>
+                props.updateEvaluating ? props.updateEvaluating(true) : {}
+              }
+              title="reevaluate movie"
+            >
+              {parseInt(props.evaluatedMovieItem.M.score.N, 10) >= 50 && (
+                <FireIcon
+                  size={30}
+                  score={parseInt(props.evaluatedMovieItem.M.score.N, 10) - 50}
+                  animate={false}
+                  isGray={false}
+                />
+              )}
+              {parseInt(props.evaluatedMovieItem.M.score.N) < 50 && (
+                <ColdIcon
+                  size={30}
+                  score={parseInt(props.evaluatedMovieItem.M.score.N, 10)}
+                  animate={false}
+                  isGray={false}
+                />
+              )}
+            </TransparentButton>
+          </IconWrapper>
+        )}
+        {props.useCase === EvaluationItemUseCase.PARTNER && (
+          <IconWrapper>
             {parseInt(props.evaluatedMovieItem.M.score.N, 10) >= 50 && (
               <FireIcon
                 size={30}
@@ -56,9 +80,9 @@ export const UserEvaluationItem = (props: Props) => {
                 isGray={false}
               />
             )}
-          </TransparentButton>
-        </IconWrapper>
-        <IconText score={parseInt(props.evaluatedMovieItem.M.score.N, 10) - 50}>
+          </IconWrapper>
+        )}
+        <IconText score={parseInt(props.evaluatedMovieItem.M.score.N, 10)}>
           {props.evaluatedMovieItem.M.score.N}
         </IconText>
       </UserEvaluatedItemWrapperContentWrapper>
@@ -75,20 +99,39 @@ type IconTextProps = {
   score: number;
 };
 const getRedColor = (score: number) => {
-  return 255 - Math.floor(score * 2);
+  if (score >= 50) {
+    const scorePercent = score / 100;
+    return 255 - Math.floor(scorePercent * 2);
+  } else {
+    const scorePercent = -1 * score / 100;
+    return 120 - Math.floor(scorePercent * 80)
+  }
 };
 const getGreenColor = (score: number) => {
-  return 186 - Math.floor(score * 85);
+  if (score >= 50) {
+    const scorePercent = score / 100;
+    return 186 - Math.floor(scorePercent * 85);
+  } else {
+    const scorePercent = -1 * score / 100;
+    return 175 - Math.floor(scorePercent * 46);
+  }
 };
 const getBlueColor = (score: number) => {
-  return 166 - Math.floor(score * 112);
+  if (score >= 50) {
+    const scorePercent = score / 100;
+    return 166 - Math.floor(scorePercent * 112);
+  } else {
+    const scorePercent = -1 * score / 100;
+    return 255 - Math.floor(scorePercent * 2);
+  }
 };
+
 const IconText = styled.h5`
   margin: 0;
   color: ${(props: IconTextProps) =>
-    `rgb(${getRedColor(props.score / 50)},${getGreenColor(
-      props.score / 50
-    )},${getBlueColor(props.score / 50)})`};
+    `rgb(${getRedColor(props.score)},${getGreenColor(
+      props.score
+    )},${getBlueColor(props.score)})`};
 `;
 
 const UserEvaluatedItemWrapper = styled.div`

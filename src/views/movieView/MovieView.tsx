@@ -14,6 +14,7 @@ import { CardContentWrapper } from "../logIn/LogIn";
 import { MovieEvaluationSection } from "./movieEvaluationSection/MovieEvaluationSection";
 import { evaluateMovie } from "../../apiService/evaluateMovie";
 import { LikeMovieProcess } from "../mainView/MainView";
+import { ImagePlaceholder, TitlePlaceholder } from "../mainView/MainView";
 
 type Props = {
   getCurrentSessionProcess: Process;
@@ -129,51 +130,55 @@ export const MovieView = (props: Props) => {
     }
   };
 
-  if (
-    getMovieDetailsProcess.status === Status.SUCCESS &&
-    props.getUserItemProcess.status === Status.SUCCESS
-  ) {
-    return (
-      <Wrapper>
-        <ImageSection>
-          <Image
-            src={`https://image.tmdb.org/t/p/w500/${getMovieDetailsProcess.data.backdrop_path}`}
-            alt={getMovieDetailsProcess.data.original_title}
-          />
-        </ImageSection>
-        <MovieViewCardContentWrapper>
-          <PrimaryHeadline>
-            {getMovieDetailsProcess.data.original_title}
-          </PrimaryHeadline>
-          <InfoList>
-            <InfoListItem>
-              <InfoListItemText title={getRuntimeStr()}>
-                {getRuntimeStr()}
-              </InfoListItemText>
-            </InfoListItem>
-            <InfoListItem>
-              <InfoListItemText>{getGenresStr()}</InfoListItemText>
-            </InfoListItem>
-            <InfoListItem>
-              <InfoListItemText
-                title={getMovieDetailsProcess.data.release_date}
-              >
-                {getMovieDetailsProcess.data.release_date.split("-")[0]}
-              </InfoListItemText>
-            </InfoListItem>
-          </InfoList>
-          <MovieEvaluationSection
-            getMovieDetailsProcess={getMovieDetailsProcess}
-            getPairedUserProcess={props.getPairedUserProcess}
-            getUserItemProcess={props.getUserItemProcess}
-            evaluateItem={evaluateItem}
-            likeMovieProcess={likeMovieProcess}
-          />
-          <MovieViewSection>
-            <SecondaryHeadline>Overview</SecondaryHeadline>
-            <Text>{getMovieDetailsProcess.data.overview}</Text>
-          </MovieViewSection>
-          {/* <MovieViewSection>
+  return (
+    <Wrapper>
+      {getMovieDetailsProcess.status === Status.LOADING && (
+        <div>
+          <ImagePlaceholder />
+          <TitlePlaceholder />
+        </div>
+      )}
+      {getMovieDetailsProcess.status === Status.SUCCESS && (
+        <>
+          <ImageSection>
+            <Image
+              src={`https://image.tmdb.org/t/p/w500/${getMovieDetailsProcess.data.backdrop_path}`}
+              alt={getMovieDetailsProcess.data.original_title}
+            />
+          </ImageSection>
+          <MovieViewCardContentWrapper>
+            <PrimaryHeadline>
+              {getMovieDetailsProcess.data.original_title}
+            </PrimaryHeadline>
+            <InfoList>
+              <InfoListItem>
+                <InfoListItemText title={getRuntimeStr()}>
+                  {getRuntimeStr()}
+                </InfoListItemText>
+              </InfoListItem>
+              <InfoListItem>
+                <InfoListItemText>{getGenresStr()}</InfoListItemText>
+              </InfoListItem>
+              <InfoListItem>
+                <InfoListItemText
+                  title={getMovieDetailsProcess.data.release_date}
+                >
+                  {getMovieDetailsProcess.data.release_date.split("-")[0]}
+                </InfoListItemText>
+              </InfoListItem>
+            </InfoList>
+            <MovieEvaluationSection
+              getMovieDetailsProcess={getMovieDetailsProcess}
+              getPairedUserProcess={props.getPairedUserProcess}
+              getUserItemProcess={props.getUserItemProcess}
+              evaluateItem={evaluateItem}
+              likeMovieProcess={likeMovieProcess}
+            />
+            <MovieViewSection>
+              <SecondaryHeadline>Overview</SecondaryHeadline>
+              <Text>{getMovieDetailsProcess.data.overview}</Text>
+            </MovieViewSection>
+            {/* <MovieViewSection>
             <SecondaryHeadline>Details</SecondaryHeadline>
             <DetailItemWrapper>
               <MovieTertiaryHeadline color="gray">
@@ -182,12 +187,11 @@ export const MovieView = (props: Props) => {
               <Text>{getMovieDetailsProcess.data.runtime}</Text>
             </DetailItemWrapper>
           </MovieViewSection> */}
-        </MovieViewCardContentWrapper>
-      </Wrapper>
-    );
-  } else {
-    return <div />;
-  }
+          </MovieViewCardContentWrapper>
+        </>
+      )}
+    </Wrapper>
+  );
 };
 
 const MovieViewSection = styled.div`

@@ -17,6 +17,11 @@ type Props = {
   likeMovieProcess: LikeMovieProcess;
 };
 
+export enum EvaluationItemUseCase {
+  PARTNER,
+  USER
+}
+
 export const MovieEvaluationSection = (props: Props) => {
   const [evaluating, setEvaluating] = React.useState<boolean>(false);
 
@@ -104,6 +109,7 @@ export const MovieEvaluationSection = (props: Props) => {
                   getUserItemProcess={props.getUserItemProcess}
                   evaluatedMovieItem={userEvaluatedMovieItem}
                   updateEvaluating={setEvaluating}
+                  useCase={EvaluationItemUseCase.USER}
                 />
               </UserEvaluationItemWrapper>
             )}
@@ -113,6 +119,7 @@ export const MovieEvaluationSection = (props: Props) => {
                   getMovieDetailsProcess={props.getMovieDetailsProcess}
                   getUserItemProcess={props.getPairedUserProcess}
                   evaluatedMovieItem={partnerEvaluatedMovieItem}
+                  useCase={EvaluationItemUseCase.PARTNER}
                 />
               </UserEvaluationItemWrapper>
             )}

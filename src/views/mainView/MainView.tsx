@@ -232,7 +232,7 @@ const Title = styled(PrimaryHeadline)`
   word-wrap: break-word;
 `;
 
-const TitlePlaceholder = styled.div`
+export const TitlePlaceholder = styled.div`
   margin: ${`${sizingScale[6]}px auto 0 auto`};
   height: ${`${sizingScale[5]}px`};
   width: ${`${sizingScale[10]}px`};
@@ -301,7 +301,7 @@ const Image = styled.img`
   width: ${`${sizingScale[13]}px`};
 `;
 
-const ImagePlaceholder = styled.div`
+export const ImagePlaceholder = styled.div`
   height: ${`${sizingScale[11]}px`};
   width: ${`${sizingScale[12]}px`};
   margin: auto;

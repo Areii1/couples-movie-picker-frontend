@@ -28,8 +28,8 @@ export const NavigationBar = (props: Props) => {
           <IconWrapper>
             <FireIcon
               size={sizingScale[6]}
-              score={50}
-              animate={false}
+              score={100}
+              animate
               isGray={false}
             />
           </IconWrapper>

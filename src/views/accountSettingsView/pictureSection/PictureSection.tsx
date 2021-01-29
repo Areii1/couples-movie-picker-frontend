@@ -111,7 +111,8 @@ export const PictureSection = (props: Props) => {
       try {
         setRemovePictureProcess({ status: Status.LOADING });
         const uploadPictureResponse = await removeProfilePicture(
-          props.getCurrentAuthenticatedUserProcess.data.username
+          props.getCurrentAuthenticatedUserProcess.data.username,
+          props.getCurrentSessionProcess.data.getIdToken().getJwtToken()
         );
         setRemovePictureProcess({
           status: Status.SUCCESS,
@@ -119,10 +120,18 @@ export const PictureSection = (props: Props) => {
         });
         toast.success("Removed profile picture");
         setQueryingUpdatedItem(true);
-        props.getUserItem(
-          props.getCurrentAuthenticatedUserProcess.data.username,
-          props.getCurrentSessionProcess.data.getIdToken().getJwtToken()
-        );
+        setTimeout(() => {
+          if (
+            props.getCurrentAuthenticatedUserProcess.status ===
+              Status.SUCCESS &&
+            props.getCurrentSessionProcess.status === Status.SUCCESS
+          )
+            props.getUserItem(
+              props.getCurrentAuthenticatedUserProcess.data.username,
+              props.getCurrentSessionProcess.data.getIdToken().getJwtToken()
+            );
+          toast.success("Uploaded profile picture");
+        }, 1000);
       } catch (uploadPictureError) {
         toast.error("Could not remove profile picture");
         setRemovePictureProcess({
@@ -149,10 +158,18 @@ export const PictureSection = (props: Props) => {
         });
         toast.success("Changed profile picture");
         setQueryingUpdatedItem(true);
-        props.getUserItem(
-          props.getCurrentAuthenticatedUserProcess.data.username,
-          props.getCurrentSessionProcess.data.getIdToken().getJwtToken()
-        );
+        setTimeout(() => {
+          if (
+            props.getCurrentAuthenticatedUserProcess.status ===
+              Status.SUCCESS &&
+            props.getCurrentSessionProcess.status === Status.SUCCESS
+          )
+            props.getUserItem(
+              props.getCurrentAuthenticatedUserProcess.data.username,
+              props.getCurrentSessionProcess.data.getIdToken().getJwtToken()
+            );
+          toast.success("Uploaded profile picture");
+        }, 1000);
       } catch (randomizeProfilePictureError) {
         toast.error("Could not change profile picture");
         setRandomizeProfilePictureProcess({

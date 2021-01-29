@@ -1,5 +1,5 @@
 import React from "react";
-import styled, { keyframes } from "styled-components";
+import styled, { keyframes, css } from "styled-components";
 
 type Props = {
   size: number;
@@ -63,6 +63,7 @@ export const FireIcon = (props: Props) => {
       width={`${props.size}px`}
       viewBox="0 0 512 512"
       xmlSpace="preserve"
+      animate={props.animate}
     >
       <path
         fill={
@@ -144,20 +145,36 @@ const lightenFourth = keyframes`
   }
 `;
 
+const getHoverEffect = (animate: boolean) => {
+  if (animate) {
+    return css`
+      path:first-child {
+        animation: ${lightenFirst} 0.3s linear forwards;
+      }
+      path:nth-child(2) {
+        animation: ${lightenSecond} 0.3s linear forwards;
+      }
+      path:nth-child(3) {
+        animation: ${lightenThird} 0.3s linear forwards;
+      }
+      path:nth-child(4) {
+        animation: ${lightenFourth} 0.3s linear forwards;
+      }
+    `;
+  } else {
+    return css`
+      animation: unset;
+    `;
+  }
+};
+
+type SvgProps = {
+  animate: boolean;
+};
+
 const Svg = styled.svg`
   enable-background: new 0 0 512 512;
   :hover {
-    path:first-child {
-      animation: ${lightenFirst} 0.3s linear forwards;
-    }
-    path:nth-child(2) {
-      animation: ${lightenSecond} 0.3s linear forwards;
-    }
-    path:nth-child(3) {
-      animation: ${lightenThird} 0.3s linear forwards;
-    }
-    path:nth-child(4) {
-      animation: ${lightenFourth} 0.3s linear forwards;
-    }
+    ${(props: SvgProps) => getHoverEffect(props.animate)}
   }
 `;

@@ -28,22 +28,24 @@ export const LikedMoviesSection = (props: Props) => {
 
   const getLikedMovieListItems = (list: LikedMoviesList) => {
     return list.L.map((listItem: LikedMoviesListItem) => {
-      return (
-        <MovieListItem>
-          <Link
-            to={`/movie/${listItem.M.id.S}`}
-            title={`view movie ${listItem.M.id.S}`}
-          >
-            <TertiaryHeadline>{listItem.M.id.S}</TertiaryHeadline>
-          </Link>
-          <Text>{`(${listItem.M.score.N})`}</Text>
-          <TransparentButton onClick={() => {}} title="dislike movie">
-            <Mark fontColor="salmon" size={20}>
-              ✕
-            </Mark>
-          </TransparentButton>
-        </MovieListItem>
-      );
+      if (props.getUserItemProcess.status === Status.SUCCESS) {
+        return (
+          <MovieListItem>
+            <Link
+              to={`/movie/${listItem.M.id.S}`}
+              title={`view movie ${listItem.M.id.S}`}
+            >
+              <TertiaryHeadline>{listItem.M.id.S}</TertiaryHeadline>
+            </Link>
+            <Text>{`(${listItem.M.score.N})`}</Text>
+            <TransparentButton onClick={() => {}} title="dislike movie">
+              <Mark fontColor="salmon" size={20}>
+                ✕
+              </Mark>
+            </TransparentButton>
+          </MovieListItem>
+        );
+      }
     });
   };
 
@@ -121,22 +123,18 @@ const MovieList = styled.ul`
   list-style-type: none;
   padding: 0;
   margin: ${`${sizingScale[4]}px`} 0 ${`${sizingScale[7]}px`} 0;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  row-gap: ${`${sizingScale[3]}px`};
-  justify-items: center;
   width: 100%;
 `;
 
 const MovieListItem = styled.li`
   padding: ${`${sizingScale[1]}px`} ${`${sizingScale[2]}px`};
   background-color: lightgray;
-  width: ${`${sizingScale[9] + 60}px`};
   border-radius: ${`${borderRadius}px`};
   display: flex;
   justify-content: space-between;
   align-items: center;
   border: 1px solid gray;
+  margin: ${`${sizingScale[4]}px`} 0;
 `;
 
 const Text = styled.p`

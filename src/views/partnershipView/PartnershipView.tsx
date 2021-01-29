@@ -49,7 +49,6 @@ export const PartnershipView = (props: Props) => {
   //   props.getUserItemProcess.status === Status.SUCCESS &&
   //   props.getUserItemProcess.data.likedMovies;
 
-  console.log(props, "props");
   return (
     <PartnershipCardContentWrapper>
       <PrimaryHeadline>Partner</PrimaryHeadline>

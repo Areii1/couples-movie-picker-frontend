@@ -23,6 +23,7 @@ type Props = {
   initiateSession: () => void;
   getUserItemProcess: GetUserItemProcess;
   getUserItem: (username: string) => void;
+  resetState: () => void;
 };
 
 export const AccountSettingsView = (props: Props) => {
@@ -39,6 +40,7 @@ export const AccountSettingsView = (props: Props) => {
         data: signOutResponse,
       });
       props.initiateSession();
+      props.resetState();
     } catch (signOutError) {
       setSignOutProcess({
         status: Status.ERROR,

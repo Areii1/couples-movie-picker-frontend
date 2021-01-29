@@ -17,7 +17,8 @@ import { TransparentButton } from "../../accountSettingsView/pictureSection/Pict
 import { Puff } from "../../../components/puff/Puff";
 import { bucketUrl } from "../../../config/Config";
 import { SecondaryHeadline } from "../../../styles/Styles";
-import { sizingScale } from "../../../styles/Variables";
+import { borderRadius, sizingScale } from "../../../styles/Variables";
+import { ConfirmModal } from "../../../components/modals/ConfirmModal";
 
 type Props = {
   getCurrentAuthenticatedUserProcess: Process;
@@ -28,6 +29,12 @@ type Props = {
   getPairedUser: (username: string, jwtToken: string) => void;
 };
 
+enum ModalOpen {
+  BREAK,
+  CANCEL,
+  NONE,
+}
+
 export const DetailsSection = (props: Props) => {
   const [
     breakUpPartnershipProcess,
@@ -37,6 +44,7 @@ export const DetailsSection = (props: Props) => {
     cancelPairingRequestProcess,
     setCancelPairingRequestProcess,
   ] = React.useState<Process>({ status: Status.INITIAL });
+  const [modalOpen, setModalOpen] = React.useState<ModalOpen>(ModalOpen.NONE);
 
   const cancelPairing = async () => {
     if (
@@ -124,7 +132,10 @@ export const DetailsSection = (props: Props) => {
         return (
           <TextWrapper>
             <p>{`${props.getUserItemProcess.data.username.S} loves ${props.getUserItemProcess.data.partner.S}`}</p>
-            <TransparentButton onClick={breakUp} title="break up">
+            <TransparentButton
+              onClick={() => setModalOpen(ModalOpen.BREAK)}
+              title="break up"
+            >
               <Text>break up</Text>
             </TransparentButton>
           </TextWrapper>
@@ -141,7 +152,10 @@ export const DetailsSection = (props: Props) => {
               {`${props.getUserItemProcess.data.outgoingRequests.S}'s`}
               <DeemphasizedSpan>approval</DeemphasizedSpan>
             </p>
-            <TransparentButton onClick={cancelPairing} title="cancel">
+            <TransparentButton
+              onClick={() => setModalOpen(ModalOpen.CANCEL)}
+              title="cancel"
+            >
               <Text>cancel</Text>
             </TransparentButton>
           </TextWrapper>
@@ -162,6 +176,16 @@ export const DetailsSection = (props: Props) => {
         return <Puff size={50} fill="lightblue" />;
       }
     }
+  };
+
+  const handleCancelModalButtonClick = () => {
+    setModalOpen(ModalOpen.NONE);
+    cancelPairing();
+  };
+
+  const handleBreakUpModalButtonClick = () => {
+    setModalOpen(ModalOpen.NONE);
+    breakUp();
   };
 
   return (
@@ -243,9 +267,9 @@ export const DetailsSection = (props: Props) => {
                   {props.getUserItemProcess.status === Status.SUCCESS &&
                     props.getUserItemProcess.data.outgoingRequests !==
                       undefined && (
-                      <IconWrapper>
+                      <PendingIconWrapper>
                         <PendingIcon animate={false} size={80} />
-                      </IconWrapper>
+                      </PendingIconWrapper>
                     )}
                 </PartnerBallWrapper>
                 <IconWrapper>
@@ -259,6 +283,27 @@ export const DetailsSection = (props: Props) => {
               </BallsWrapper>
             </MatchSection>
             {getTextSection()}
+          </>
+        )}
+      {modalOpen !== ModalOpen.NONE &&
+        props.getUserItemProcess.status === Status.SUCCESS && (
+          <>
+            {modalOpen === ModalOpen.BREAK &&
+              props.getUserItemProcess.data.partner && (
+                <ConfirmModal
+                  title={`Break up partnership with ${props.getUserItemProcess.data.partner.S}`}
+                  closeModal={() => setModalOpen(ModalOpen.NONE)}
+                  performAction={() => handleBreakUpModalButtonClick()}
+                />
+              )}
+            {modalOpen === ModalOpen.CANCEL &&
+              props.getUserItemProcess.data.outgoingRequests && (
+                <ConfirmModal
+                  title={`Cancel pending request to ${props.getUserItemProcess.data.outgoingRequests.S}`}
+                  closeModal={() => setModalOpen(ModalOpen.NONE)}
+                  performAction={() => handleCancelModalButtonClick()}
+                />
+              )}
           </>
         )}
     </MatchSectionWrapper>
@@ -308,6 +353,12 @@ const IconWrapper = styled.div`
   position: absolute;
   top: calc(50% - 40px);
   left: calc(50% - 40px);
+`;
+
+const PendingIconWrapper = styled(IconWrapper)`
+  background-color: rgba(0, 0, 0, 0.5);
+  border-radius: ${`${borderRadius}px`};
+  padding: ${`${sizingScale[1]}px`} 0;
 `;
 
 const MatchSection = styled.div`

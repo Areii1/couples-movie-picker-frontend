@@ -177,6 +177,13 @@ export const App = () => {
     }
   }, [getUserItemProcess.status]);
 
+  const resetState = () => {
+    setGetCurrentSessionProcess({ status: Status.INITIAL });
+    setGetCurrentAuthenticatedUserProcess({ status: Status.INITIAL });
+    setGetPairedUserProcess({ status: Status.INITIAL });
+    setGetUserItemProcess({ status: Status.INITIAL });
+  }
+
   // console.log(getUserItemProcess, "getUserItemProcess");
   // console.log(getCurrentSessionProcess, "getCurrentSessionProcess");
   // console.log(
@@ -258,6 +265,7 @@ export const App = () => {
                   initiateSession={getUserInfo}
                   getUserItemProcess={getUserItemProcess}
                   getUserItem={getUserItem}
+                  resetState={resetState}
                 />
               </div>
             </CSSTransition>

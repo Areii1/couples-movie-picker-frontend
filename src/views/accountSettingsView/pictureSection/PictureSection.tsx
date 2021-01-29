@@ -16,7 +16,7 @@ import {
   borderRadius,
   fontSizes,
 } from "../../../styles/Variables";
-import { Button, ButtonText } from "../../logIn/LogIn";
+import { ConfirmModal } from "../../../components/modals/ConfirmModal";
 
 type Props = {
   getCurrentAuthenticatedUserProcess: Process;
@@ -312,43 +312,11 @@ export const PictureSection = (props: Props) => {
         </ExtraButtonsWrapper>
       </PictureUploadWrapper>
       {modalOpen && (
-        <ModalBackground>
-          <Modal>
-            <SecondaryHeadline>Remove profile picture?</SecondaryHeadline>
-            <CloseButtonWrapper>
-              <TransparentButton
-                onClick={() => setModalOpen(false)}
-                title="close modal"
-              >
-                <Mark fontColor="salmon" size={30}>
-                  ✕
-                </Mark>
-              </TransparentButton>
-            </CloseButtonWrapper>
-            <ButtonsWrapper>
-              <ButtonWrapper>
-                <Button
-                  type="button"
-                  title="remove picture"
-                  onClick={() => handleModalButtonClick()}
-                  error={false}
-                >
-                  <ButtonText>Remove</ButtonText>
-                </Button>
-              </ButtonWrapper>
-              <ButtonWrapper>
-                <Button
-                  type="button"
-                  title="cancel"
-                  onClick={() => setModalOpen(false)}
-                  error={false}
-                >
-                  <ButtonText>Cancel</ButtonText>
-                </Button>
-              </ButtonWrapper>
-            </ButtonsWrapper>
-          </Modal>
-        </ModalBackground>
+        <ConfirmModal
+          title="Remove profile picture?"
+          performAction={handleModalButtonClick}
+          closeModal={() => setModalOpen(false)}
+        />
       )}
     </Section>
   );
@@ -481,41 +449,6 @@ export const TransparentButton = styled.button`
   display: flex;
   justify-content: center;
   align-items: center;
-`;
-
-const ModalBackground = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0, 0, 0, 0.7);
-`;
-
-const Modal = styled.div`
-  position: relative;
-  background-color: white;
-  margin: ${`${sizingScale[10]}px`} auto 0 auto;
-  width: ${`${sizingScale[12]}px`};
-  padding: ${`${sizingScale[6]}px`} ${`${sizingScale[3]}px`};
-  border-radius: ${`${borderRadius}px`};
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-`;
-
-const CloseButtonWrapper = styled.div`
-  position: absolute;
-  top: ${`${sizingScale[1]}px`};
-  right: ${`${sizingScale[2]}px`};
-`;
-
-const ButtonWrapper = styled.div`
-  margin-right: ${`${sizingScale[2]}px`};
-`;
-
-const ButtonsWrapper = styled.div`
-  display: flex;
 `;
 
 const ExtraButtonsWrapper = styled.div`

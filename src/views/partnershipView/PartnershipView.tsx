@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { PrimaryHeadline, SecondaryHeadline } from "../../styles/Styles";
+import { PrimaryHeadline } from "../../styles/Styles";
 import {
   GetCurrentSessionProcess,
   GetUserItemProcess,
@@ -11,15 +11,8 @@ import { DetailsSection } from "./detailsSection/DetailsSection";
 import { SearchSection } from "./searchSection/SearchSection";
 import { RequestsListSection } from "./requestsListSection/RequestsListSection";
 import { CardContentWrapper } from "../logIn/LogIn";
-import { borderRadius, fontSizes, sizingScale } from "../../styles/Variables";
-import { TertiaryHeadline } from "../../styles/Styles";
-import { DownwardArrow } from "../../components/icons/DownwardArrow";
-import { LikedMoviesList, LikedMoviesListItem } from "../../types/Types";
-import {
-  TransparentButton,
-  Mark,
-} from "../accountSettingsView/pictureSection/PictureSection";
-import { Link } from "react-router-dom";
+import { fontSizes, sizingScale } from "../../styles/Variables";
+import { LikedMoviesSection } from "./likedMoviesSection/LikedMoviesSection";
 
 type Props = {
   getCurrentAuthenticatedUserProcess: Process;
@@ -31,13 +24,6 @@ type Props = {
 };
 
 export const PartnershipView = (props: Props) => {
-  const [yourLikesExpanded, setYourLikesExpanded] = React.useState<boolean>(
-    false
-  );
-  const [
-    partnersLikesExpanded,
-    setPartnersLikesExpanded,
-  ] = React.useState<boolean>(false);
   const isPartnered =
     props.getUserItemProcess.status === Status.SUCCESS &&
     props.getUserItemProcess.data.partner !== undefined;
@@ -62,27 +48,6 @@ export const PartnershipView = (props: Props) => {
   // const partnerLikedMovies =
   //   props.getUserItemProcess.status === Status.SUCCESS &&
   //   props.getUserItemProcess.data.likedMovies;
-
-  const getLikedMovieListItems = (list: LikedMoviesList) => {
-    return list.L.map((listItem: LikedMoviesListItem) => {
-      return (
-        <MovieListItem>
-          <Link
-            to={`/movie/${listItem.M.id.S}`}
-            title={`view movie ${listItem.M.id.S}`}
-          >
-            <TertiaryHeadline>{listItem.M.id.S}</TertiaryHeadline>
-          </Link>
-          <Text>{`(${listItem.M.score.N})`}</Text>
-          <TransparentButton onClick={() => {}} title="dislike movie">
-            <Mark fontColor="salmon" size={20}>
-              ✕
-            </Mark>
-          </TransparentButton>
-        </MovieListItem>
-      );
-    });
-  };
 
   console.log(props, "props");
   return (
@@ -119,60 +84,10 @@ export const PartnershipView = (props: Props) => {
           )}
           {props.getUserItemProcess.status === Status.SUCCESS &&
             props.getUserItemProcess.data.likedMovies && (
-              <LikedMoviesWrapper>
-                <SecondaryHeadline>Likes</SecondaryHeadline>
-                <>
-                  {props.getUserItemProcess.status === Status.SUCCESS &&
-                    props.getUserItemProcess.data.likedMovies && (
-                      <MovieListWrapper>
-                        <MovieListTriggerButton
-                          title="your likes"
-                          onClick={() =>
-                            setYourLikesExpanded(!yourLikesExpanded)
-                          }
-                        >
-                          <TertiaryHeadline>your likes</TertiaryHeadline>
-                          <DownwardArrow size={15} />
-                        </MovieListTriggerButton>
-                        {yourLikesExpanded && (
-                          <MovieList>
-                            {getLikedMovieListItems(
-                              props.getUserItemProcess.data.likedMovies
-                            )}
-                          </MovieList>
-                        )}
-                      </MovieListWrapper>
-                    )}
-                  {props.getPairedUserProcess.status === Status.SUCCESS &&
-                    props.getPairedUserProcess.data.likedMovies && (
-                      <MovieListWrapper>
-                        <MovieListTriggerButton
-                          title="partners likes"
-                          onClick={() =>
-                            setPartnersLikesExpanded(!partnersLikesExpanded)
-                          }
-                        >
-                          <TertiaryHeadline>{`${props.getPairedUserProcess.data.username.S}'s likes`}</TertiaryHeadline>
-                          <DownwardArrow size={15} />
-                        </MovieListTriggerButton>
-                        {partnersLikesExpanded && (
-                          <MovieList>
-                            {getLikedMovieListItems(
-                              props.getPairedUserProcess.data.likedMovies
-                            )}
-                          </MovieList>
-                        )}
-                      </MovieListWrapper>
-                    )}
-                </>
-                {isPartnered &&
-                  props.getPairedUserProcess.status === Status.SUCCESS &&
-                  props.getPairedUserProcess.data.likedMovies && (
-                    <Link to="matches">
-                      <p>view matched movies</p>
-                    </Link>
-                  )}
-              </LikedMoviesWrapper>
+              <LikedMoviesSection
+                getPairedUserProcess={props.getPairedUserProcess}
+                getUserItemProcess={props.getUserItemProcess}
+              />
             )}
         </div>
       )}
@@ -219,52 +134,4 @@ export const ProfileWrapper = styled.div`
 export const ButtonsWrapper = styled.div`
   margin-left: ${`${sizingScale[3]}px`};
   display: flex;
-`;
-
-const MovieListTriggerButton = styled.button`
-  width: 100%;
-  background-color: white;
-  text-align: start;
-  padding: ${`${sizingScale[2]}px`} ${`${sizingScale[3]}px`};
-  border-radius: ${`${borderRadius}px`};
-  border: 1px solid gray;
-  display: flex;
-  justify-content: space-between;
-  cursor: pointer;
-`;
-
-const MovieList = styled.ul`
-  list-style-type: none;
-  padding: 0;
-  margin: ${`${sizingScale[4]}px`} 0 ${`${sizingScale[7]}px`} 0;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  row-gap: ${`${sizingScale[3]}px`};
-  justify-items: center;
-  width: 100%;
-`;
-
-const MovieListItem = styled.li`
-  padding: ${`${sizingScale[1]}px`} ${`${sizingScale[2]}px`};
-  background-color: lightgray;
-  width: ${`${sizingScale[9] + 60}px`};
-  border-radius: ${`${borderRadius}px`};
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border: 1px solid gray;
-`;
-
-const Text = styled.p`
-  margin: 0;
-  color: gray;
-`;
-
-const LikedMoviesWrapper = styled.div`
-  margin-top: ${`${sizingScale[5]}px`};
-  text-align: start;
-`;
-
-const MovieListWrapper = styled.div`
-  margin-top: ${`${sizingScale[3]}px`};
 `;

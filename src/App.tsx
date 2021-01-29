@@ -82,7 +82,7 @@ export const App = () => {
         data: getPairedUserResponse,
       });
     } catch (getUserError) {
-      toast.error('Could not get partnered user information')
+      toast.error("Could not get partnered user information");
       setGetPairedUserProcess({ status: Status.ERROR, error: getUserError });
     }
   };
@@ -91,12 +91,13 @@ export const App = () => {
     try {
       setGetUserItemProcess({ status: Status.LOADING });
       const getUserResponse = await getUser(username, jwtToken);
+      console.log(getUserResponse, "getUserResponse");
       setGetUserItemProcess({
         status: Status.SUCCESS,
         data: getUserResponse,
       });
     } catch (getUserError) {
-      toast.error('Could not get user information')
+      toast.error("Could not get user information");
       setGetUserItemProcess({ status: Status.ERROR, error: getUserError });
     }
   };
@@ -121,14 +122,14 @@ export const App = () => {
           getCurrentSessionResponse.getIdToken().getJwtToken()
         );
       } catch (getCurrentAuthenticatedUserError) {
-        toast.error('Could not get user information');
+        toast.error("Could not get user information");
         setGetCurrentAuthenticatedUserProcess({
           status: Status.ERROR,
           error: getCurrentAuthenticatedUserError,
         });
       }
     } catch (getCurrentSessionError) {
-      toast.error('Could not initiate session');
+      toast.error("Could not initiate session");
       setGetCurrentSessionProcess({
         status: Status.ERROR,
         error: getCurrentSessionError,
@@ -204,7 +205,9 @@ export const App = () => {
                   getCurrentSessionProcess={getCurrentSessionProcess}
                   getUserItemProcess={getUserItemProcess}
                   getUserItem={getUserItem}
-                  getCurrentAuthenticatedUserProcess={getCurrentAuthenticatedUserProcess}
+                  getCurrentAuthenticatedUserProcess={
+                    getCurrentAuthenticatedUserProcess
+                  }
                 />
               </div>
             </CSSTransition>

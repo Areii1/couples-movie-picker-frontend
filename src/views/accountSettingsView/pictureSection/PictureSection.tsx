@@ -7,17 +7,21 @@ import { ImageIcon } from "../../../components/icons/ImageIcon";
 import { ProfileBall } from "../../../components/profileBall/ProfileBall";
 import { randomizeProfilePicture } from "../../../apiService/randomizeProfilePicture";
 import { bucketUrl } from "../../../config/Config";
-import { Process, Status } from "../../../App";
+import { GetCurrentSessionProcess, Process, Status } from "../../../App";
 import { Section } from "../AccountSettingsView";
 import { Puff } from "../../../components/puff/Puff";
 import { SecondaryHeadline } from "../../../styles/Styles";
-import { sizingScale, borderRadius, fontSizes } from '../../../styles/Variables';
+import {
+  sizingScale,
+  borderRadius,
+  fontSizes,
+} from "../../../styles/Variables";
 
 type Props = {
   getCurrentAuthenticatedUserProcess: Process;
   getUserItemProcess: Process;
-  getCurrentSessionProcess: Process;
-  getUserItem: (username: string) => void;
+  getCurrentSessionProcess: GetCurrentSessionProcess;
+  getUserItem: (username: string, jwtToken: string) => void;
 };
 
 export const PictureSection = (props: Props) => {
@@ -60,7 +64,10 @@ export const PictureSection = (props: Props) => {
   }, [props.getUserItemProcess.status]);
 
   const uploadPicture = async () => {
-    if (props.getCurrentAuthenticatedUserProcess.status === Status.SUCCESS) {
+    if (
+      props.getCurrentAuthenticatedUserProcess.status === Status.SUCCESS &&
+      props.getCurrentSessionProcess.status === Status.SUCCESS
+    ) {
       try {
         setUploadPictureProcess({ status: Status.LOADING });
         const uploadPictureResponse = await uploadProfilePicture(
@@ -68,17 +75,26 @@ export const PictureSection = (props: Props) => {
           selectedFile,
           props.getCurrentAuthenticatedUserProcess.data.username
         );
+        console.log(uploadPictureResponse, "uploadPictureResponse");
         setUploadPictureProcess({
           status: Status.SUCCESS,
           data: uploadPictureResponse,
         });
-        toast.success("Uploaded profile picture");
         setQueryingUpdatedItem(true);
-        props.getUserItem(
-          props.getCurrentAuthenticatedUserProcess.data.username
-        );
+        setTimeout(() => {
+          if (
+            props.getCurrentAuthenticatedUserProcess.status ===
+              Status.SUCCESS &&
+            props.getCurrentSessionProcess.status === Status.SUCCESS
+          )
+            props.getUserItem(
+              props.getCurrentAuthenticatedUserProcess.data.username,
+              props.getCurrentSessionProcess.data.getIdToken().getJwtToken()
+            );
+          toast.success("Uploaded profile picture");
+        }, 1000);
       } catch (uploadPictureError) {
-        toast.error('Could not upload profile picture');
+        toast.error("Could not upload profile picture");
         setUploadPictureProcess({
           status: Status.ERROR,
           error: uploadPictureError,
@@ -88,7 +104,10 @@ export const PictureSection = (props: Props) => {
   };
 
   const removePicture = async () => {
-    if (props.getCurrentAuthenticatedUserProcess.status === Status.SUCCESS) {
+    if (
+      props.getCurrentAuthenticatedUserProcess.status === Status.SUCCESS &&
+      props.getCurrentSessionProcess.status === Status.SUCCESS
+    ) {
       try {
         setRemovePictureProcess({ status: Status.LOADING });
         const uploadPictureResponse = await removeProfilePicture(
@@ -101,10 +120,11 @@ export const PictureSection = (props: Props) => {
         toast.success("Removed profile picture");
         setQueryingUpdatedItem(true);
         props.getUserItem(
-          props.getCurrentAuthenticatedUserProcess.data.username
+          props.getCurrentAuthenticatedUserProcess.data.username,
+          props.getCurrentSessionProcess.data.getIdToken().getJwtToken()
         );
       } catch (uploadPictureError) {
-        toast.error('Could not remove profile picture');
+        toast.error("Could not remove profile picture");
         setRemovePictureProcess({
           status: Status.ERROR,
           error: uploadPictureError,
@@ -130,10 +150,11 @@ export const PictureSection = (props: Props) => {
         toast.success("Changed profile picture");
         setQueryingUpdatedItem(true);
         props.getUserItem(
-          props.getCurrentAuthenticatedUserProcess.data.username
+          props.getCurrentAuthenticatedUserProcess.data.username,
+          props.getCurrentSessionProcess.data.getIdToken().getJwtToken()
         );
       } catch (randomizeProfilePictureError) {
-        toast.error('Could not change profile picture');
+        toast.error("Could not change profile picture");
         setRandomizeProfilePictureProcess({
           status: Status.ERROR,
           error: randomizeProfilePictureError,
@@ -187,6 +208,8 @@ export const PictureSection = (props: Props) => {
       return undefined;
     }
   };
+
+  console.log(props.getUserItemProcess, "props.getUserItemProcess");
 
   return (
     <Section>
@@ -375,7 +398,8 @@ const getColorHover = (fontColor: string) => keyframes`
 export const Mark = styled.h5`
   color: ${(props: MarkProps) => props.fontColor};
   animation: ${markFadeIn} 0.3s linear forwards;
-  font-size: ${(props: MarkProps) => (props.size ? `${props.size}px` : `${sizingScale[6]}px`)};
+  font-size: ${(props: MarkProps) =>
+    props.size ? `${props.size}px` : `${sizingScale[6]}px`};
   margin: 0;
   text-align: center;
   vertical-align: center;

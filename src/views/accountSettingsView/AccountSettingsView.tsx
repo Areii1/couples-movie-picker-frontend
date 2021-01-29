@@ -44,7 +44,7 @@ export const AccountSettingsView = (props: Props) => {
         status: Status.ERROR,
         error: signOutError,
       });
-      toast.error("Could not log out")
+      toast.error("Could not log out");
     }
   };
 

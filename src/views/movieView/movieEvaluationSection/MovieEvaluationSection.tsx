@@ -19,7 +19,7 @@ type Props = {
 
 export enum EvaluationItemUseCase {
   PARTNER,
-  USER
+  USER,
 }
 
 export const MovieEvaluationSection = (props: Props) => {
@@ -63,12 +63,13 @@ export const MovieEvaluationSection = (props: Props) => {
     props.getPairedUserProcess,
     props.getMovieDetailsProcess
   );
+  console.log(userEvaluatedMovieItem, "userEvaluatedMovieItem");
+  console.log(evaluating, "evaluating");
   return (
     <UserEvaluationWrapper>
-      {props.getPairedUserProcess.status === Status.SUCCESS &&
-        props.getUserItemProcess.status === Status.SUCCESS &&
+      {props.getUserItemProcess.status === Status.SUCCESS &&
         props.getMovieDetailsProcess.status === Status.SUCCESS &&
-        (!userEvaluatedMovieItem || evaluating) && (
+        (userEvaluatedMovieItem === undefined || evaluating) && (
           <FireMeterWrapper>
             <FireMeter
               evaluateItem={props.evaluateItem}
@@ -77,11 +78,10 @@ export const MovieEvaluationSection = (props: Props) => {
             />
           </FireMeterWrapper>
         )}
-      {props.getPairedUserProcess.status === Status.SUCCESS &&
-        props.getUserItemProcess.status === Status.SUCCESS &&
+      {props.getUserItemProcess.status === Status.SUCCESS &&
         userEvaluatedMovieItem && (
           <>
-            {!evaluating && (
+            {!evaluating && partnerEvaluatedMovieItem && (
               <UserEvaluationItemWrapper>
                 {movieIsMatched && (
                   <>

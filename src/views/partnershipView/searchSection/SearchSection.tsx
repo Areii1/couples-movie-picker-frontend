@@ -82,7 +82,7 @@ export const SearchSection = (props: Props) => {
           searchProcess.data.username.S,
           props.getCurrentSessionProcess.data.getIdToken().getJwtToken()
         );
-        toast.success(`Send request to ${searchProcess.data.username.S}`);
+        toast.success(`Pairing request sent to ${searchProcess.data.username.S}`);
         setPairingProcess({
           status: Status.SUCCESS,
           data: pairWithUserResponse,

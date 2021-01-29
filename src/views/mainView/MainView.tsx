@@ -40,8 +40,6 @@ export const MainView = (props: Props) => {
     status: Status.INITIAL,
   });
 
-  const [viewRefreshing, setViewRefreshing] = React.useState<boolean>(false);
-
   const getMovies = async () => {
     try {
       setGetTrendingMoviesProcess({ status: Status.LOADING });
@@ -107,21 +105,6 @@ export const MainView = (props: Props) => {
     }
   }, [props.getUserItemProcess.status]);
 
-  React.useEffect(() => {
-    if (props.getCurrentSessionProcess.status === Status.LOADING) {
-      setViewRefreshing(true);
-    }
-  }, [props.getCurrentSessionProcess.status]);
-
-  React.useEffect(() => {
-    if (
-      getTrendingMoviesProcess.status === Status.SUCCESS &&
-      viewRefreshing
-    ) {
-      setViewRefreshing(false);
-    }
-  }, [getTrendingMoviesProcess.status]);
-
   const getFilteredList = () => {
     if (getTrendingMoviesProcess.status === Status.SUCCESS) {
       return getTrendingMoviesProcess.data.results.filter((movie: any) => {
@@ -176,16 +159,15 @@ export const MainView = (props: Props) => {
     getTrendingMoviesProcess.status === Status.SUCCESS;
 
   const filteredList = getFilteredList();
-  console.log(viewRefreshing, 'viewRefreshing');
   return (
     <Wrapper>
-      {viewRefreshing && (
+      {!viewInitialized && (
         <div>
           <ImagePlaceholder />
           <TitlePlaceholder />
         </div>
       )}
-      {viewInitialized && !viewRefreshing && (
+      {viewInitialized && (
         <>
           {filteredList.length > 0 && (
             <div>

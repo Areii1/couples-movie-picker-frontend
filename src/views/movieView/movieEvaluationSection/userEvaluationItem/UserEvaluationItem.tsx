@@ -44,12 +44,16 @@ export const UserEvaluationItem = (props: Props) => {
               <FireIcon
                 size={30}
                 score={parseInt(props.evaluatedMovieItem.M.score.N, 10) - 50}
+                animate={false}
+                isGray={false}
               />
             )}
             {parseInt(props.evaluatedMovieItem.M.score.N) < 50 && (
               <ColdIcon
                 size={30}
                 score={parseInt(props.evaluatedMovieItem.M.score.N, 10)}
+                animate={false}
+                isGray={false}
               />
             )}
           </TransparentButton>

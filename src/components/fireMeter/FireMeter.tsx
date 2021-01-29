@@ -107,14 +107,24 @@ export const FireMeter = (props: Props) => {
         title="horrible"
         disabled={props.likeMovieProcess.status === Status.LOADING}
       >
-        <ColdIcon size={sizingScale[6]} />
+        <ColdIcon
+          size={sizingScale[6]}
+          score={score}
+          isGray={props.likeMovieProcess.status === Status.LOADING}
+          animate={false}
+        />
       </ColdIconButton>
       <HotIconButton
         onClick={handleHotIconButtonClick}
         title="awesome"
         disabled={props.likeMovieProcess.status === Status.LOADING}
       >
-        <FireIcon size={sizingScale[6]} score={score} />
+        <FireIcon
+          size={sizingScale[6]}
+          score={score}
+          isGray={props.likeMovieProcess.status === Status.LOADING}
+          animate={false}
+        />
       </HotIconButton>
       <MeterSwitchButton
         onClick={switchButtonClick}
@@ -157,6 +167,7 @@ const Wrapper = styled.div`
   height: ${`${sizingScale[5]}px`};
   ${(props: WrapperProps) => getWrapperBackground(props.isLoading)}
   border-radius: ${`${sizingScale[5]}px`};
+  box-shadow: 10px 5px 5px #b3b2b2;
 `;
 
 const ColdIconButton = styled.button`

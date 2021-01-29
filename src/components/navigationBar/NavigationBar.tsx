@@ -5,9 +5,9 @@ import { HeartIcon } from "../icons/HeartIcon";
 import { FireIcon } from "../icons/FireIcon";
 import { GetUserItemProcess, Process, Status } from "../../App";
 import { ProfileBall } from "../profileBall/ProfileBall";
-import { AnimateType } from '../icons/HeartIcon';
-import { bucketUrl } from '../../config/Config';
-import { borderRadius, shadowColor, sizingScale } from '../../styles/Variables';
+import { AnimateType } from "../icons/HeartIcon";
+import { bucketUrl } from "../../config/Config";
+import { borderRadius, shadowColor, sizingScale } from "../../styles/Variables";
 
 type Props = {
   getCurrentAuthenticatedUserProcess: Process;
@@ -15,7 +15,7 @@ type Props = {
 };
 
 export const NavigationBar = (props: Props) => {
-  console.log('navigation bar');
+  console.log("navigation bar");
   const firstName =
     props.getCurrentAuthenticatedUserProcess.status === Status.SUCCESS &&
     props.getUserItemProcess.status === Status.SUCCESS
@@ -26,7 +26,12 @@ export const NavigationBar = (props: Props) => {
       <ListItem>
         <Link to="/" title="like">
           <IconWrapper>
-            <FireIcon size={sizingScale[6]} score={50} />
+            <FireIcon
+              size={sizingScale[6]}
+              score={50}
+              animate={false}
+              isGray={false}
+            />
           </IconWrapper>
         </Link>
       </ListItem>
@@ -35,7 +40,8 @@ export const NavigationBar = (props: Props) => {
           <ProfileBall
             firstName={firstName}
             image={
-              (props.getUserItemProcess.status === Status.SUCCESS && props.getUserItemProcess.data.profilePicture)
+              props.getUserItemProcess.status === Status.SUCCESS &&
+              props.getUserItemProcess.data.profilePicture
                 ? `${bucketUrl}/${props.getUserItemProcess.data.profilePicture.S}`
                 : undefined
             }
@@ -51,7 +57,11 @@ export const NavigationBar = (props: Props) => {
       <ListItem>
         <Link to="/love" title="matches">
           <IconWrapper>
-            <HeartIcon size={sizingScale[6]} animate={AnimateType.COLOR} isRed/>
+            <HeartIcon
+              size={sizingScale[6]}
+              animate={AnimateType.COLOR}
+              isRed
+            />
           </IconWrapper>
         </Link>
       </ListItem>

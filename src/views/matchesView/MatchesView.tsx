@@ -36,7 +36,7 @@ export const MatchesView = (props: Props) => {
         data: parsedGetTrendingMoviesResponse,
       });
     } catch (getTrendingMoviesError) {
-      toast.error('Could not fetch movies list');
+      toast.error("Could not fetch movies list");
       setGetTrendingMoviesProcess({
         status: Status.ERROR,
         error: getTrendingMoviesError,
@@ -50,68 +50,83 @@ export const MatchesView = (props: Props) => {
     }
   }, [props.getUserItemProcess.status]);
 
-  if (
-    props.getCurrentSessionProcess.status === Status.SUCCESS &&
-    props.getCurrentAuthenticatedUserProcess.status === Status.SUCCESS &&
-    props.getUserItemProcess.status === Status.SUCCESS &&
-    props.getPairedUserProcess.status === Status.SUCCESS &&
-    getTrendingMoviesProcess.status === Status.SUCCESS &&
-    props.getUserItemProcess.data.likedMovies &&
-    props.getPairedUserProcess.data.likedMovies
-  ) {
-    const matchedMovies = props.getUserItemProcess.data.likedMovies.L.filter(
-      (userLikedMovie: LikedMoviesListItem) => {
-        if (
-          props.getPairedUserProcess.status === Status.SUCCESS &&
-          props.getPairedUserProcess.data.likedMovies
-        ) {
-          const partnerHasLikedMovie = props.getPairedUserProcess.data.likedMovies.L.some(
-            (partnerLikedMovie: LikedMoviesListItem) =>
-              partnerLikedMovie.M.id.S === userLikedMovie.M.id.S
-          );
-          return partnerHasLikedMovie;
-        } else {
-          return true;
+  const getMatchedMovies = () => {
+    if (
+      props.getUserItemProcess.status === Status.SUCCESS &&
+      props.getUserItemProcess.data.likedMovies
+    ) {
+      return props.getUserItemProcess.data.likedMovies.L.filter(
+        (userLikedMovie: LikedMoviesListItem) => {
+          if (
+            props.getPairedUserProcess.status === Status.SUCCESS &&
+            props.getPairedUserProcess.data.likedMovies
+          ) {
+            const partnerHasLikedMovie = props.getPairedUserProcess.data.likedMovies.L.some(
+              (partnerLikedMovie: LikedMoviesListItem) =>
+                partnerLikedMovie.M.id.S === userLikedMovie.M.id.S
+            );
+            return partnerHasLikedMovie;
+          } else {
+            return true;
+          }
         }
-      }
-    );
-
-    const matchedMoviesDetails = matchedMovies.map(
-      (matchedMovie: LikedMoviesListItem) => {
-        if (getTrendingMoviesProcess.status === Status.SUCCESS) {
-          const matchedMovieDetails = getTrendingMoviesProcess.data.results.find(
-            (movie: any) => {
-              return movie.id === parseInt(matchedMovie.M.id.S, 10);
-            }
-          );
-          return matchedMovieDetails;
-        } else {
-          return matchedMovie;
-        }
-      }
-    );
-
-    const matchesListItems = matchedMoviesDetails.map((movie: any) => {
-      return (
-        <MatchesListItem>
-          <Link to={`movie/${movie.id}`} title={`${movie.title}`}>
-            <ImageOverlay />
-            <Image
-              src={`https://image.tmdb.org/t/p/w342/${movie.backdrop_path}`}
-              alt={`${movie.title}`}
-            />
-          </Link>
-        </MatchesListItem>
       );
-    });
-    return (
-      <CardContentWrapper>
-        <MatchesList>{matchesListItems}</MatchesList>
-      </CardContentWrapper>
-    );
-  } else {
-    return <div />;
-  }
+    } else {
+      return [];
+    }
+  };
+
+  const getMatchedMoviesDetails = () => {
+    const matchedMovies = getMatchedMovies();
+    if (matchedMovies) {
+      const matchedMoviesDetails = matchedMovies.map(
+        (matchedMovie: LikedMoviesListItem) => {
+          if (getTrendingMoviesProcess.status === Status.SUCCESS) {
+            const matchedMovieDetails = getTrendingMoviesProcess.data.results.find(
+              (movie: any) => {
+                return movie.id === parseInt(matchedMovie.M.id.S, 10);
+              }
+            );
+            return matchedMovieDetails;
+          } else {
+            return matchedMovie;
+          }
+        }
+      );
+      const filteredList = matchedMoviesDetails.filter(
+        (movieDetailsItems) => movieDetailsItems !== undefined
+      );
+      return filteredList;
+    } else {
+      return [];
+    }
+  };
+
+  const getMatchesListItems = () => {
+    const matchedMoviesDetails = getMatchedMoviesDetails();
+    if (matchedMoviesDetails) {
+      return matchedMoviesDetails.map((movie: any) => {
+        return (
+          <MatchesListItem>
+            <Link to={`movie/${movie.id}`} title={`${movie.title}`}>
+              <ImageOverlay />
+              <Image
+                src={`https://image.tmdb.org/t/p/w342/${movie.backdrop_path}`}
+                alt={`${movie.title}`}
+              />
+            </Link>
+          </MatchesListItem>
+        );
+      });
+    } else {
+      return [];
+    }
+  };
+  return (
+    <CardContentWrapper>
+      <MatchesList>{getMatchesListItems()}</MatchesList>
+    </CardContentWrapper>
+  );
 };
 
 const MatchesList = styled.ul`
@@ -120,12 +135,12 @@ const MatchesList = styled.ul`
   margin: 0;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  margin: ${`${sizingScale[6] * -1}px`} 0 0 ${`${sizingScale[6] * -1}px`};
+  margin: 0 0 0 ${`${sizingScale[6] * -1}px`};
 `;
 
 const ImageOverlay = styled.div`
-  width: 256px;
-  height: 190px;
+  width: ${`${sizingScale[13] / 2}px`};
+  height: ${`${sizingScale[9]}px`};
   position: absolute;
   top: 0;
   left: 0;
@@ -145,9 +160,11 @@ const hoverLighten = keyframes`
 const MatchesListItem = styled.li`
   padding: 0;
   margin: 0;
-  width: 256px;
-  height: 190px;
+  width: ${`${sizingScale[13] / 2}px`};
+  height: ${`${sizingScale[9]}px`};
   position: relative;
+  border: 1px solid white;
+  overflow: hidden;
   :hover {
     div {
       animation: ${hoverLighten} 0.3s linear forwards;
@@ -157,4 +174,6 @@ const MatchesListItem = styled.li`
 
 const Image = styled.img`
   object-fit: cover;
+  max-width: ${`${sizingScale[13] / 2}px`};
+  max-height: ${`${sizingScale[11]}px`};
 `;

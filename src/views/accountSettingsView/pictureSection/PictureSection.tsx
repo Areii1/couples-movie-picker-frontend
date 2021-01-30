@@ -296,7 +296,7 @@ export const PictureSection = (props: Props) => {
             onChange={(event) => selectFile(event)}
             accept="image/*"
           />
-          <ImageIcon size={40} animate={true} />
+          <ImageIcon size={40} animate={true} color="black" />
           <DropzoneText>Click or drag to upload image</DropzoneText>
         </Dropzone>
         <ExtraButtonsWrapper>

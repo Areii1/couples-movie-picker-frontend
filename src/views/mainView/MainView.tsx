@@ -4,11 +4,12 @@ import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Process, Status } from "../../App";
 import { FireMeter } from "../../components/fireMeter/FireMeter";
-import { PrimaryHeadline } from "../../styles/Styles";
+import { PrimaryHeadline, SecondaryHeadline } from "../../styles/Styles";
 import { borderRadius, sizingScale } from "../../styles/Variables";
 import { getTrendingMovies } from "../../apiService/getTrendingMovies";
 import { evaluateMovie } from "../../apiService/evaluateMovie";
 import { AnimateType, HeartIcon } from "../../components/icons/HeartIcon";
+import { ImageIcon } from "../../components/icons/ImageIcon";
 
 type Props = {
   getCurrentSessionProcess: Process;
@@ -210,7 +211,20 @@ export const MainView = (props: Props) => {
               </DetailsSection>
             </div>
           )}
-          {filteredList.length === 0 && <h5>everything swiped</h5>}
+          {filteredList.length === 0 && (
+            <>
+              <ImageWrapper>
+                <ImageIcon
+                  size={sizingScale[10]}
+                  animate={false}
+                  color="gray"
+                />
+              </ImageWrapper>
+              <TitleWrapper>
+                <SecondaryHeadline>Everything swiped</SecondaryHeadline>
+              </TitleWrapper>
+            </>
+          )}
         </>
       )}
     </Wrapper>
@@ -342,4 +356,16 @@ const SwipingMark = styled.h5`
 
 const FireMeterWrapper = styled.div`
   margin: ${`${sizingScale[8]}px`} auto 0 auto;
+`;
+
+const ImageWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const TitleWrapper = styled.div`
+  margin-top: ${`${sizingScale[5]}px`};
+  display: flex;
+  justify-content: center;
 `;

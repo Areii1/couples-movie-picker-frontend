@@ -53,7 +53,7 @@ export const ConfirmModal = (props: Props) => {
   );
 };
 
-const ModalBackground = styled.div`
+export const ModalBackground = styled.div`
   position: fixed;
   top: 0;
   left: 0;
@@ -62,7 +62,7 @@ const ModalBackground = styled.div`
   background: rgba(0, 0, 0, 0.7);
 `;
 
-const Modal = styled.div`
+export const Modal = styled.div`
   position: relative;
   background-color: white;
   margin: ${`${sizingScale[10]}px`} auto 0 auto;
@@ -74,7 +74,7 @@ const Modal = styled.div`
   align-items: center;
 `;
 
-const CloseButtonWrapper = styled.div`
+export const CloseButtonWrapper = styled.div`
   position: absolute;
   top: ${`${sizingScale[1]}px`};
   right: ${`${sizingScale[2]}px`};

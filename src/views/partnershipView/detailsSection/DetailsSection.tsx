@@ -19,6 +19,7 @@ import { bucketUrl } from "../../../config/Config";
 import { SecondaryHeadline } from "../../../styles/Styles";
 import { borderRadius, sizingScale } from "../../../styles/Variables";
 import { ConfirmModal } from "../../../components/modals/ConfirmModal";
+import { DisplayProfile } from "../../../components/modals/DisplayProfileModal";
 
 type Props = {
   getCurrentAuthenticatedUserProcess: Process;
@@ -32,6 +33,8 @@ type Props = {
 enum ModalOpen {
   BREAK,
   CANCEL,
+  PICTUREUSER,
+  PICTUREPARTNER,
   NONE,
 }
 
@@ -197,88 +200,96 @@ export const DetailsSection = (props: Props) => {
             <SecondaryHeadline>Details</SecondaryHeadline>
             <MatchSection>
               <BallsWrapper>
-                <PartnerBallWrapper toLeft={false}>
-                  <ProfileBall
-                    firstName={
-                      props.getCurrentAuthenticatedUserProcess.data.username
-                    }
-                    image={
-                      props.getUserItemProcess.status === Status.SUCCESS &&
-                      props.getUserItemProcess.data.profilePicture
-                        ? `${bucketUrl}/${props.getUserItemProcess.data.profilePicture.S}`
-                        : undefined
-                    }
-                    isCurrentUser={false}
-                    size={192}
-                    animate={false}
-                    fontSize={100}
-                    showText
-                    shadow={false}
-                    border={false}
-                  />
-                  <BallOverlay
-                    requestPending={
-                      props.getUserItemProcess.status === Status.SUCCESS &&
-                      props.getUserItemProcess.data.outgoingRequests !==
-                        undefined
-                    }
-                  />
-                </PartnerBallWrapper>
-                <PartnerBallWrapper toLeft>
-                  <ProfileBall
-                    firstName={
-                      props.getPairedUserProcess.status === Status.SUCCESS
-                        ? props.getPairedUserProcess.data.username.S
-                        : undefined
-                    }
-                    image={
-                      ((props.getUserItemProcess.status === Status.SUCCESS &&
-                        props.getUserItemProcess.data.outgoingRequests !==
-                          undefined) ||
-                        (props.getUserItemProcess.status === Status.SUCCESS &&
-                          props.getUserItemProcess.data.partner !==
-                            undefined)) &&
-                      props.getPairedUserProcess.status === Status.SUCCESS &&
-                      props.getPairedUserProcess.data.profilePicture
-                        ? `${bucketUrl}/${props.getPairedUserProcess.data.profilePicture.S}`
-                        : undefined
-                    }
-                    isCurrentUser={false}
-                    size={192}
-                    animate={false}
-                    fontSize={100}
-                    showText={
-                      !(
+                <TransparentButton
+                  title={`display ${props.getUserItemProcess.data.username.S}`}
+                  onClick={() => setModalOpen(ModalOpen.PICTUREUSER)}
+                >
+                  <PartnerBallWrapper toLeft={false}>
+                    <ProfileBall
+                      firstName={
+                        props.getCurrentAuthenticatedUserProcess.data.username
+                      }
+                      image={
+                        props.getUserItemProcess.status === Status.SUCCESS &&
+                        props.getUserItemProcess.data.profilePicture
+                          ? `${bucketUrl}/${props.getUserItemProcess.data.profilePicture.S}`
+                          : undefined
+                      }
+                      isCurrentUser={false}
+                      size={192}
+                      animate={false}
+                      fontSize={100}
+                      showText
+                      shadow={false}
+                      border={false}
+                    />
+                    <BallOverlay
+                      requestPending={
                         props.getUserItemProcess.status === Status.SUCCESS &&
                         props.getUserItemProcess.data.outgoingRequests !==
                           undefined
-                      )
-                    }
-                    shadow={false}
-                    border={false}
-                  />
-                  <BallOverlay
-                    requestPending={
-                      props.getUserItemProcess.status === Status.SUCCESS &&
+                      }
+                    />
+                  </PartnerBallWrapper>
+                </TransparentButton>
+                <TransparentButton
+                  title={`display ${props.getUserItemProcess.data.username.S}`}
+                  onClick={() => setModalOpen(ModalOpen.PICTUREPARTNER)}
+                >
+                  <PartnerBallWrapper toLeft>
+                    <ProfileBall
+                      firstName={
+                        props.getPairedUserProcess.status === Status.SUCCESS
+                          ? props.getPairedUserProcess.data.username.S
+                          : undefined
+                      }
+                      image={
+                        ((props.getUserItemProcess.status === Status.SUCCESS &&
+                          props.getUserItemProcess.data.outgoingRequests !==
+                            undefined) ||
+                          (props.getUserItemProcess.status === Status.SUCCESS &&
+                            props.getUserItemProcess.data.partner !==
+                              undefined)) &&
+                        props.getPairedUserProcess.status === Status.SUCCESS &&
+                        props.getPairedUserProcess.data.profilePicture
+                          ? `${bucketUrl}/${props.getPairedUserProcess.data.profilePicture.S}`
+                          : undefined
+                      }
+                      isCurrentUser={false}
+                      size={192}
+                      animate={false}
+                      fontSize={100}
+                      showText={
+                        !(
+                          props.getUserItemProcess.status === Status.SUCCESS &&
+                          props.getUserItemProcess.data.outgoingRequests !==
+                            undefined
+                        )
+                      }
+                      shadow={false}
+                      border={false}
+                    />
+                    <BallOverlay
+                      requestPending={
+                        props.getUserItemProcess.status === Status.SUCCESS &&
+                        props.getUserItemProcess.data.outgoingRequests !==
+                          undefined
+                      }
+                    />
+                    {props.getUserItemProcess.status === Status.SUCCESS &&
                       props.getUserItemProcess.data.outgoingRequests !==
-                        undefined
-                    }
-                  />
-                  {props.getUserItemProcess.status === Status.SUCCESS &&
-                    props.getUserItemProcess.data.outgoingRequests !==
-                      undefined && (
-                      <PendingIconWrapper>
-                        <PendingIcon animate={false} size={80} />
-                      </PendingIconWrapper>
-                    )}
-                </PartnerBallWrapper>
+                        undefined && (
+                        <PendingIconWrapper>
+                          <PendingIcon animate={false} size={80} />
+                        </PendingIconWrapper>
+                      )}
+                  </PartnerBallWrapper>
+                </TransparentButton>
                 <IconWrapper>
                   {!(
                     props.getUserItemProcess.status === Status.SUCCESS &&
                     props.getUserItemProcess.data.outgoingRequests !== undefined
-                  ) && (
-                    <HeartIcon size={80} animate={AnimateType.NONE} isRed />
-                  )}
+                  ) && <HeartIcon size={80} animate={AnimateType.NONE} isRed />}
                 </IconWrapper>
               </BallsWrapper>
             </MatchSection>
@@ -302,6 +313,20 @@ export const DetailsSection = (props: Props) => {
                   title={`Cancel pending request to ${props.getUserItemProcess.data.outgoingRequests.S}`}
                   closeModal={() => setModalOpen(ModalOpen.NONE)}
                   performAction={() => handleCancelModalButtonClick()}
+                />
+              )}
+            {modalOpen === ModalOpen.PICTUREUSER &&
+              props.getUserItemProcess.status === Status.SUCCESS && (
+                <DisplayProfile
+                  closeModal={() => setModalOpen(ModalOpen.NONE)}
+                  source={`${bucketUrl}/${props.getUserItemProcess.data.profilePicture.S}`}
+                />
+              )}
+            {modalOpen === ModalOpen.PICTUREPARTNER &&
+              props.getPairedUserProcess.status === Status.SUCCESS && (
+                <DisplayProfile
+                  closeModal={() => setModalOpen(ModalOpen.NONE)}
+                  source={`${bucketUrl}/${props.getPairedUserProcess.data.profilePicture.S}`}
                 />
               )}
           </>

@@ -14,10 +14,8 @@ import { bucketUrl } from "../../config/Config";
 import { ProfileBall } from "../../components/profileBall/ProfileBall";
 import { getEvaluatedMovieItem } from "../movieView/MovieViewUtilityFunctions";
 import { getScoreTextColor } from "../movieView/movieEvaluationSection/userEvaluationItem/UserEvaluationItemUtilityFunctions";
-import {
-  Mark,
-  TransparentButton,
-} from "../accountSettingsView/pictureSection/PictureSection";
+import { TransparentButton } from "../accountSettingsView/pictureSection/PictureSection";
+import { DisplayProfile } from "../../components/modals/DisplayProfileModal";
 
 type Props = {
   getCurrentSessionProcess: Process;
@@ -54,6 +52,8 @@ export const MainView = (props: Props) => {
     partnerScoreHovering,
     setPartnerScoreHovering,
   ] = React.useState<boolean>(false);
+
+  const [modalOpen, setModalOpen] = React.useState<boolean>(false);
 
   const getMovies = async () => {
     try {
@@ -205,7 +205,6 @@ export const MainView = (props: Props) => {
   };
   const partnerEvaluatedMovie = getPartnerEvaluatedMovie();
   const filteredList = getFilteredList();
-  console.log(partnerEvaluatedMovie, "partnerEvaluatedMovie");
   return (
     <Wrapper>
       {!viewInitialized && (
@@ -244,7 +243,8 @@ export const MainView = (props: Props) => {
                 )}
                 {getIsPartnered() &&
                   likeMovieProcess.status !== Status.LOADING &&
-                  props.getPairedUserProcess.status === Status.SUCCESS && (
+                  props.getPairedUserProcess.status === Status.SUCCESS &&
+                  partnerEvaluatedMovie && (
                     <PartnerScoreWrapper
                       title={`${props.getPairedUserProcess.data.username.S} ${
                         partnerEvaluatedMovie.M.score.N >= 50
@@ -253,23 +253,29 @@ export const MainView = (props: Props) => {
                       }`}
                       onMouseEnter={() => setPartnerScoreHovering(true)}
                       onMouseLeave={() => setPartnerScoreHovering(false)}
+                      score={partnerEvaluatedMovie.M.score.N}
                     >
                       <PartnerScoreContentWrapper>
-                        <ProfileBall
-                          image={
-                            props.getPairedUserProcess.status ===
-                              Status.SUCCESS &&
-                            props.getPairedUserProcess.data.profilePicture
-                              ? `${bucketUrl}/${props.getPairedUserProcess.data.profilePicture.S}`
-                              : undefined
-                          }
-                          isCurrentUser={false}
-                          size={sizingScale[6]}
-                          animate={false}
-                          showText
-                          shadow={false}
-                          border={false}
-                        />
+                        <TransparentButton
+                          title={`display ${props.getPairedUserProcess.data.username.S}`}
+                          onClick={() => setModalOpen(true)}
+                        >
+                          <ProfileBall
+                            image={
+                              props.getPairedUserProcess.status ===
+                                Status.SUCCESS &&
+                              props.getPairedUserProcess.data.profilePicture
+                                ? `${bucketUrl}/${props.getPairedUserProcess.data.profilePicture.S}`
+                                : undefined
+                            }
+                            isCurrentUser={false}
+                            size={sizingScale[6]}
+                            animate={false}
+                            showText
+                            shadow={false}
+                            border={false}
+                          />
+                        </TransparentButton>
                         {partnerEvaluatedMovie !== undefined && (
                           <ScoreText score={partnerEvaluatedMovie.M.score.N}>
                             {partnerEvaluatedMovie.M.score.N}
@@ -322,6 +328,12 @@ export const MainView = (props: Props) => {
           )}
         </>
       )}
+      {modalOpen && props.getPairedUserProcess.status === Status.SUCCESS && (
+        <DisplayProfile
+          closeModal={() => setModalOpen(false)}
+          source={`${bucketUrl}/${props.getPairedUserProcess.data.profilePicture.S}`}
+        />
+      )}
     </Wrapper>
   );
 };
@@ -331,6 +343,7 @@ const Wrapper = styled.div`
 `;
 
 const ImageSection = styled.div`
+  width: ${`${sizingScale[13]}px`};
   margin: ${`${sizingScale[6] * -1}px`} 0 0 ${`${sizingScale[6] * -1}px`};
   height: ${`${sizingScale[11]}px`};
   position: relative;
@@ -466,14 +479,28 @@ const TitleWrapper = styled.div`
   justify-content: center;
 `;
 
+type PartnerScoreWrapperProps = {
+  score: number;
+};
+
 const PartnerScoreWrapper = styled.div`
   position: absolute;
-  top: 0;
-  left: 0;
+  top: ${`calc(50% - ${sizingScale[7] / 2}px)`};
+  left: ${(props: PartnerScoreWrapperProps) =>
+    props.score < 50 ? 0 : "unset"};
+  right: ${(props: PartnerScoreWrapperProps) =>
+    props.score >= 50 ? 0 : "unset"};
   width: ${`${sizingScale[8] + 10}px`};
   height: ${`${sizingScale[7]}px`};
   background-color: rgba(255, 255, 255, 0.5);
-  border-bottom-right-radius: ${`${borderRadius}px`};
+  border-top-right-radius: ${(props: PartnerScoreWrapperProps) =>
+    props.score < 50 ? `${borderRadius}px` : "unset"};
+  border-bottom-right-radius: ${(props: PartnerScoreWrapperProps) =>
+    props.score < 50 ? `${borderRadius}px` : "unset"};
+  border-top-left-radius: ${(props: PartnerScoreWrapperProps) =>
+    props.score >= 50 ? `${borderRadius}px` : "unset"};
+  border-bottom-left-radius: ${(props: PartnerScoreWrapperProps) =>
+    props.score >= 50 ? `${borderRadius}px` : "unset"};
 `;
 
 const PartnerScoreContentWrapper = styled.div`
@@ -483,9 +510,8 @@ const PartnerScoreContentWrapper = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: ${`${sizingScale[1]}px`}  ${`${sizingScale[2]}px`};`
-  ;
-
+  padding: ${`${sizingScale[1]}px`} ${`${sizingScale[2]}px`};
+`;
 type ScoreTextProps = {
   score: number;
 };

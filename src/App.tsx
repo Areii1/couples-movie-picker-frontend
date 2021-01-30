@@ -215,6 +215,7 @@ export const App = () => {
                   getCurrentAuthenticatedUserProcess={
                     getCurrentAuthenticatedUserProcess
                   }
+                  getPairedUserProcess={getPairedUserProcess}
                 />
               </div>
             </CSSTransition>

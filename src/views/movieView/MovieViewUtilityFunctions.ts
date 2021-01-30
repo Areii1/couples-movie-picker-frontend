@@ -3,22 +3,15 @@ import { LikedMoviesListItem } from "../../types/Types";
 
 export const getEvaluatedMovieItem = (
   getUserItemProcess: Process,
-  getMovieDetailsProcess: Process
+  movieId: number
 ) => {
   if (
     getUserItemProcess.status === Status.SUCCESS &&
     getUserItemProcess.data.likedMovies
   ) {
     return getUserItemProcess.data.likedMovies.L.find(
-      (likedMovie: LikedMoviesListItem) => {
-        if (getMovieDetailsProcess.status === Status.SUCCESS) {
-          return (
-            parseInt(likedMovie.M.id.S, 10) === getMovieDetailsProcess.data.id
-          );
-        } else {
-          return false;
-        }
-      }
+      (likedMovie: LikedMoviesListItem) =>
+        parseInt(likedMovie.M.id.S, 10) === movieId
     );
   } else {
     return undefined;

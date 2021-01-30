@@ -2,20 +2,29 @@ import React from "react";
 import styled, { keyframes, css } from "styled-components";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
-import { Process, Status } from "../../App";
+import { Process, Status, GetUserItemProcess } from "../../App";
 import { FireMeter } from "../../components/fireMeter/FireMeter";
 import { PrimaryHeadline, SecondaryHeadline } from "../../styles/Styles";
-import { borderRadius, sizingScale } from "../../styles/Variables";
+import { borderRadius, sizingScale, fontSizes } from "../../styles/Variables";
 import { getTrendingMovies } from "../../apiService/getTrendingMovies";
 import { evaluateMovie } from "../../apiService/evaluateMovie";
 import { AnimateType, HeartIcon } from "../../components/icons/HeartIcon";
 import { ImageIcon } from "../../components/icons/ImageIcon";
+import { bucketUrl } from "../../config/Config";
+import { ProfileBall } from "../../components/profileBall/ProfileBall";
+import { getEvaluatedMovieItem } from "../movieView/MovieViewUtilityFunctions";
+import { getScoreTextColor } from "../movieView/movieEvaluationSection/userEvaluationItem/UserEvaluationItemUtilityFunctions";
+import {
+  Mark,
+  TransparentButton,
+} from "../accountSettingsView/pictureSection/PictureSection";
 
 type Props = {
   getCurrentSessionProcess: Process;
-  getUserItemProcess: Process;
+  getUserItemProcess: GetUserItemProcess;
   getUserItem: (username: string, jwtToken: string) => void;
   getCurrentAuthenticatedUserProcess: Process;
+  getPairedUserProcess: GetUserItemProcess;
 };
 
 export type LikeMovieProcess =
@@ -40,6 +49,11 @@ export const MainView = (props: Props) => {
   ] = React.useState<LikeMovieProcess>({
     status: Status.INITIAL,
   });
+
+  const [
+    partnerScoreHovering,
+    setPartnerScoreHovering,
+  ] = React.useState<boolean>(false);
 
   const getMovies = async () => {
     try {
@@ -159,7 +173,39 @@ export const MainView = (props: Props) => {
     props.getUserItemProcess.status === Status.SUCCESS &&
     getTrendingMoviesProcess.status === Status.SUCCESS;
 
+  const getIsPartnered = () => {
+    console.log(props.getUserItemProcess, "getUserItemProcess");
+    console.log(props.getPairedUserProcess, "getPairedUserProcess");
+    if (
+      props.getUserItemProcess.status === Status.SUCCESS &&
+      props.getUserItemProcess.data.partner !== undefined &&
+      props.getPairedUserProcess.status === Status.SUCCESS &&
+      props.getPairedUserProcess.data.partner !== undefined &&
+      props.getPairedUserProcess.data.partner.S ===
+        props.getUserItemProcess.data.username.S &&
+      props.getPairedUserProcess.data.username.S ===
+        props.getUserItemProcess.data.partner.S
+    ) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
+  const getPartnerEvaluatedMovie = () => {
+    const filteredList = getFilteredList();
+    if (filteredList.length > 0) {
+      return getEvaluatedMovieItem(
+        props.getPairedUserProcess,
+        filteredList[swipingIndex].id
+      );
+    } else {
+      return undefined;
+    }
+  };
+  const partnerEvaluatedMovie = getPartnerEvaluatedMovie();
   const filteredList = getFilteredList();
+  console.log(partnerEvaluatedMovie, "partnerEvaluatedMovie");
   return (
     <Wrapper>
       {!viewInitialized && (
@@ -196,9 +242,58 @@ export const MainView = (props: Props) => {
                     </SwipingImageContentWrapper>
                   </SwipingImageWrapper>
                 )}
+                {getIsPartnered() &&
+                  likeMovieProcess.status !== Status.LOADING &&
+                  props.getPairedUserProcess.status === Status.SUCCESS && (
+                    <PartnerScoreWrapper
+                      title={`${props.getPairedUserProcess.data.username.S} ${
+                        partnerEvaluatedMovie.M.score.N >= 50
+                          ? "liked this movie"
+                          : "didn't like this movie"
+                      }`}
+                      onMouseEnter={() => setPartnerScoreHovering(true)}
+                      onMouseLeave={() => setPartnerScoreHovering(false)}
+                    >
+                      <PartnerScoreContentWrapper>
+                        <ProfileBall
+                          image={
+                            props.getPairedUserProcess.status ===
+                              Status.SUCCESS &&
+                            props.getPairedUserProcess.data.profilePicture
+                              ? `${bucketUrl}/${props.getPairedUserProcess.data.profilePicture.S}`
+                              : undefined
+                          }
+                          isCurrentUser={false}
+                          size={sizingScale[6]}
+                          animate={false}
+                          showText
+                          shadow={false}
+                          border={false}
+                        />
+                        {partnerEvaluatedMovie !== undefined && (
+                          <ScoreText score={partnerEvaluatedMovie.M.score.N}>
+                            {partnerEvaluatedMovie.M.score.N}
+                          </ScoreText>
+                        )}
+                        {partnerEvaluatedMovie === undefined && (
+                          <NotEvaluatedText>?</NotEvaluatedText>
+                        )}
+                        {partnerScoreHovering && (
+                          <PartnerScoreCloseButtonWrapper>
+                            <TransparentButton title="dont't show partner score">
+                              <CloseButtonText>x</CloseButtonText>
+                            </TransparentButton>
+                          </PartnerScoreCloseButtonWrapper>
+                        )}
+                      </PartnerScoreContentWrapper>
+                    </PartnerScoreWrapper>
+                  )}
               </ImageSection>
               <DetailsSection>
-                <Link to={`movie/${filteredList[swipingIndex].id}`}>
+                <Link
+                  to={`movie/${filteredList[swipingIndex].id}`}
+                  title={filteredList[swipingIndex].original_title}
+                >
                   <Title>{filteredList[swipingIndex].original_title}</Title>
                 </Link>
                 <FireMeterWrapper>
@@ -320,6 +415,7 @@ export const ImagePlaceholder = styled.div`
   width: ${`${sizingScale[12]}px`};
   margin: auto;
   background-color: #e9e9e9;
+  border-radius: ${`${borderRadius}px`};
 `;
 
 type SwipingImageWrapperProps = {
@@ -355,7 +451,7 @@ const SwipingMark = styled.h5`
 `;
 
 const FireMeterWrapper = styled.div`
-  margin: ${`${sizingScale[8]}px`} auto 0 auto;
+  margin: ${`${sizingScale[6]}px`} auto 0 auto;
 `;
 
 const ImageWrapper = styled.div`
@@ -368,4 +464,52 @@ const TitleWrapper = styled.div`
   margin-top: ${`${sizingScale[5]}px`};
   display: flex;
   justify-content: center;
+`;
+
+const PartnerScoreWrapper = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: ${`${sizingScale[8] + 10}px`};
+  height: ${`${sizingScale[7]}px`};
+  background-color: rgba(255, 255, 255, 0.5);
+  border-bottom-right-radius: ${`${borderRadius}px`};
+`;
+
+const PartnerScoreContentWrapper = styled.div`
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: ${`${sizingScale[1]}px`}  ${`${sizingScale[2]}px`};`
+  ;
+
+type ScoreTextProps = {
+  score: number;
+};
+
+const ScoreText = styled.h5`
+  font-size: ${`${fontSizes[5]}px`};
+  color: ${(props: ScoreTextProps) => getScoreTextColor(props.score)};
+  margin: 0;
+`;
+
+const NotEvaluatedText = styled.h5`
+  font-size: ${`${fontSizes[5]}px`};
+  color: white;
+  margin: 0;
+`;
+
+const PartnerScoreCloseButtonWrapper = styled.div`
+  position: absolute;
+  top: 0;
+  right: 0;
+`;
+
+const CloseButtonText = styled.h5`
+  color: black;
+  font-size: ${`${fontSizes[3]}px`};
+  margin: ${`${sizingScale[0]}px`} ${`${sizingScale[1]}px`} 0 0;
 `;

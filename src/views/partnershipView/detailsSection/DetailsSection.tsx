@@ -277,7 +277,7 @@ export const DetailsSection = (props: Props) => {
                     props.getUserItemProcess.status === Status.SUCCESS &&
                     props.getUserItemProcess.data.outgoingRequests !== undefined
                   ) && (
-                    <HeartIcon size={80} animate={AnimateType.SCALE} isRed />
+                    <HeartIcon size={80} animate={AnimateType.NONE} isRed />
                   )}
                 </IconWrapper>
               </BallsWrapper>

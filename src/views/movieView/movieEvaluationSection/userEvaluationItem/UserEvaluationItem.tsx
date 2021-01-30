@@ -8,6 +8,7 @@ import { bucketUrl } from "../../../../config/Config";
 import { borderRadius, sizingScale } from "../../../../styles/Variables";
 import { TransparentButton } from "../../../accountSettingsView/pictureSection/PictureSection";
 import { EvaluationItemUseCase } from "../MovieEvaluationSection";
+import { getScoreTextColor } from "./UserEvaluationItemUtilityFunctions";
 
 type Props = {
   getUserItemProcess: GetUserItemProcess;
@@ -98,40 +99,10 @@ const IconWrapper = styled.div`
 type IconTextProps = {
   score: number;
 };
-const getRedColor = (score: number) => {
-  if (score >= 50) {
-    const scorePercent = score / 100;
-    return 255 - Math.floor(scorePercent * 2);
-  } else {
-    const scorePercent = -1 * score / 100;
-    return 120 - Math.floor(scorePercent * 80)
-  }
-};
-const getGreenColor = (score: number) => {
-  if (score >= 50) {
-    const scorePercent = score / 100;
-    return 186 - Math.floor(scorePercent * 85);
-  } else {
-    const scorePercent = -1 * score / 100;
-    return 175 - Math.floor(scorePercent * 46);
-  }
-};
-const getBlueColor = (score: number) => {
-  if (score >= 50) {
-    const scorePercent = score / 100;
-    return 166 - Math.floor(scorePercent * 112);
-  } else {
-    const scorePercent = -1 * score / 100;
-    return 255 - Math.floor(scorePercent * 2);
-  }
-};
 
 const IconText = styled.h5`
   margin: 0;
-  color: ${(props: IconTextProps) =>
-    `rgb(${getRedColor(props.score)},${getGreenColor(
-      props.score
-    )},${getBlueColor(props.score)})`};
+  color: ${(props: IconTextProps) => getScoreTextColor(props.score)};
 `;
 
 const UserEvaluatedItemWrapper = styled.div`

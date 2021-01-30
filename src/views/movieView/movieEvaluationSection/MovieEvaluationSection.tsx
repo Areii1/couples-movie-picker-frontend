@@ -26,20 +26,26 @@ export const MovieEvaluationSection = (props: Props) => {
   const [evaluating, setEvaluating] = React.useState<boolean>(false);
 
   const getIsMatched = () => {
-    const userEvaluatedItem = getEvaluatedMovieItem(
-      props.getUserItemProcess,
-      props.getMovieDetailsProcess
-    );
-    console.log(userEvaluatedItem, "userEvaluatedItem");
-    const partnerEvaluatedItem = getEvaluatedMovieItem(
-      props.getPairedUserProcess,
-      props.getMovieDetailsProcess
-    );
-    if (userEvaluatedItem !== undefined && partnerEvaluatedItem !== undefined) {
-      return (
-        parseInt(userEvaluatedItem.M.score.N, 10) >= 50 &&
-        parseInt(partnerEvaluatedItem.M.score.N, 10) >= 50
+    if (props.getMovieDetailsProcess.status === Status.SUCCESS) {
+      const userEvaluatedItem = getEvaluatedMovieItem(
+        props.getUserItemProcess,
+        props.getMovieDetailsProcess.data.id
       );
+      const partnerEvaluatedItem = getEvaluatedMovieItem(
+        props.getPairedUserProcess,
+        props.getMovieDetailsProcess.data.id
+      );
+      if (
+        userEvaluatedItem !== undefined &&
+        partnerEvaluatedItem !== undefined
+      ) {
+        return (
+          parseInt(userEvaluatedItem.M.score.N, 10) >= 50 &&
+          parseInt(partnerEvaluatedItem.M.score.N, 10) >= 50
+        );
+      } else {
+        return false;
+      }
     } else {
       return false;
     }
@@ -55,16 +61,24 @@ export const MovieEvaluationSection = (props: Props) => {
   }, [props.likeMovieProcess.status]);
 
   const movieIsMatched = getIsMatched();
-  const userEvaluatedMovieItem = getEvaluatedMovieItem(
-    props.getUserItemProcess,
-    props.getMovieDetailsProcess
+
+  const getUserEvaluaedMovieItem = (userProcess: GetUserItemProcess) => {
+    if (props.getMovieDetailsProcess.status === Status.SUCCESS) {
+      return getEvaluatedMovieItem(
+        userProcess,
+        props.getMovieDetailsProcess.data.id
+      );
+    } else {
+      return undefined;
+    }
+  };
+
+  const userEvaluatedMovieItem = getUserEvaluaedMovieItem(
+    props.getUserItemProcess
   );
-  const partnerEvaluatedMovieItem = getEvaluatedMovieItem(
-    props.getPairedUserProcess,
-    props.getMovieDetailsProcess
+  const partnerEvaluatedMovieItem = getUserEvaluaedMovieItem(
+    props.getPairedUserProcess
   );
-  console.log(userEvaluatedMovieItem, "userEvaluatedMovieItem");
-  console.log(evaluating, "evaluating");
   return (
     <UserEvaluationWrapper>
       {props.getUserItemProcess.status === Status.SUCCESS &&

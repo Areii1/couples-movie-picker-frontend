@@ -516,7 +516,7 @@ type ScoreTextProps = {
   score: number;
 };
 
-const ScoreText = styled.h5`
+export const ScoreText = styled.h5`
   font-size: ${`${fontSizes[5]}px`};
   color: ${(props: ScoreTextProps) => getScoreTextColor(props.score)};
   margin: 0;

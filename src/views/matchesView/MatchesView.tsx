@@ -9,9 +9,10 @@ import {
 } from "../../App";
 import { LikedMoviesListItem } from "../../types/Types";
 import { getTrendingMovies } from "../../apiService/getTrendingMovies";
-import { sizingScale } from "../../styles/Variables";
+import { borderRadius, sizingScale } from "../../styles/Variables";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
+import { ScoreText } from "../mainView/MainView";
 
 type Props = {
   getPairedUserProcess: GetUserItemProcess;
@@ -61,7 +62,7 @@ export const MatchesView = (props: Props) => {
             props.getPairedUserProcess.status === Status.SUCCESS &&
             props.getPairedUserProcess.data.likedMovies
           ) {
-            const partnerHasLikedMovie = props.getPairedUserProcess.data.likedMovies.L.some(
+            const partnerHasLikedMovie = props.getPairedUserProcess.data.likedMovies.L.find(
               (partnerLikedMovie: LikedMoviesListItem) =>
                 partnerLikedMovie.M.id.S === userLikedMovie.M.id.S
             );
@@ -76,23 +77,61 @@ export const MatchesView = (props: Props) => {
     }
   };
 
+  const getProcessedMatchedMovies = (matchedMovies: any[]) => {
+    return matchedMovies.map((movie: any) => {
+      if (
+        props.getPairedUserProcess.status === Status.SUCCESS &&
+        props.getPairedUserProcess.data.likedMovies
+      ) {
+        const partnerScoreA = props.getPairedUserProcess.data.likedMovies.L.find(
+          (likedMovie: LikedMoviesListItem) =>
+            likedMovie.M.id.S === movie.M.id.S
+        );
+        if (partnerScoreA) {
+          return {
+            id: movie.M.id.S,
+            commonScore:
+              parseInt(movie.M.score.N, 10) + parseInt(partnerScoreA.M.score.N),
+          };
+        } else {
+          return undefined;
+        }
+      }
+    });
+  };
+
+  const getSortedMatchedMovies = (matchedMovies: any[]) => {
+    return matchedMovies.sort((a: any, b: any) => {
+      if (a.commonScore < b.commonScore) {
+        return 1;
+      } else if (a.commonScore > b.commonScore) {
+        return -1;
+      } else {
+        return 0;
+      }
+    });
+  };
+
   const getMatchedMoviesDetails = () => {
     const matchedMovies = getMatchedMovies();
-    if (matchedMovies) {
-      const matchedMoviesDetails = matchedMovies.map(
-        (matchedMovie: LikedMoviesListItem) => {
-          if (getTrendingMoviesProcess.status === Status.SUCCESS) {
-            const matchedMovieDetails = getTrendingMoviesProcess.data.results.find(
-              (movie: any) => {
-                return movie.id === parseInt(matchedMovie.M.id.S, 10);
-              }
-            );
-            return matchedMovieDetails;
-          } else {
-            return matchedMovie;
-          }
+    const processedMatchedMovies = getProcessedMatchedMovies(matchedMovies);
+    const sortedMovies = getSortedMatchedMovies(processedMatchedMovies);
+    if (sortedMovies) {
+      const matchedMoviesDetails = sortedMovies.map((matchedMovie: any) => {
+        if (getTrendingMoviesProcess.status === Status.SUCCESS) {
+          const matchedMovieDetails = getTrendingMoviesProcess.data.results.find(
+            (movie: any) => {
+              return movie.id === parseInt(matchedMovie.id, 10);
+            }
+          );
+          return {
+            ...matchedMovieDetails,
+            commonScore: matchedMovie.commonScore,
+          };
+        } else {
+          return matchedMovie;
         }
-      );
+      });
       const filteredList = matchedMoviesDetails.filter(
         (movieDetailsItems) => movieDetailsItems !== undefined
       );
@@ -109,7 +148,12 @@ export const MatchesView = (props: Props) => {
         return (
           <MatchesListItem>
             <Link to={`movie/${movie.id}`} title={`${movie.title}`}>
-              <ImageOverlay />
+              <TextWrapper>
+                <ScoreText score={movie.commonScore / 2}>
+                  {movie.commonScore / 2}
+                </ScoreText>
+              </TextWrapper>
+              <ImageOverlay id="matches-view-image-overlay" />
               <Image
                 src={`https://image.tmdb.org/t/p/w342/${movie.backdrop_path}`}
                 alt={`${movie.title}`}
@@ -124,7 +168,9 @@ export const MatchesView = (props: Props) => {
   };
   return (
     <CardContentWrapper>
-      <MatchesList>{getMatchesListItems()}</MatchesList>
+      {props.getPairedUserProcess.status === Status.SUCCESS && (
+        <MatchesList>{getMatchesListItems()}</MatchesList>
+      )}
     </CardContentWrapper>
   );
 };
@@ -166,7 +212,7 @@ const MatchesListItem = styled.li`
   border: 1px solid white;
   overflow: hidden;
   :hover {
-    div {
+    #matches-view-image-overlay {
       animation: ${hoverLighten} 0.3s linear forwards;
     }
   }
@@ -176,4 +222,16 @@ const Image = styled.img`
   object-fit: cover;
   max-width: ${`${sizingScale[13] / 2}px`};
   max-height: ${`${sizingScale[11]}px`};
+`;
+
+const TextWrapper = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: rgba(255, 255, 255, 0.7);
+  display: flex;
+  justify-content: center;
+  width: ${`${sizingScale[7]}px`};
+  z-index: 20;
+  border-bottom-right-radius: ${`${borderRadius}px`};
 `;

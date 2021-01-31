@@ -107,7 +107,7 @@ export const LikedMoviesSection = (props: Props) => {
   );
 };
 
-const MovieListTriggerButton = styled.button`
+export const MovieListTriggerButton = styled.button`
   width: 100%;
   background-color: white;
   text-align: start;

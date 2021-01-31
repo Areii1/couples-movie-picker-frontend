@@ -13,6 +13,10 @@ import { borderRadius, sizingScale } from "../../styles/Variables";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { ScoreText } from "../mainView/MainView";
+import { TertiaryHeadline } from "../../styles/Styles";
+import { DownwardArrow } from "../../components/icons/DownwardArrow";
+import { MovieListTriggerButton } from "../../views/partnershipView/likedMoviesSection/LikedMoviesSection";
+import { TransparentButton } from "../accountSettingsView/pictureSection/PictureSection";
 
 type Props = {
   getPairedUserProcess: GetUserItemProcess;
@@ -26,6 +30,11 @@ export const MatchesView = (props: Props) => {
     getTrendingMoviesProcess,
     setGetTrendingMoviesProcess,
   ] = React.useState<Process>({ status: Status.INITIAL });
+
+  const [
+    dislikedMoviesListExpanded,
+    setDislikedMoviesListExpanded,
+  ] = React.useState<boolean>(false);
 
   const getMovies = async () => {
     try {
@@ -141,10 +150,13 @@ export const MatchesView = (props: Props) => {
     }
   };
 
-  const getMatchesListItems = () => {
+  const getMatchesLikedListItems = () => {
     const matchedMoviesDetails = getMatchedMoviesDetails();
-    if (matchedMoviesDetails) {
-      return matchedMoviesDetails.map((movie: any) => {
+    const likedMatchedMoviesDetails = matchedMoviesDetails.filter(
+      (matchedMovie) => matchedMovie.commonScore > 100
+    );
+    if (likedMatchedMoviesDetails) {
+      return likedMatchedMoviesDetails.map((movie: any) => {
         return (
           <MatchesListItem>
             <Link to={`movie/${movie.id}`} title={`${movie.title}`}>
@@ -166,10 +178,66 @@ export const MatchesView = (props: Props) => {
       return [];
     }
   };
+
+  const getMatchesDislikedListItems = () => {
+    const matchedMoviesDetails = getMatchedMoviesDetails();
+    const disLikedMatchedMoviesDetails = matchedMoviesDetails.filter(
+      (matchedMovie) => matchedMovie.commonScore < 100
+    );
+    if (disLikedMatchedMoviesDetails) {
+      return disLikedMatchedMoviesDetails.map((movie: any) => {
+        return (
+          <MatchesListItem>
+            <Link to={`movie/${movie.id}`} title={`${movie.title}`}>
+              <TextWrapper>
+                <ScoreText score={movie.commonScore / 2}>
+                  {movie.commonScore / 2}
+                </ScoreText>
+              </TextWrapper>
+              <ImageOverlay id="matches-view-image-overlay" />
+              <Image
+                src={`https://image.tmdb.org/t/p/w342/${movie.backdrop_path}`}
+                alt={`${movie.title}`}
+              />
+            </Link>
+          </MatchesListItem>
+        );
+      });
+    } else {
+      return [];
+    }
+  };
+
   return (
     <CardContentWrapper>
       {props.getPairedUserProcess.status === Status.SUCCESS && (
-        <MatchesList>{getMatchesListItems()}</MatchesList>
+        <>
+          {getMatchesLikedListItems() !== [] && (
+            <MatchesList>{getMatchesLikedListItems()}</MatchesList>
+          )}
+          {getMatchesDislikedListItems() !== [] && (
+            <>
+              {!dislikedMoviesListExpanded && (
+                <DislikedMoviesListWrapper>
+                  <TransparentButton
+                    onClick={() =>
+                      setDislikedMoviesListExpanded(!dislikedMoviesListExpanded)
+                    }
+                    title="show disliked movies"
+                  >
+                    <DownwardArrow size={30} />
+                  </TransparentButton>
+                </DislikedMoviesListWrapper>
+              )}
+              {dislikedMoviesListExpanded && (
+                <>
+                  <ListPadding />
+                  <MatchesList>{getMatchesDislikedListItems()}</MatchesList>
+                </>
+              )}
+            </>
+          )}
+        </>
       )}
     </CardContentWrapper>
   );
@@ -181,6 +249,7 @@ const MatchesList = styled.ul`
   margin: 0;
   display: grid;
   grid-template-columns: 1fr 1fr;
+  width: ${`${sizingScale[13]}px`};
   margin: 0 0 0 ${`${sizingScale[6] * -1}px`};
 `;
 
@@ -232,6 +301,16 @@ const TextWrapper = styled.div`
   display: flex;
   justify-content: center;
   width: ${`${sizingScale[7]}px`};
-  z-index: 20;
   border-bottom-right-radius: ${`${borderRadius}px`};
+`;
+
+const DislikedMoviesListWrapper = styled.div`
+  margin-top: ${`${sizingScale[7]}px`};
+  display: flex;
+  justify-content: center;
+  width: 100%;
+`;
+
+const ListPadding = styled.div`
+  margin-top: ${`${sizingScale[7]}px`};
 `;

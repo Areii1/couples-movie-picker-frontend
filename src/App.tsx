@@ -184,13 +184,13 @@ export const App = () => {
     setGetUserItemProcess({ status: Status.INITIAL });
   }
 
-  // console.log(getUserItemProcess, "getUserItemProcess");
-  // console.log(getCurrentSessionProcess, "getCurrentSessionProcess");
-  // console.log(
-  //   getCurrentAuthenticatedUserProcess,
-  //   "getCurrentAuthenticatedUserProcess"
-  // );
-  // console.log(getPairedUserProcess, "getPairedUserProcess");
+  console.log(getUserItemProcess, "getUserItemProcess");
+  console.log(getCurrentSessionProcess, "getCurrentSessionProcess");
+  console.log(
+    getCurrentAuthenticatedUserProcess,
+    "getCurrentAuthenticatedUserProcess"
+  );
+  console.log(getPairedUserProcess, "getPairedUserProcess");
 
   return (
     <ContentWrapper>

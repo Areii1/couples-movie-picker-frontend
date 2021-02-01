@@ -1,7 +1,8 @@
 import { API } from "aws-amplify";
+import { apiName } from '../config/Config';
 
 export const rejectIncomingRequest = (username: string, jwtToken: string) =>
-  API.get("couples-movie-picker-api", `/rejectIncomingRequest?username=${username}`, {
+  API.get(apiName, `/rejectIncomingRequest?username=${username}`, {
     headers: {
       Authorization: jwtToken,
     },

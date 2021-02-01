@@ -10,12 +10,13 @@ import {
   Process,
   Status,
 } from "../../App";
-import { SecondaryHeadline } from "../../styles/Styles";
+import { SecondaryHeadline, TertiaryHeadline } from "../../styles/Styles";
 import { Puff } from "../../components/puff/Puff";
 import { Button, ButtonText, CardContentWrapper } from "../logIn/LogIn";
 import { PrimaryHeadline } from "../../styles/Styles";
 import { PictureSection } from "./pictureSection/PictureSection";
 import { sizingScale, fontSizes } from "../../styles/Variables";
+// import { updatePreference } from "../../apiService/updatePreference";
 
 type Props = {
   getCurrentSessionProcess: GetCurrentSessionProcess;
@@ -30,6 +31,10 @@ export const AccountSettingsView = (props: Props) => {
   const [signOutProcess, setSignOutProcess] = React.useState<Process>({
     status: Status.INITIAL,
   });
+  // const [
+  //   updatePreferenceProcess,
+  //   setUpdatePreferenceProcess,
+  // ] = React.useState<Process>({ status: Status.INITIAL });
 
   const signOut = async () => {
     try {
@@ -50,6 +55,48 @@ export const AccountSettingsView = (props: Props) => {
     }
   };
 
+  // const updateShowFireMeterPreference = async () => {
+  //   try {
+  //     setUpdatePreferenceProcess({ status: Status.LOADING });
+  //     const updatePreferenceResponse = await updatePreference();
+  //     console.log(updatePreferenceResponse, "updatePreferenceResponse");
+  //     toast.success("Updated preference");
+  //     setUpdatePreferenceProcess({
+  //       status: Status.SUCCESS,
+  //       data: updatePreferenceResponse,
+  //     });
+  //   } catch (updatePreferenceError) {
+  //     toast.error("Could not update preference");
+  //     setUpdatePreferenceProcess({
+  //       status: Status.ERROR,
+  //       error: updatePreferenceError,
+  //     });
+  //   }
+  // };
+
+  // const updateShowPartnerPreference = async () => {
+  //   try {
+  //     setUpdatePreferenceProcess({ status: Status.LOADING });
+  //     const updatePreferenceResponse = await updatePreference();
+  //     toast.success("Updated preference");
+  //     setUpdatePreferenceProcess({
+  //       status: Status.SUCCESS,
+  //       data: updatePreferenceResponse,
+  //     });
+  //   } catch (updatePreferenceError) {
+  //     toast.error("Could not update preference");
+  //     setUpdatePreferenceProcess({
+  //       status: Status.ERROR,
+  //       error: updatePreferenceError,
+  //     });
+  //   }
+  // };
+
+  // const preferences = {
+  //   showPartnerScore: true,
+  //   showMeter: true,
+  // };
+
   return (
     <SettingsCardContentWrapper>
       <PrimaryHeadline>Profile</PrimaryHeadline>
@@ -66,6 +113,24 @@ export const AccountSettingsView = (props: Props) => {
             getCurrentSessionProcess={props.getCurrentSessionProcess}
             getUserItem={props.getUserItem}
           />
+          {/* <Section>
+            <SecondaryHeadline>Preferences</SecondaryHeadline>
+            <SectionContentWrapper>
+              <PreferenceItem>
+                <TertiaryHeadline>Partner score</TertiaryHeadline>
+                <ToggleButton onClick={updateShowPartnerPreference}>
+                  <ButtonContentWrapper
+                    isLoading={
+                      updatePreferenceProcess.status === Status.LOADING
+                    }
+                    isOn={preferences.showPartnerScore}
+                  >
+                    {preferences.showPartnerScore ? "x" : "&#10003;"}
+                  </ButtonContentWrapper>
+                </ToggleButton>
+              </PreferenceItem>
+            </SectionContentWrapper>
+          </Section> */}
           <Section>
             <SecondaryHeadline>Log out</SecondaryHeadline>
             {signOutProcess.status !== Status.LOADING && (
@@ -111,7 +176,7 @@ export const AccountSettingsView = (props: Props) => {
 
 export const Section = styled.div`
   text-align: start;
-  margin-top: ${`${sizingScale[3]}px`};
+  margin-top: ${`${sizingScale[5]}px`};
 `;
 
 const TextWrapper = styled.div`
@@ -127,3 +192,42 @@ const Text = styled.p`
 const SettingsCardContentWrapper = styled(CardContentWrapper)`
   text-align: center;
 `;
+
+// const SectionContentWrapper = styled.div`
+//   margin-top: ${`${sizingScale[3]}px`};
+// `;
+
+// const ToggleButton = styled.button`
+//   width: ${`${sizingScale[7]}px`};
+//   height: ${`${sizingScale[4]}px`};
+//   border-radius: ${`${sizingScale[3]}px`};
+//   background-color: white;
+//   border: 1px solid lightgray;
+//   cursor: pointer;
+// `;
+
+// const getTextAlign = (isLoading: boolean, isOn: boolean) => {
+//   if (!isLoading) {
+//     if (isOn) {
+//       return "end";
+//     } else {
+//       return "start";
+//     }
+//   } else {
+//     return "center";
+//   }
+// };
+
+// type ButtonContentWrapperProps = {
+//   isLoading: boolean;
+//   isOn: boolean;
+// };
+
+// const ButtonContentWrapper = styled.div`
+//   text-align: ${(props: ButtonContentWrapperProps) =>
+//     getTextAlign(props.isLoading, props.isOn)};
+// `;
+
+// const PreferenceItem = styled.div`
+//   display: flex;
+// `;

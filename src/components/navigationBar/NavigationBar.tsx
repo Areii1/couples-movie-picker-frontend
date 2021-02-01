@@ -15,7 +15,6 @@ type Props = {
 };
 
 export const NavigationBar = (props: Props) => {
-  console.log("navigation bar");
   const firstName =
     props.getCurrentAuthenticatedUserProcess.status === Status.SUCCESS &&
     props.getUserItemProcess.status === Status.SUCCESS

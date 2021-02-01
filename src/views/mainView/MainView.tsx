@@ -174,8 +174,6 @@ export const MainView = (props: Props) => {
     getTrendingMoviesProcess.status === Status.SUCCESS;
 
   const getIsPartnered = () => {
-    console.log(props.getUserItemProcess, "getUserItemProcess");
-    console.log(props.getPairedUserProcess, "getPairedUserProcess");
     if (
       props.getUserItemProcess.status === Status.SUCCESS &&
       props.getUserItemProcess.data.partner !== undefined &&

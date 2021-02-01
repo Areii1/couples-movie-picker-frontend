@@ -1,7 +1,8 @@
 import { API } from "aws-amplify";
+import { apiName } from '../config/Config';
 
 export const cancelPairingRequest = (username: string, jwtToken: string) =>
-  API.get("couples-movie-picker-api", `/cancelPairing?username=${username}`, {
+  API.get(apiName, `/cancelPairing?username=${username}`, {
     headers: {
       Authorization: jwtToken,
     },

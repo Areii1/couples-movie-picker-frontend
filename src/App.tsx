@@ -129,7 +129,9 @@ export const App = () => {
         });
       }
     } catch (getCurrentSessionError) {
-      toast.error("Could not initiate session");
+      if (getCurrentSessionError !== "No current user") {
+        toast.error("Could not initiate session");
+      }
       setGetCurrentSessionProcess({
         status: Status.ERROR,
         error: getCurrentSessionError,

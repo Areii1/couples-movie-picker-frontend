@@ -33,6 +33,12 @@ export type LikeMovieProcess =
   | { status: Status.SUCCESS; data: any }
   | { status: Status.ERROR; error: any };
 
+enum HoveringOver {
+  LEFT,
+  RIGHT,
+  NONE,
+}
+
 export const MainView = (props: Props) => {
   const [
     getTrendingMoviesProcess,
@@ -54,6 +60,10 @@ export const MainView = (props: Props) => {
   ] = React.useState<boolean>(false);
 
   const [modalOpen, setModalOpen] = React.useState<boolean>(false);
+
+  const [hoveringOver, setHoveringOver] = React.useState<HoveringOver>(
+    HoveringOver.NONE
+  );
 
   const getMovies = async () => {
     try {
@@ -173,6 +183,11 @@ export const MainView = (props: Props) => {
     props.getUserItemProcess.status === Status.SUCCESS &&
     getTrendingMoviesProcess.status === Status.SUCCESS;
 
+  const viewErrored =
+    props.getCurrentAuthenticatedUserProcess.status === Status.ERROR ||
+    props.getCurrentSessionProcess.status === Status.ERROR ||
+    props.getUserItemProcess.status === Status.ERROR ||
+    getTrendingMoviesProcess.status === Status.ERROR;
   const getIsPartnered = () => {
     if (
       props.getUserItemProcess.status === Status.SUCCESS &&
@@ -201,11 +216,48 @@ export const MainView = (props: Props) => {
       return undefined;
     }
   };
+
+  React.useEffect(() => {
+    if (
+      likeMovieProcess.status === Status.SUCCESS &&
+      props.getPairedUserProcess.status === Status.SUCCESS &&
+      props.getPairedUserProcess.data.likedMovies &&
+      props.getUserItemProcess.status === Status.SUCCESS &&
+      props.getUserItemProcess.data.likedMovies
+    ) {
+      const filteredList = getFilteredList();
+      const userEvaluatedLastMovieItem = likeMovieProcess.data.Attributes.likedMovies.L.find(
+        (likedMovie: any) =>
+          filteredList[swipingIndex - 1].id === parseInt(likedMovie.M.id.S, 10)
+      );
+      if (
+        userEvaluatedLastMovieItem &&
+        parseInt(userEvaluatedLastMovieItem.M.score.N, 10) >= 50
+      ) {
+        console.log(userEvaluatedLastMovieItem, "userEvaluatedLastMovieItem");
+        const pairedUserEvaluatedLastItem = props.getPairedUserProcess.data.likedMovies.L.find(
+          (likedMovie: any) =>
+            filteredList[swipingIndex - 1].id ===
+            parseInt(likedMovie.M.id.S, 10)
+        );
+        console.log(pairedUserEvaluatedLastItem, "pairedUserEvaluatedLastItem");
+        if (
+          pairedUserEvaluatedLastItem &&
+          parseInt(pairedUserEvaluatedLastItem.M.score.N, 10) >= 50
+        ) {
+          toast.success(
+            `Movie matched with ${props.getPairedUserProcess.data.username.S}`
+          );
+        }
+      }
+    }
+  }, [likeMovieProcess.status]);
+  console.log(likeMovieProcess, "likeMovieProcess");
   const partnerEvaluatedMovie = getPartnerEvaluatedMovie();
   const filteredList = getFilteredList();
   return (
     <Wrapper>
-      {!viewInitialized && (
+      {!viewInitialized && !viewErrored && (
         <div>
           <ImagePlaceholder />
           <TitlePlaceholder />
@@ -216,6 +268,38 @@ export const MainView = (props: Props) => {
           {filteredList.length > 0 && (
             <div>
               <ImageSection>
+                <EvaluateButtonLeft
+                  onMouseEnter={() => setHoveringOver(HoveringOver.LEFT)}
+                  onMouseLeave={() => setHoveringOver(HoveringOver.NONE)}
+                  onClick={() => evaluateItem(filteredList[swipingIndex].id, 0)}
+                  title="dislike movie"
+                  hovering={hoveringOver === HoveringOver.LEFT}
+                >
+                  {hoveringOver === HoveringOver.LEFT && (
+                    <IconWrapper>
+                      <HoveringMark>✕</HoveringMark>
+                    </IconWrapper>
+                  )}
+                </EvaluateButtonLeft>
+                <EvaluateButtonRight
+                  onMouseEnter={() => setHoveringOver(HoveringOver.RIGHT)}
+                  onMouseLeave={() => setHoveringOver(HoveringOver.NONE)}
+                  onClick={() =>
+                    evaluateItem(filteredList[swipingIndex].id, 100)
+                  }
+                  title="like movie"
+                  hovering={hoveringOver === HoveringOver.RIGHT}
+                >
+                  {hoveringOver === HoveringOver.RIGHT && (
+                    <IconWrapper>
+                      <HeartIcon
+                        size={sizingScale[7]}
+                        isRed={false}
+                        animate={AnimateType.NONE}
+                      />
+                    </IconWrapper>
+                  )}
+                </EvaluateButtonRight>
                 <Image src={getImageSrc()} alt={getImageAlt()} />
                 {likeMovieProcess.status === Status.LOADING && (
                   <SwipingImageWrapper score={likeMovieProcess.score}>
@@ -242,7 +326,11 @@ export const MainView = (props: Props) => {
                 {getIsPartnered() &&
                   likeMovieProcess.status !== Status.LOADING &&
                   props.getPairedUserProcess.status === Status.SUCCESS &&
-                  partnerEvaluatedMovie && (
+                  partnerEvaluatedMovie &&
+                  ((partnerEvaluatedMovie.M.score.N >= 50 &&
+                    hoveringOver !== HoveringOver.RIGHT) ||
+                    (partnerEvaluatedMovie.M.score.N < 50 &&
+                      hoveringOver !== HoveringOver.LEFT)) && (
                     <PartnerScoreWrapper
                       title={`${props.getPairedUserProcess.data.username.S} ${
                         partnerEvaluatedMovie.M.score.N >= 50
@@ -345,6 +433,66 @@ const ImageSection = styled.div`
   margin: ${`${sizingScale[6] * -1}px`} 0 0 ${`${sizingScale[6] * -1}px`};
   height: ${`${sizingScale[11]}px`};
   position: relative;
+`;
+
+type EvaluateButtonProps = {
+  hovering: boolean;
+};
+
+const lightenButton = keyframes`
+  from {
+    background-color: transparent;
+  }
+  to {
+    background-color: rgba(255, 255, 255, 0.2);
+  }
+`;
+
+const getHoveringAnimation = (hovering: boolean) => {
+  if (hovering) {
+    return css`
+      animation: ${lightenButton} 0.3s linear forwards;
+    `;
+  } else {
+    return "unset";
+  }
+};
+
+const EvaluateButton = styled.button`
+  width: ${`${sizingScale[9]}px`};
+  height: 100%;
+  position: absolute;
+  top: 0;
+  border: none;
+  background-color: transparent;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  ${(props: EvaluateButtonProps) => getHoveringAnimation(props.hovering)}
+`;
+
+const EvaluateButtonLeft = styled(EvaluateButton)`
+  left: 0;
+`;
+
+const EvaluateButtonRight = styled(EvaluateButton)`
+  right: 0;
+`;
+
+const fadeIconIn = keyframes`
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+`;
+
+const IconWrapper = styled.div`
+  opacity: 0;
+  animation: ${fadeIconIn} 0.3s linear forwards;
 `;
 
 const Title = styled(PrimaryHeadline)`
@@ -459,6 +607,11 @@ const SwipingMark = styled.h5`
   font-size: ${`${sizingScale[10]}px`};
   margin: -40px 0 0 0;
   vertical-align: text-top;
+`;
+
+const HoveringMark = styled.h5`
+  color: red;
+  font-size: ${`${sizingScale[7]}px`};
 `;
 
 const FireMeterWrapper = styled.div`

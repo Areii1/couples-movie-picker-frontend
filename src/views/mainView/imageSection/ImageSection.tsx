@@ -9,12 +9,18 @@ import {
   sizingScale,
 } from "../../../styles/Variables";
 import { TransparentButton } from "../../accountSettingsView/pictureSection/PictureSection";
-import { getEvaluatedMovieItem } from "../../movieView/MovieViewUtilityFunctions";
-import { bucketUrl } from "../../../config/Config";
 import { getScoreTextColor } from "../../movieView/movieEvaluationSection/userEvaluationItem/UserEvaluationItemUtilityFunctions";
 import { LikeMovieProcess } from "../MainView";
+import {
+  userEvaluationItemIsNotBlockedByHoverEffect,
+  getImageAlt,
+  getImageSrc,
+  getPartnerEvaluatedMovie,
+  getIsPartnered,
+} from "./ImageSectionUtilityFunctions";
+import { bucketUrl } from "../../../config/Config";
 
-enum HoveringOver {
+export enum HoveringOver {
   LEFT,
   RIGHT,
   NONE,
@@ -42,79 +48,11 @@ export const ImageSection = (props: Props) => {
     HoveringOver.NONE
   );
 
-  const getIsPartnered = () => {
-    if (
-      props.getUserItemProcess.status === Status.SUCCESS &&
-      props.getUserItemProcess.data.partner !== undefined &&
-      props.getPairedUserProcess.status === Status.SUCCESS &&
-      props.getPairedUserProcess.data.partner !== undefined &&
-      props.getPairedUserProcess.data.partner.S ===
-        props.getUserItemProcess.data.username.S &&
-      props.getPairedUserProcess.data.username.S ===
-        props.getUserItemProcess.data.partner.S
-    ) {
-      return true;
-    } else {
-      return false;
-    }
-  };
-
-  const getPartnerEvaluatedMovie = () => {
-    if (props.filteredList.length > 0) {
-      return getEvaluatedMovieItem(
-        props.getPairedUserProcess,
-        props.filteredList[props.swipingIndex].id
-      );
-    } else {
-      return undefined;
-    }
-  };
-
-  const getImageSrc = () => {
-    if (props.evaluateMovieProcess.status === Status.LOADING) {
-      if (props.filteredList[props.swipingIndex + 1] !== undefined) {
-        return `https://image.tmdb.org/t/p/w500/${
-          props.filteredList[props.swipingIndex + 1].backdrop_path
-        }`;
-      } else {
-        return "";
-      }
-    } else {
-      return `https://image.tmdb.org/t/p/w500/${
-        props.filteredList[props.swipingIndex].backdrop_path
-      }`;
-    }
-  };
-
-  const getImageAlt = () => {
-    if (props.evaluateMovieProcess.status === Status.LOADING) {
-      if (props.filteredList[props.swipingIndex + 1] !== undefined) {
-        return props.filteredList[props.swipingIndex + 1].original_title;
-      } else {
-        return "";
-      }
-    } else {
-      return props.filteredList[props.swipingIndex].original_title;
-    }
-  };
-
-  const userEvaluationItemIsNotBlockedByHoverEffect = () => {
-    if (
-      partnerEvaluatedMovie.M.score.N >= 50 &&
-      hoveringOver !== HoveringOver.RIGHT
-    ) {
-      return true;
-    } else if (
-      partnerEvaluatedMovie.M.score.N < 50 &&
-      hoveringOver !== HoveringOver.LEFT
-    ) {
-      return true;
-    } else {
-      return false;
-    }
-  };
-
-  const partnerEvaluatedMovie = getPartnerEvaluatedMovie();
+  const partnerEvaluatedMovie = getPartnerEvaluatedMovie(
+    props.filteredList,
+    props.swipingIndex,
+    props.getPairedUserProcess
+  );
 
   return (
     <Wrapper>
@@ -162,7 +100,18 @@ export const ImageSection = (props: Props) => {
           </IconWrapper>
         )}
       </EvaluateButtonRight>
-      <Image src={getImageSrc()} alt={getImageAlt()} />
+      <Image
+        src={getImageSrc(
+          props.evaluateMovieProcess,
+          props.filteredList,
+          props.swipingIndex
+        )}
+        alt={getImageAlt(
+          props.evaluateMovieProcess,
+          props.filteredList,
+          props.swipingIndex
+        )}
+      />
       {props.evaluateMovieProcess.status === Status.LOADING && (
         <SwipingImageWrapper score={props.evaluateMovieProcess.score}>
           <SwipingImageContentWrapper>
@@ -187,11 +136,14 @@ export const ImageSection = (props: Props) => {
           </SwipingImageContentWrapper>
         </SwipingImageWrapper>
       )}
-      {getIsPartnered() &&
+      {getIsPartnered(props.getUserItemProcess, props.getPairedUserProcess) &&
         props.evaluateMovieProcess.status !== Status.LOADING &&
         props.getPairedUserProcess.status === Status.SUCCESS &&
         partnerEvaluatedMovie &&
-        userEvaluationItemIsNotBlockedByHoverEffect() && (
+        userEvaluationItemIsNotBlockedByHoverEffect(
+          partnerEvaluatedMovie,
+          hoveringOver
+        ) && (
           <PartnerScoreWrapper
             title={`${props.getPairedUserProcess.data.username.S} ${
               partnerEvaluatedMovie.M.score.N >= 50

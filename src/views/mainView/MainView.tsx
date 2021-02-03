@@ -48,8 +48,8 @@ export const MainView = (props: Props) => {
   const [swipingIndex, setSwipingIndex] = React.useState<number>(0);
 
   const [
-    likeMovieProcess,
-    setLikeMovieProcess,
+    evaluateMovieProcess,
+    setEvaluateMovieProcess,
   ] = React.useState<LikeMovieProcess>({
     status: Status.INITIAL,
   });
@@ -87,24 +87,24 @@ export const MainView = (props: Props) => {
     if (
       props.getCurrentSessionProcess.status === Status.SUCCESS &&
       getTrendingMoviesProcess.status === Status.SUCCESS &&
-      likeMovieProcess.status !== Status.LOADING
+      evaluateMovieProcess.status !== Status.LOADING
     ) {
       try {
-        setLikeMovieProcess({ status: Status.LOADING, score });
+        setEvaluateMovieProcess({ status: Status.LOADING, score });
         const likeMovieResponse = await evaluateMovie(
           props.getCurrentSessionProcess.data.getIdToken().getJwtToken(),
           movieId,
           score
         );
         setSwipingIndex(swipingIndex + 1);
-        setLikeMovieProcess({
+        setEvaluateMovieProcess({
           status: Status.SUCCESS,
           data: likeMovieResponse,
         });
       } catch (likeMovieError) {
         toast.error("Failed to evaluate movie");
         setSwipingIndex(swipingIndex + 1);
-        setLikeMovieProcess({
+        setEvaluateMovieProcess({
           status: Status.ERROR,
           error: likeMovieError,
         });
@@ -152,7 +152,7 @@ export const MainView = (props: Props) => {
   };
 
   const getImageSrc = () => {
-    if (likeMovieProcess.status === Status.LOADING) {
+    if (evaluateMovieProcess.status === Status.LOADING) {
       if (filteredList[swipingIndex + 1] !== undefined) {
         return `https://image.tmdb.org/t/p/w500/${
           filteredList[swipingIndex + 1].backdrop_path
@@ -166,7 +166,7 @@ export const MainView = (props: Props) => {
   };
 
   const getImageAlt = () => {
-    if (likeMovieProcess.status === Status.LOADING) {
+    if (evaluateMovieProcess.status === Status.LOADING) {
       if (filteredList[swipingIndex + 1] !== undefined) {
         return filteredList[swipingIndex + 1].original_title;
       } else {
@@ -219,14 +219,14 @@ export const MainView = (props: Props) => {
 
   React.useEffect(() => {
     if (
-      likeMovieProcess.status === Status.SUCCESS &&
+      evaluateMovieProcess.status === Status.SUCCESS &&
       props.getPairedUserProcess.status === Status.SUCCESS &&
       props.getPairedUserProcess.data.likedMovies &&
       props.getUserItemProcess.status === Status.SUCCESS &&
       props.getUserItemProcess.data.likedMovies
     ) {
       const filteredList = getFilteredList();
-      const userEvaluatedLastMovieItem = likeMovieProcess.data.Attributes.likedMovies.L.find(
+      const userEvaluatedLastMovieItem = evaluateMovieProcess.data.Attributes.likedMovies.L.find(
         (likedMovie: any) =>
           filteredList[swipingIndex - 1].id === parseInt(likedMovie.M.id.S, 10)
       );
@@ -234,13 +234,11 @@ export const MainView = (props: Props) => {
         userEvaluatedLastMovieItem &&
         parseInt(userEvaluatedLastMovieItem.M.score.N, 10) >= 50
       ) {
-        console.log(userEvaluatedLastMovieItem, "userEvaluatedLastMovieItem");
         const pairedUserEvaluatedLastItem = props.getPairedUserProcess.data.likedMovies.L.find(
           (likedMovie: any) =>
             filteredList[swipingIndex - 1].id ===
             parseInt(likedMovie.M.id.S, 10)
         );
-        console.log(pairedUserEvaluatedLastItem, "pairedUserEvaluatedLastItem");
         if (
           pairedUserEvaluatedLastItem &&
           parseInt(pairedUserEvaluatedLastItem.M.score.N, 10) >= 50
@@ -251,8 +249,24 @@ export const MainView = (props: Props) => {
         }
       }
     }
-  }, [likeMovieProcess.status]);
-  console.log(likeMovieProcess, "likeMovieProcess");
+  }, [evaluateMovieProcess.status]);
+
+  const userEvaluationItemIsNotBlockedByHoverEffect = () => {
+    if (
+      partnerEvaluatedMovie.M.score.N >= 50 &&
+      hoveringOver !== HoveringOver.RIGHT
+    ) {
+      return true;
+    } else if (
+      partnerEvaluatedMovie.M.score.N < 50 &&
+      hoveringOver !== HoveringOver.LEFT
+    ) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
   const partnerEvaluatedMovie = getPartnerEvaluatedMovie();
   const filteredList = getFilteredList();
   return (
@@ -273,7 +287,12 @@ export const MainView = (props: Props) => {
                   onMouseLeave={() => setHoveringOver(HoveringOver.NONE)}
                   onClick={() => evaluateItem(filteredList[swipingIndex].id, 0)}
                   title="dislike movie"
-                  hovering={hoveringOver === HoveringOver.LEFT}
+                  hovering={
+                    evaluateMovieProcess.status !== Status.LOADING
+                      ? hoveringOver === HoveringOver.LEFT
+                      : false
+                  }
+                  disabled={evaluateMovieProcess.status === Status.LOADING}
                 >
                   {hoveringOver === HoveringOver.LEFT && (
                     <IconWrapper>
@@ -288,7 +307,12 @@ export const MainView = (props: Props) => {
                     evaluateItem(filteredList[swipingIndex].id, 100)
                   }
                   title="like movie"
-                  hovering={hoveringOver === HoveringOver.RIGHT}
+                  hovering={
+                    evaluateMovieProcess.status !== Status.LOADING
+                      ? hoveringOver === HoveringOver.RIGHT
+                      : false
+                  }
+                  disabled={evaluateMovieProcess.status === Status.LOADING}
                 >
                   {hoveringOver === HoveringOver.RIGHT && (
                     <IconWrapper>
@@ -301,18 +325,18 @@ export const MainView = (props: Props) => {
                   )}
                 </EvaluateButtonRight>
                 <Image src={getImageSrc()} alt={getImageAlt()} />
-                {likeMovieProcess.status === Status.LOADING && (
-                  <SwipingImageWrapper score={likeMovieProcess.score}>
+                {evaluateMovieProcess.status === Status.LOADING && (
+                  <SwipingImageWrapper score={evaluateMovieProcess.score}>
                     <SwipingImageContentWrapper>
                       <SwipingImageIconWrapper>
-                        {likeMovieProcess.score >= 50 && (
+                        {evaluateMovieProcess.score >= 50 && (
                           <HeartIcon
                             size={sizingScale[10]}
                             isRed={false}
                             animate={AnimateType.NONE}
                           />
                         )}
-                        {likeMovieProcess.score < 50 && (
+                        {evaluateMovieProcess.score < 50 && (
                           <SwipingMark>✕</SwipingMark>
                         )}
                       </SwipingImageIconWrapper>
@@ -324,13 +348,10 @@ export const MainView = (props: Props) => {
                   </SwipingImageWrapper>
                 )}
                 {getIsPartnered() &&
-                  likeMovieProcess.status !== Status.LOADING &&
+                  evaluateMovieProcess.status !== Status.LOADING &&
                   props.getPairedUserProcess.status === Status.SUCCESS &&
                   partnerEvaluatedMovie &&
-                  ((partnerEvaluatedMovie.M.score.N >= 50 &&
-                    hoveringOver !== HoveringOver.RIGHT) ||
-                    (partnerEvaluatedMovie.M.score.N < 50 &&
-                      hoveringOver !== HoveringOver.LEFT)) && (
+                  userEvaluationItemIsNotBlockedByHoverEffect() && (
                     <PartnerScoreWrapper
                       title={`${props.getPairedUserProcess.data.username.S} ${
                         partnerEvaluatedMovie.M.score.N >= 50
@@ -392,7 +413,7 @@ export const MainView = (props: Props) => {
                   <FireMeter
                     evaluateItem={evaluateItem}
                     movieId={filteredList[swipingIndex].id}
-                    likeMovieProcess={likeMovieProcess}
+                    likeMovieProcess={evaluateMovieProcess}
                   />
                 </FireMeterWrapper>
               </DetailsSection>

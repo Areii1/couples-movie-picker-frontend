@@ -1,6 +1,6 @@
 import React from "react";
 import styled, { keyframes } from "styled-components";
-import { CardContentWrapper } from "../logIn/LogIn";
+import { CardContentWrapper } from "../logIn/LogInStyles";
 import {
   GetUserItemProcess,
   Status,

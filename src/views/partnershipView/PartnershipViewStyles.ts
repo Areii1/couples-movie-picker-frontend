@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { fontSizes, sizingScale } from "../../styles/Variables";
-import { CardContentWrapper } from "../logIn/LogIn";
+import { CardContentWrapper } from "../logIn/LogInStyles";
 
 export const MatchSectionWrapper = styled.div`
   margin-top: ${`${sizingScale[6]}px`};

@@ -10,7 +10,7 @@ import {
   SecondaryHeadline,
   TertiaryHeadline,
 } from "../../styles/Styles";
-import { CardContentWrapper } from "../logIn/LogIn";
+import { CardContentWrapper } from "../logIn/LogInStyles";
 import { MovieEvaluationSection } from "./movieEvaluationSection/MovieEvaluationSection";
 import { evaluateMovie } from "../../apiService/evaluateMovie";
 import { LikeMovieProcess } from "../mainView/MainView";

@@ -4,16 +4,10 @@ import { toast } from "react-toastify";
 import { Auth } from "aws-amplify";
 import { Redirect } from "react-router";
 import { Link } from "react-router-dom";
-import {
-  GetCurrentSessionProcess,
-  GetUserItemProcess,
-  Process,
-  Status,
-} from "../../App";
-import { SecondaryHeadline, TertiaryHeadline } from "../../styles/Styles";
+import { GetCurrentSessionProcess, GetUserItemProcess, Process, Status } from "../../App";
+import { SecondaryHeadline, PrimaryHeadline } from "../../styles/Styles";
 import { Puff } from "../../components/puff/Puff";
-import { Button, ButtonText, CardContentWrapper } from "../logIn/LogIn";
-import { PrimaryHeadline } from "../../styles/Styles";
+import { Button, ButtonText, CardContentWrapper } from "../logIn/LogInStyles";
 import { PictureSection } from "./pictureSection/PictureSection";
 import { sizingScale, fontSizes } from "../../styles/Variables";
 // import { updatePreference } from "../../apiService/updatePreference";
@@ -100,15 +94,11 @@ export const AccountSettingsView = (props: Props) => {
   return (
     <SettingsCardContentWrapper>
       <PrimaryHeadline>Profile</PrimaryHeadline>
-      {props.getCurrentSessionProcess.status === Status.LOADING && (
-        <Puff size={50} fill="blue" />
-      )}
+      {props.getCurrentSessionProcess.status === Status.LOADING && <Puff size={50} fill="blue" />}
       {props.getCurrentSessionProcess.status === Status.SUCCESS && (
         <>
           <PictureSection
-            getCurrentAuthenticatedUserProcess={
-              props.getCurrentAuthenticatedUserProcess
-            }
+            getCurrentAuthenticatedUserProcess={props.getCurrentAuthenticatedUserProcess}
             getUserItemProcess={props.getUserItemProcess}
             getCurrentSessionProcess={props.getCurrentSessionProcess}
             getUserItem={props.getUserItem}
@@ -141,18 +131,12 @@ export const AccountSettingsView = (props: Props) => {
                 error={signOutProcess.status === Status.ERROR}
               >
                 <ButtonText>
-                  {signOutProcess.status === Status.ERROR
-                    ? "Try again"
-                    : "Log out"}
+                  {signOutProcess.status === Status.ERROR ? "Try again" : "Log out"}
                 </ButtonText>
               </Button>
             )}
-            {signOutProcess.status === Status.LOADING && (
-              <Puff size={50} fill="lightblue" />
-            )}
-            {signOutProcess.status === Status.SUCCESS && (
-              <Redirect to="/login" />
-            )}
+            {signOutProcess.status === Status.LOADING && <Puff size={50} fill="lightblue" />}
+            {signOutProcess.status === Status.SUCCESS && <Redirect to="/login" />}
           </Section>
         </>
       )}

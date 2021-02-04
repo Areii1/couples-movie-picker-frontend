@@ -6,7 +6,7 @@ import {
   Mark,
   TransparentButton,
 } from "../../views/accountSettingsView/pictureSection/PictureSection";
-import { Button, ButtonText } from "../../views/logIn/LogIn";
+import { Button, ButtonText } from "../../views/logIn/LogInStyles";
 
 type Props = {
   closeModal: () => void;

@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { toast } from "react-toastify";
 import { GetCurrentSessionProcess, GetUserItemProcess, Process, Status } from "../../../App";
 import { SearchIcon } from "../../../components/icons/SearchIcon";
-import { Form, InputField } from "../../logIn/LogIn";
+import { Form, InputField } from "../../logIn/LogInStyles";
 import { getUser } from "../../../apiService/getUser";
 import { pairWithUser } from "../../../apiService/pairWithUser";
 import { Puff } from "../../../components/puff/Puff";

@@ -14,7 +14,7 @@ import {
   HeadlineWrapper,
   Text,
   CardContentWrapper,
-} from "../logIn/LogIn";
+} from "../logIn/LogInStyles";
 import { PrimaryHeadline } from "../../styles/Styles";
 
 export const SignUp: React.FC = () => {

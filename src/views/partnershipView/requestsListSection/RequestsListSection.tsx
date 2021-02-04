@@ -1,5 +1,4 @@
 import React from "react";
-import styled from "styled-components";
 import { toast } from "react-toastify";
 import { ProfileBall } from "../../../components/profileBall/ProfileBall";
 import { HeartIcon, AnimateType } from "../../../components/icons/HeartIcon";
@@ -18,7 +17,7 @@ import {
   ButtonsWrapper,
 } from "../PartnershipViewStyles";
 import { SecondaryHeadline } from "../../../styles/Styles";
-import { sizingScale } from "../../../styles/Variables";
+import { SectionWrapper, RequestList, RequestListItem } from "./RequestsListSectionStyles";
 
 type Props = {
   getUserItemProcess: GetUserItemProcess;
@@ -163,18 +162,3 @@ export const RequestsListSection = (props: Props) => {
     </SectionWrapper>
   );
 };
-
-const SectionWrapper = styled.div`
-  margin-top: ${`${sizingScale[3]}px`};
-  text-align: start;
-`;
-
-const RequestList = styled.ul`
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
-`;
-
-const RequestListItem = styled.li`
-  padding: 0;
-`;

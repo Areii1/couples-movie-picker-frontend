@@ -1,5 +1,4 @@
 import React, { FormEvent } from "react";
-import styled from "styled-components";
 import { toast } from "react-toastify";
 import { GetCurrentSessionProcess, GetUserItemProcess, Process, Status } from "../../../App";
 import { SearchIcon } from "../../../components/icons/SearchIcon";
@@ -19,6 +18,7 @@ import { ProfileBall } from "../../../components/profileBall/ProfileBall";
 import { AnimateType, HeartIcon } from "../../../components/icons/HeartIcon";
 import { bucketUrl } from "../../../config/Config";
 import { SecondaryHeadline } from "../../../styles/Styles";
+import { FormWrapper, InputFieldWrapper, SearchIconButton } from "./SearchSectionStyles";
 
 type Props = {
   getCurrentAuthenticatedUserProcess: Process;
@@ -158,19 +158,3 @@ export const SearchSection = (props: Props) => {
     </MatchSectionWrapper>
   );
 };
-
-const FormWrapper = styled.div`
-  width: 100%;
-  margin-top: 20px;
-`;
-
-const InputFieldWrapper = styled.div`
-  position: relative;
-  width: 250px;
-`;
-
-const SearchIconButton = styled(TransparentButton)`
-  position: absolute;
-  top: 0;
-  right: 0;
-`;

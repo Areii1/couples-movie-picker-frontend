@@ -1,17 +1,22 @@
 import React from "react";
-import styled, { keyframes } from "styled-components";
+import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 import { CardContentWrapper } from "../logIn/LogInStyles";
 import { GetUserItemProcess, Status, Process, GetCurrentSessionProcess } from "../../App";
 import { LikedMoviesListItem } from "../../types/Types";
 import { getTrendingMovies } from "../../apiService/getTrendingMovies";
-import { borderRadius, sizingScale } from "../../styles/Variables";
-import { Link } from "react-router-dom";
-import { toast } from "react-toastify";
 import { ScoreText } from "../mainView/imageSection/ImageSectionStyles";
-import { TertiaryHeadline } from "../../styles/Styles";
 import { DownwardArrow } from "../../components/icons/DownwardArrow";
-import { MovieListTriggerButton } from "../../views/partnershipView/likedMoviesSection/LikedMoviesSection";
 import { TransparentButton } from "../accountSettingsView/pictureSection/PictureSectionStyles";
+import {
+  MatchesList,
+  ImageOverlay,
+  MatchesListItem,
+  Image,
+  TextWrapper,
+  DislikedMoviesListWrapper,
+  ListPadding,
+} from "./MatchesViewStyles";
 
 type Props = {
   getPairedUserProcess: GetUserItemProcess;
@@ -225,75 +230,3 @@ export const MatchesView = (props: Props) => {
     </CardContentWrapper>
   );
 };
-
-const MatchesList = styled.ul`
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  width: ${`${sizingScale[13]}px`};
-  margin: 0 0 0 ${`${sizingScale[6] * -1}px`};
-`;
-
-const ImageOverlay = styled.div`
-  width: ${`${sizingScale[13] / 2}px`};
-  height: ${`${sizingScale[9]}px`};
-  position: absolute;
-  top: 0;
-  left: 0;
-  background-color: white;
-  opacity: 0;
-`;
-
-const hoverLighten = keyframes`
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 0.3;
-  }
-`;
-
-const MatchesListItem = styled.li`
-  padding: 0;
-  margin: 0;
-  width: ${`${sizingScale[13] / 2}px`};
-  height: ${`${sizingScale[9]}px`};
-  position: relative;
-  border: 1px solid white;
-  overflow: hidden;
-  :hover {
-    #matches-view-image-overlay {
-      animation: ${hoverLighten} 0.3s linear forwards;
-    }
-  }
-`;
-
-const Image = styled.img`
-  object-fit: cover;
-  max-width: ${`${sizingScale[13] / 2}px`};
-  max-height: ${`${sizingScale[11]}px`};
-`;
-
-const TextWrapper = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-  background-color: rgba(255, 255, 255, 0.7);
-  display: flex;
-  justify-content: center;
-  width: ${`${sizingScale[7]}px`};
-  border-bottom-right-radius: ${`${borderRadius}px`};
-`;
-
-const DislikedMoviesListWrapper = styled.div`
-  margin-top: ${`${sizingScale[7]}px`};
-  display: flex;
-  justify-content: center;
-  width: 100%;
-`;
-
-const ListPadding = styled.div`
-  margin-top: ${`${sizingScale[7]}px`};
-`;

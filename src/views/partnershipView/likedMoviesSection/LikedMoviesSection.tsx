@@ -1,16 +1,21 @@
 import React from "react";
-import styled from "styled-components";
 import { Link } from "react-router-dom";
 import { Status, GetUserItemProcess } from "../../../App";
 import { DownwardArrow } from "../../../components/icons/DownwardArrow";
 import { LikedMoviesList, LikedMoviesListItem } from "../../../types/Types";
-import { sizingScale, borderRadius } from "../../../styles/Variables";
-import { TertiaryHeadline } from "../../../styles/Styles";
-import { SecondaryHeadline } from "../../../styles/Styles";
+import { TertiaryHeadline, SecondaryHeadline } from "../../../styles/Styles";
 import {
   TransparentButton,
   Mark,
 } from "../../accountSettingsView/pictureSection/PictureSectionStyles";
+import {
+  MovieListTriggerButton,
+  MovieList,
+  MovieListItem,
+  Text,
+  LikedMoviesWrapper,
+  MovieListWrapper,
+} from "./LikedMovieSectionStyles";
 
 type Props = {
   getUserItemProcess: GetUserItemProcess;
@@ -94,47 +99,3 @@ export const LikedMoviesSection = (props: Props) => {
     </LikedMoviesWrapper>
   );
 };
-
-export const MovieListTriggerButton = styled.button`
-  width: 100%;
-  background-color: white;
-  text-align: start;
-  padding: ${`${sizingScale[2]}px`} ${`${sizingScale[3]}px`};
-  border-radius: ${`${borderRadius}px`};
-  border: 1px solid gray;
-  display: flex;
-  justify-content: space-between;
-  cursor: pointer;
-`;
-
-const MovieList = styled.ul`
-  list-style-type: none;
-  padding: 0;
-  margin: ${`${sizingScale[4]}px`} 0 ${`${sizingScale[7]}px`} 0;
-  width: 100%;
-`;
-
-const MovieListItem = styled.li`
-  padding: ${`${sizingScale[1]}px`} ${`${sizingScale[2]}px`};
-  background-color: lightgray;
-  border-radius: ${`${borderRadius}px`};
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border: 1px solid gray;
-  margin: ${`${sizingScale[4]}px`} 0;
-`;
-
-const Text = styled.p`
-  margin: 0;
-  color: gray;
-`;
-
-const LikedMoviesWrapper = styled.div`
-  margin-top: ${`${sizingScale[5]}px`};
-  text-align: start;
-`;
-
-const MovieListWrapper = styled.div`
-  margin-top: ${`${sizingScale[3]}px`};
-`;

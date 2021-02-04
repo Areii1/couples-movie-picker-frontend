@@ -14,7 +14,7 @@ import { CardContentWrapper } from "../logIn/LogInStyles";
 import { MovieEvaluationSection } from "./movieEvaluationSection/MovieEvaluationSection";
 import { evaluateMovie } from "../../apiService/evaluateMovie";
 import { LikeMovieProcess } from "../mainView/MainView";
-import { ImagePlaceholder, TitlePlaceholder } from "../mainView/MainView";
+import { ImagePlaceholder, TitlePlaceholder } from "../mainView/MainViewStyles";
 
 type Props = {
   getCurrentSessionProcess: Process;

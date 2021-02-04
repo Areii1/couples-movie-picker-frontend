@@ -1,17 +1,26 @@
 import React from "react";
-import styled from "styled-components";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Process, Status, GetUserItemProcess } from "../../App";
 import { FireMeter } from "../../components/fireMeter/FireMeter";
-import { PrimaryHeadline, SecondaryHeadline } from "../../styles/Styles";
-import { borderRadius, sizingScale } from "../../styles/Variables";
+import { SecondaryHeadline } from "../../styles/Styles";
+import { sizingScale } from "../../styles/Variables";
 import { getTrendingMovies } from "../../apiService/getTrendingMovies";
 import { evaluateMovie } from "../../apiService/evaluateMovie";
 import { ImageIcon } from "../../components/icons/ImageIcon";
 import { bucketUrl } from "../../config/Config";
 import { DisplayProfile } from "../../components/modals/DisplayProfileModal";
 import { ImageSection } from "./imageSection/ImageSection";
+import {
+  Wrapper,
+  Title,
+  TitlePlaceholder,
+  DetailsSection,
+  ImagePlaceholder,
+  FireMeterWrapper,
+  ImageWrapper,
+  TitleWrapper,
+} from "./MainViewStyles";
 
 type Props = {
   getCurrentSessionProcess: Process;
@@ -30,17 +39,13 @@ export type LikeMovieProcess =
   | { status: Status.ERROR; error: any };
 
 export const MainView = (props: Props) => {
-  const [
-    getTrendingMoviesProcess,
-    setGetTrendingMoviesProcess,
-  ] = React.useState<Process>({ status: Status.INITIAL });
+  const [getTrendingMoviesProcess, setGetTrendingMoviesProcess] = React.useState<Process>({
+    status: Status.INITIAL,
+  });
 
   const [swipingIndex, setSwipingIndex] = React.useState<number>(0);
 
-  const [
-    evaluateMovieProcess,
-    setEvaluateMovieProcess,
-  ] = React.useState<LikeMovieProcess>({
+  const [evaluateMovieProcess, setEvaluateMovieProcess] = React.useState<LikeMovieProcess>({
     status: Status.INITIAL,
   });
 
@@ -75,7 +80,7 @@ export const MainView = (props: Props) => {
         const likeMovieResponse = await evaluateMovie(
           props.getCurrentSessionProcess.data.getIdToken().getJwtToken(),
           movieId,
-          score
+          score,
         );
         setSwipingIndex(swipingIndex + 1);
         setEvaluateMovieProcess({
@@ -100,7 +105,7 @@ export const MainView = (props: Props) => {
     ) {
       props.getUserItem(
         props.getUserItemProcess.data.username.S,
-        props.getCurrentSessionProcess.data.getIdToken().getJwtToken()
+        props.getCurrentSessionProcess.data.getIdToken().getJwtToken(),
       );
     }
   }, []);
@@ -120,7 +125,7 @@ export const MainView = (props: Props) => {
         ) {
           return (
             props.getUserItemProcess.data.likedMovies.L.find(
-              (likedMovie: any) => movie.id === parseInt(likedMovie.M.id.S, 10)
+              (likedMovie: any) => movie.id === parseInt(likedMovie.M.id.S, 10),
             ) === undefined
           );
         } else {
@@ -154,25 +159,18 @@ export const MainView = (props: Props) => {
     ) {
       const filteredList = getFilteredList();
       const userEvaluatedLastMovieItem = evaluateMovieProcess.data.Attributes.likedMovies.L.find(
-        (likedMovie: any) =>
-          filteredList[swipingIndex - 1].id === parseInt(likedMovie.M.id.S, 10)
+        (likedMovie: any) => filteredList[swipingIndex - 1].id === parseInt(likedMovie.M.id.S, 10),
       );
-      if (
-        userEvaluatedLastMovieItem &&
-        parseInt(userEvaluatedLastMovieItem.M.score.N, 10) >= 50
-      ) {
+      if (userEvaluatedLastMovieItem && parseInt(userEvaluatedLastMovieItem.M.score.N, 10) >= 50) {
         const pairedUserEvaluatedLastItem = props.getPairedUserProcess.data.likedMovies.L.find(
           (likedMovie: any) =>
-            filteredList[swipingIndex - 1].id ===
-            parseInt(likedMovie.M.id.S, 10)
+            filteredList[swipingIndex - 1].id === parseInt(likedMovie.M.id.S, 10),
         );
         if (
           pairedUserEvaluatedLastItem &&
           parseInt(pairedUserEvaluatedLastItem.M.score.N, 10) >= 50
         ) {
-          toast.success(
-            `Movie matched with ${props.getPairedUserProcess.data.username.S}`
-          );
+          toast.success(`Movie matched with ${props.getPairedUserProcess.data.username.S}`);
         }
       }
     }
@@ -194,9 +192,7 @@ export const MainView = (props: Props) => {
               <ImageSection
                 getCurrentSessionProcess={props.getCurrentSessionProcess}
                 getUserItemProcess={props.getUserItemProcess}
-                getCurrentAuthenticatedUserProcess={
-                  props.getCurrentAuthenticatedUserProcess
-                }
+                getCurrentAuthenticatedUserProcess={props.getCurrentAuthenticatedUserProcess}
                 getPairedUserProcess={props.getPairedUserProcess}
                 filteredList={filteredList}
                 swipingIndex={swipingIndex}
@@ -224,11 +220,7 @@ export const MainView = (props: Props) => {
           {filteredList.length === 0 && (
             <>
               <ImageWrapper>
-                <ImageIcon
-                  size={sizingScale[10]}
-                  animate={false}
-                  color="gray"
-                />
+                <ImageIcon size={sizingScale[10]} animate={false} color="gray" />
               </ImageWrapper>
               <TitleWrapper>
                 <SecondaryHeadline>Everything swiped</SecondaryHeadline>
@@ -246,51 +238,3 @@ export const MainView = (props: Props) => {
     </Wrapper>
   );
 };
-
-const Wrapper = styled.div`
-  width: 100%;
-`;
-
-const Title = styled(PrimaryHeadline)`
-  color: #808080;
-  word-wrap: break-word;
-`;
-
-export const TitlePlaceholder = styled.div`
-  margin: ${`${sizingScale[6]}px auto 0 auto`};
-  height: ${`${sizingScale[5]}px`};
-  width: ${`${sizingScale[10]}px`};
-  background-color: #e9e9e9;
-`;
-
-const DetailsSection = styled.div`
-  margin: ${`${sizingScale[3]}px`} 0 0 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: ${`${sizingScale[13] - sizingScale[6] * 2}px`};
-`;
-
-export const ImagePlaceholder = styled.div`
-  height: ${`${sizingScale[11]}px`};
-  width: ${`${sizingScale[12]}px`};
-  margin: auto;
-  background-color: #e9e9e9;
-  border-radius: ${`${borderRadius}px`};
-`;
-
-const FireMeterWrapper = styled.div`
-  margin: ${`${sizingScale[6]}px`} auto 0 auto;
-`;
-
-const ImageWrapper = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-
-const TitleWrapper = styled.div`
-  margin-top: ${`${sizingScale[5]}px`};
-  display: flex;
-  justify-content: center;
-`;

@@ -15,9 +15,7 @@ type Props = {
 export const FireMeter = (props: Props) => {
   const [isDragging, setIsDragging] = React.useState<boolean>(false);
   const [mouseXPosition, setMouseXPosition] = React.useState<number>(0);
-  const [mouseXStartPosition, setMouseXStartPosition] = React.useState<number>(
-    0
-  );
+  const [mouseXStartPosition, setMouseXStartPosition] = React.useState<number>(0);
   const [score, setScore] = React.useState<number>(50);
   const [startingScore, setStartingScore] = React.useState<number>(50);
 
@@ -71,12 +69,10 @@ export const FireMeter = (props: Props) => {
   React.useEffect(() => {
     if (isDragging) {
       if (mouseXStartPosition < mouseXPosition) {
-        const newPos =
-          (mouseXPosition - mouseXStartPosition) / 2.56 + startingScore;
+        const newPos = (mouseXPosition - mouseXStartPosition) / 2.56 + startingScore;
         setScore(Math.floor(newPos <= 100 ? newPos : 100));
       } else {
-        const newPos =
-          startingScore - (mouseXStartPosition - mouseXPosition) / 2.56;
+        const newPos = startingScore - (mouseXStartPosition - mouseXPosition) / 2.56;
         setScore(Math.floor(newPos >= 0 ? newPos : 0));
       }
     }
@@ -149,11 +145,7 @@ const getWrapperBackground = (isLoading: boolean) => {
     `;
   } else {
     return css`
-      background: linear-gradient(
-        90deg,
-        rgba(8, 82, 151, 1) 0%,
-        rgba(220, 106, 1, 1) 100%
-      );
+      background: linear-gradient(90deg, rgba(8, 82, 151, 1) 0%, rgba(220, 106, 1, 1) 100%);
     `;
   }
 };
@@ -188,12 +180,10 @@ const getMeterSwitchPxPosition = (fireMeterSwitchPosition: any) => {
   const barMultiplier = 2.56;
   const positionIsLowMax = fireMeterSwitchPosition === 100;
   if (positionIsLowMax) {
-    const finalPos =
-      fireMeterSwitchPosition * barMultiplier - meterSwitcCircleRadius;
+    const finalPos = fireMeterSwitchPosition * barMultiplier - meterSwitcCircleRadius;
     return `${finalPos}px`;
   } else {
-    const finalPos =
-      fireMeterSwitchPosition * barMultiplier - meterSwitcCircleRadius;
+    const finalPos = fireMeterSwitchPosition * barMultiplier - meterSwitcCircleRadius;
     return `${finalPos}px`;
   }
 };
@@ -214,7 +204,6 @@ const MeterSwitchButton = styled.button`
   position: absolute;
   top: calc(50% - 25px);
   opacity: 0.9;
-  left: ${(props: MeterSwitchButtonProps) =>
-    getMeterSwitchPxPosition(props.score)};
+  left: ${(props: MeterSwitchButtonProps) => getMeterSwitchPxPosition(props.score)};
   cursor: pointer;
 `;

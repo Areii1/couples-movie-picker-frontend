@@ -7,7 +7,7 @@ import { getTrendingMovies } from "../../apiService/getTrendingMovies";
 import { borderRadius, sizingScale } from "../../styles/Variables";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
-import { ScoreText } from "../mainView/imageSection/ImageSection";
+import { ScoreText } from "../mainView/imageSection/ImageSectionStyles";
 import { TertiaryHeadline } from "../../styles/Styles";
 import { DownwardArrow } from "../../components/icons/DownwardArrow";
 import { MovieListTriggerButton } from "../../views/partnershipView/likedMoviesSection/LikedMoviesSection";

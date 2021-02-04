@@ -184,7 +184,7 @@ export const App = () => {
     setGetCurrentAuthenticatedUserProcess({ status: Status.INITIAL });
     setGetPairedUserProcess({ status: Status.INITIAL });
     setGetUserItemProcess({ status: Status.INITIAL });
-  }
+  };
 
   // console.log(getUserItemProcess, "getUserItemProcess");
   // console.log(getCurrentSessionProcess, "getCurrentSessionProcess");

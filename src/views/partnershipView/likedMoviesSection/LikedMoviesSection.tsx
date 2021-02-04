@@ -38,7 +38,7 @@ export const LikedMoviesSection = (props: Props) => {
               <TertiaryHeadline>{listItem.M.id.S}</TertiaryHeadline>
             </Link>
             <Text>{`(${listItem.M.score.N})`}</Text>
-            <TransparentButton onClick={() => {}} title="dislike movie">
+            <TransparentButton title="dislike movie">
               <Mark fontColor="salmon" size={20}>
                 ✕
               </Mark>

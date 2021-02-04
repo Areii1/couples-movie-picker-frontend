@@ -87,7 +87,6 @@ export const FireMeter = (props: Props) => {
     document.onmousemove = handleMouseMove;
     return () => {
       window.removeEventListener("keyDown", keyDownHandler);
-      document.onmousemove = () => {};
     };
   }, []);
 

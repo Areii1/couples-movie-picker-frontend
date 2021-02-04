@@ -1,5 +1,5 @@
 import React from "react";
-import { GetUserItemProcess, Process, Status } from "../../../../App";
+import { GetUserItemProcess, Status } from "../../../../App";
 import { FireIcon } from "../../../../components/icons/fireIcon/FireIcon";
 import { ColdIcon } from "../../../../components/icons/coldIcon/ColdIcon";
 import { ProfileBall } from "../../../../components/profileBall/ProfileBall";
@@ -15,7 +15,6 @@ import {
 
 type Props = {
   getUserItemProcess: GetUserItemProcess;
-  getMovieDetailsProcess: Process;
   evaluatedMovieItem: any;
   updateEvaluating?: (value: boolean) => void;
   useCase: EvaluationItemUseCase;
@@ -53,7 +52,7 @@ export const UserEvaluationItem = (props: Props) => {
                   isGray={false}
                 />
               )}
-              {parseInt(props.evaluatedMovieItem.M.score.N) < 50 && (
+              {parseInt(props.evaluatedMovieItem.M.score.N, 10) < 50 && (
                 <ColdIcon
                   size={30}
                   score={parseInt(props.evaluatedMovieItem.M.score.N, 10)}
@@ -74,7 +73,7 @@ export const UserEvaluationItem = (props: Props) => {
                 isGray={false}
               />
             )}
-            {parseInt(props.evaluatedMovieItem.M.score.N) < 50 && (
+            {parseInt(props.evaluatedMovieItem.M.score.N, 10) < 50 && (
               <ColdIcon
                 size={30}
                 score={parseInt(props.evaluatedMovieItem.M.score.N, 10)}
@@ -90,4 +89,8 @@ export const UserEvaluationItem = (props: Props) => {
       </UserEvaluatedItemWrapperContentWrapper>
     </UserEvaluatedItemWrapper>
   );
+};
+
+UserEvaluationItem.defaultProps = {
+  updateEvaluating: undefined,
 };

@@ -1,5 +1,4 @@
 import { Auth } from "aws-amplify";
-import styled from "styled-components";
 import { toast } from "react-toastify";
 import React, { FormEvent } from "react";
 import { Link, Redirect } from "react-router-dom";
@@ -13,9 +12,9 @@ import {
   ButtonText,
   HeadlineWrapper,
   Text,
-  CardContentWrapper,
 } from "../logIn/LogInStyles";
 import { PrimaryHeadline } from "../../styles/Styles";
+import { SignupCardContentWrapper } from "./SignUpStyles";
 
 export const SignUp: React.FC = () => {
   const [signupUsernameFieldValue, setSignupUsernameFieldValue] = React.useState<string>("");
@@ -98,9 +97,3 @@ export const SignUp: React.FC = () => {
     </SignupCardContentWrapper>
   );
 };
-
-const SignupCardContentWrapper = styled(CardContentWrapper)`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-`;

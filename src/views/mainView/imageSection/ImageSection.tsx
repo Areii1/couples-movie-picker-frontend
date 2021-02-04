@@ -1,5 +1,5 @@
 import React from "react";
-import { GetUserItemProcess, Process, Status } from "../../../App";
+import { GetUserItemProcess, Status } from "../../../App";
 import { AnimateType, HeartIcon } from "../../../components/icons/heartIcon/HeartIcon";
 import { ProfileBall } from "../../../components/profileBall/ProfileBall";
 import { sizingScale } from "../../../styles/Variables";
@@ -39,9 +39,7 @@ export enum HoveringOver {
 }
 
 type Props = {
-  getCurrentSessionProcess: Process;
   getUserItemProcess: GetUserItemProcess;
-  getCurrentAuthenticatedUserProcess: Process;
   getPairedUserProcess: GetUserItemProcess;
   filteredList: any[];
   swipingIndex: number;

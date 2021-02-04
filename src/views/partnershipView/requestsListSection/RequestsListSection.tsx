@@ -153,6 +153,8 @@ export const RequestsListSection = (props: Props) => {
         },
       );
       return requestListItems;
+    } else {
+      return undefined;
     }
   };
   return (

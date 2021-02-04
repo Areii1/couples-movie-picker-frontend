@@ -3,7 +3,6 @@ import { Wrapper, Text, Image } from "./ProfileBallStyles";
 
 type Props = {
   firstName?: string | undefined;
-  lastName?: string;
   image?: string;
   isCurrentUser: boolean;
   size: number;
@@ -36,5 +35,7 @@ export const ProfileBall = (props: Props) => {
 };
 
 ProfileBall.defaultProps = {
-  firstName: "a",
+  firstName: undefined,
+  image: undefined,
+  fontSize: undefined,
 };

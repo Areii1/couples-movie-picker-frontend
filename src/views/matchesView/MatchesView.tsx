@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { CardContentWrapper } from "../logIn/LogInStyles";
-import { GetUserItemProcess, Status, Process, GetCurrentSessionProcess } from "../../App";
+import { GetUserItemProcess, Status, Process } from "../../App";
 import { LikedMoviesListItem } from "../../types/Types";
 import { getTrendingMovies } from "../../apiService/getTrendingMovies";
 import { ScoreText } from "../mainView/imageSection/ImageSectionStyles";
@@ -21,8 +21,6 @@ import {
 type Props = {
   getPairedUserProcess: GetUserItemProcess;
   getUserItemProcess: GetUserItemProcess;
-  getCurrentAuthenticatedUserProcess: Process;
-  getCurrentSessionProcess: GetCurrentSessionProcess;
 };
 
 export const MatchesView = (props: Props) => {
@@ -96,11 +94,13 @@ export const MatchesView = (props: Props) => {
         if (partnerScoreA) {
           return {
             id: movie.M.id.S,
-            commonScore: parseInt(movie.M.score.N, 10) + parseInt(partnerScoreA.M.score.N),
+            commonScore: parseInt(movie.M.score.N, 10) + parseInt(partnerScoreA.M.score.N, 10),
           };
         } else {
           return undefined;
         }
+      } else {
+        return undefined;
       }
     });
   };

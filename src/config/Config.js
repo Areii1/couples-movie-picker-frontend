@@ -2,14 +2,15 @@ import Amplify from "aws-amplify";
 
 const isProd = true;
 
-const bucketNameDev =
-  "couplesmoviepickerbacken-profilepicturesbucketdev-ugb2hg23ts3z";
+const bucketNameDev = "couplesmoviepickerbacken-profilepicturesbucketdev-ugb2hg23ts3z";
 const bucketNameProd = "couplesmoviepickerbacken-profilepicturesbucketpro-s3dw2ajqi2y8";
-const apiNameProd = "couples-movie-picker-api-prod"
+const apiNameProd = "couples-movie-picker-api-prod";
 const apiNameDev = "couples-movie-picker-api";
 
 export const apiName = isProd ? apiNameProd : apiNameDev;
-export const bucketUrl = `https://${isProd ? bucketNameProd : bucketNameDev}.s3.eu-central-1.amazonaws.com`;
+export const bucketUrl = `https://${
+  isProd ? bucketNameProd : bucketNameDev
+}.s3.eu-central-1.amazonaws.com`;
 
 export const configureAmplify = () => {
   if (!isProd) {
@@ -27,8 +28,7 @@ export const configureAmplify = () => {
       API: {
         endpoints: [
           {
-            endpoint:
-              "https://113idz1bmg.execute-api.eu-central-1.amazonaws.com/prod",
+            endpoint: "https://113idz1bmg.execute-api.eu-central-1.amazonaws.com/prod",
             name: "couples-movie-picker-api-dev",
             region: "eu-central-1",
           },
@@ -50,8 +50,7 @@ export const configureAmplify = () => {
       API: {
         endpoints: [
           {
-            endpoint:
-              "https://295slj5x96.execute-api.eu-central-1.amazonaws.com/prod",
+            endpoint: "https://295slj5x96.execute-api.eu-central-1.amazonaws.com/prod",
             name: "couples-movie-picker-api-prod",
             region: "eu-central-1",
           },

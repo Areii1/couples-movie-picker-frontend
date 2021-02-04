@@ -19,16 +19,7 @@ export const sizingScale = [
   1200,
 ];
 
-export const fontSizes = [
-  12,
-  14,
-  16,
-  18,
-  20,
-  24,
-  32,
-  48,
-];
+export const fontSizes = [12, 14, 16, 18, 20, 24, 32, 48];
 
 export const borderRadius = 5;
 

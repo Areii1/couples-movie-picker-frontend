@@ -171,7 +171,11 @@ export const DetailsSection = (props: Props) => {
           cancelPairingRequestProcess.status === Status.LOADING)
       ) {
         return <Puff size={50} fill="lightblue" />;
+      } else {
+        return <div />;
       }
+    } else {
+      return <div />;
     }
   };
 

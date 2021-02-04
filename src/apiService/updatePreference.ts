@@ -1,7 +1,7 @@
 export const updatePreference = () => {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
-      resolve('done');
+      resolve("done");
     }, 1000);
   });
-}
+};

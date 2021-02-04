@@ -42,6 +42,8 @@ export const LikedMoviesSection = (props: Props) => {
             </TransparentButton>
           </MovieListItem>
         );
+      } else {
+        return undefined;
       }
     });
   };

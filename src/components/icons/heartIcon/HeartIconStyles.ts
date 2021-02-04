@@ -19,7 +19,7 @@ to {
 }
 `;
 
-const getAnimation = (animate: AnimateType, isRed: boolean, size: number) => {
+const getAnimation = (animate: AnimateType, isRed: boolean) => {
   switch (animate) {
     case AnimateType.COLOR: {
       return css`

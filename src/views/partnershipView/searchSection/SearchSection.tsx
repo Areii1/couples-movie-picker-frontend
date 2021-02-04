@@ -1,12 +1,7 @@
 import React, { FormEvent } from "react";
 import styled from "styled-components";
 import { toast } from "react-toastify";
-import {
-  GetCurrentSessionProcess,
-  GetUserItemProcess,
-  Process,
-  Status,
-} from "../../../App";
+import { GetCurrentSessionProcess, GetUserItemProcess, Process, Status } from "../../../App";
 import { SearchIcon } from "../../../components/icons/SearchIcon";
 import { Form, InputField } from "../../logIn/LogIn";
 import { getUser } from "../../../apiService/getUser";
@@ -19,7 +14,7 @@ import {
   ProfileWrapper,
   ProfileText,
   ButtonsWrapper,
-} from "../PartnershipView";
+} from "../PartnershipViewStyles";
 import { ProfileBall } from "../../../components/profileBall/ProfileBall";
 import { AnimateType, HeartIcon } from "../../../components/icons/HeartIcon";
 import { bucketUrl } from "../../../config/Config";
@@ -52,7 +47,7 @@ export const SearchSection = (props: Props) => {
         setSearchProcess({ status: Status.LOADING });
         const searchForUserResponse = await getUser(
           searchFieldValue,
-          props.getCurrentSessionProcess.data.getIdToken().getJwtToken()
+          props.getCurrentSessionProcess.data.getIdToken().getJwtToken(),
         );
         setSearchProcess({
           status: Status.SUCCESS,
@@ -80,7 +75,7 @@ export const SearchSection = (props: Props) => {
         setPairingProcess({ status: Status.LOADING });
         const pairWithUserResponse = await pairWithUser(
           searchProcess.data.username.S,
-          props.getCurrentSessionProcess.data.getIdToken().getJwtToken()
+          props.getCurrentSessionProcess.data.getIdToken().getJwtToken(),
         );
         toast.success(`Pairing request sent to ${searchProcess.data.username.S}`);
         setPairingProcess({
@@ -89,7 +84,7 @@ export const SearchSection = (props: Props) => {
         });
         props.getUserItem(
           props.getUserItemProcess.data.username.S,
-          props.getCurrentSessionProcess.data.getIdToken().getJwtToken()
+          props.getCurrentSessionProcess.data.getIdToken().getJwtToken(),
         );
       } catch (pairWithUserError) {
         toast.error("Could not complete request");
@@ -99,8 +94,7 @@ export const SearchSection = (props: Props) => {
   };
 
   const searchedUserIsTaken =
-    searchProcess.status === Status.SUCCESS &&
-    searchProcess.data.partner !== undefined;
+    searchProcess.status === Status.SUCCESS && searchProcess.data.partner !== undefined;
 
   return (
     <MatchSectionWrapper>
@@ -120,9 +114,7 @@ export const SearchSection = (props: Props) => {
           </InputFieldWrapper>
         </Form>
       </FormWrapper>
-      {searchProcess.status === Status.LOADING && (
-        <Puff size={50} fill="lightblue" />
-      )}
+      {searchProcess.status === Status.LOADING && <Puff size={50} fill="lightblue" />}
       {searchProcess.status === Status.SUCCESS && (
         <FoundUserWrapper>
           <ProfileWrapper>
@@ -154,16 +146,10 @@ export const SearchSection = (props: Props) => {
                   onClick={() => pairWith()}
                   title={`pair with ${searchProcess.data.username.S}`}
                 >
-                  <HeartIcon
-                    size={30}
-                    animate={AnimateType.COLOR}
-                    isRed={false}
-                  />
+                  <HeartIcon size={30} animate={AnimateType.COLOR} isRed={false} />
                 </TransparentButton>
               )}
-              {pairingProcess.status === Status.LOADING && (
-                <Puff size={20} fill="lightblue" />
-              )}
+              {pairingProcess.status === Status.LOADING && <Puff size={20} fill="lightblue" />}
               {pairingProcess.status === Status.SUCCESS && <div />}
             </ButtonsWrapper>
           )}

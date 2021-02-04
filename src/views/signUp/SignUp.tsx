@@ -18,14 +18,8 @@ import {
 import { PrimaryHeadline } from "../../styles/Styles";
 
 export const SignUp: React.FC = () => {
-  const [
-    signupUsernameFieldValue,
-    setSignupUsernameFieldValue,
-  ] = React.useState<string>("");
-  const [
-    signupPasswordFieldValue,
-    setSignupPasswordFieldValue,
-  ] = React.useState<string>("");
+  const [signupUsernameFieldValue, setSignupUsernameFieldValue] = React.useState<string>("");
+  const [signupPasswordFieldValue, setSignupPasswordFieldValue] = React.useState<string>("");
   const [
     signupConfirmPasswordFieldValue,
     setSignupConfirmPasswordFieldValue,
@@ -36,10 +30,7 @@ export const SignUp: React.FC = () => {
 
   const signUserUp = async (event: FormEvent) => {
     event.preventDefault();
-    if (
-      signupUsernameFieldValue !== "" &&
-      signupPasswordFieldValue !== ""
-    ) {
+    if (signupUsernameFieldValue !== "" && signupPasswordFieldValue !== "") {
       if (signupPasswordFieldValue === signupConfirmPasswordFieldValue) {
         try {
           setSignUpProcess({ status: Status.LOADING });
@@ -77,43 +68,29 @@ export const SignUp: React.FC = () => {
             <InputField
               type="text"
               value={signupUsernameFieldValue}
-              onChange={(event) =>
-                setSignupUsernameFieldValue(event.target.value)
-              }
+              onChange={(event) => setSignupUsernameFieldValue(event.target.value)}
               placeholder="username"
             />
             <InputField
               type="password"
               value={signupPasswordFieldValue}
-              onChange={(event) =>
-                setSignupPasswordFieldValue(event.target.value)
-              }
+              onChange={(event) => setSignupPasswordFieldValue(event.target.value)}
               placeholder="password"
             />
             <InputField
               type="password"
               value={signupConfirmPasswordFieldValue}
-              onChange={(event) =>
-                setSignupConfirmPasswordFieldValue(event.target.value)
-              }
+              onChange={(event) => setSignupConfirmPasswordFieldValue(event.target.value)}
               placeholder="confirm password"
             />
             {signUpProcess.status !== Status.LOADING && (
-              <Button
-                type="submit"
-                title="sign up"
-                error={signUpProcess.status === Status.ERROR}
-              >
+              <Button type="submit" title="sign up" error={signUpProcess.status === Status.ERROR}>
                 <ButtonText>
-                  {signUpProcess.status === Status.ERROR
-                    ? "Try again"
-                    : "Sign up"}
+                  {signUpProcess.status === Status.ERROR ? "Try again" : "Sign up"}
                 </ButtonText>
               </Button>
             )}
-            {signUpProcess.status === Status.LOADING && (
-              <Puff size={50} fill="lightblue" />
-            )}
+            {signUpProcess.status === Status.LOADING && <Puff size={50} fill="lightblue" />}
           </Form>
         </>
         {signUpProcess.status === Status.SUCCESS && <Redirect to="/login" />}

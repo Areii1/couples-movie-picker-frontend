@@ -33,13 +33,13 @@ export const FireMeter = (props: Props) => {
     props.evaluateItem(props.movieId, score);
   };
 
-  const handleOnMouseDown = (event: any) => {
+  const handleOnMouseDown = () => {
     setMouseXStartPosition(mouseXPosition);
     setStartingScore(score);
     setIsDragging(true);
   };
 
-  const handleOnMouseUp = (event: any) => {
+  const handleOnMouseUp = () => {
     setIsDragging(false);
     props.evaluateItem(props.movieId, score);
   };

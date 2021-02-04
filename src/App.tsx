@@ -1,9 +1,11 @@
 import React from "react";
 import styled from "styled-components";
+import { Route } from "react-router-dom";
 import "./App.css";
 import { CSSTransition } from "react-transition-group";
+import { ToastContainer, toast } from "react-toastify";
+import { CognitoUserSession } from "amazon-cognito-identity-js";
 import { configureAmplify } from "./config/Config";
-import { Route } from "react-router-dom";
 import { NavigationBar } from "./components/navigationBar/NavigationBar";
 import { MainView } from "./views/mainView/MainView";
 import { LogIn } from "./views/logIn/LogIn";
@@ -11,16 +13,11 @@ import { SignUp } from "./views/signUp/SignUp";
 import { AccountSettingsView } from "./views/accountSettingsView/AccountSettingsView";
 import { getUser } from "./apiService/getUser";
 import { PartnershipView } from "./views/partnershipView/PartnershipView";
-import {
-  getCurrentSession,
-  getCurrentAuthenticatedUser,
-} from "./apiService/getUserInformation";
-import { CognitoUserSession } from "amazon-cognito-identity-js";
+import { getCurrentSession, getCurrentAuthenticatedUser } from "./apiService/getUserInformation";
 import { UserInfo } from "./types/Types";
 import { sizingScale } from "./styles/Variables";
 import { MatchesView } from "./views/matchesView/MatchesView";
 import { MovieView } from "./views/movieView/MovieView";
-import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 configureAmplify();
@@ -50,26 +47,20 @@ export type GetUserItemProcess =
   | { status: Status.SUCCESS; data: UserInfo }
   | { status: Status.ERROR; error: Error };
 
-export const App = () => {
-  const [
-    getCurrentSessionProcess,
-    setGetCurrentSessionProcess,
-  ] = React.useState<GetCurrentSessionProcess>({ status: Status.INITIAL });
+export const App: React.FunctionComponent = () => {
+  const [getCurrentSessionProcess, setGetCurrentSessionProcess] = React.useState<GetCurrentSessionProcess>({
+    status: Status.INITIAL,
+  });
 
-  const [
-    getCurrentAuthenticatedUserProcess,
-    setGetCurrentAuthenticatedUserProcess,
-  ] = React.useState<Process>({ status: Status.INITIAL });
+  const [getCurrentAuthenticatedUserProcess, setGetCurrentAuthenticatedUserProcess] = React.useState<Process>({
+    status: Status.INITIAL,
+  });
 
-  const [
-    getPairedUserProcess,
-    setGetPairedUserProcess,
-  ] = React.useState<GetUserItemProcess>({ status: Status.INITIAL });
+  const [getPairedUserProcess, setGetPairedUserProcess] = React.useState<GetUserItemProcess>({
+    status: Status.INITIAL,
+  });
 
-  const [
-    getUserItemProcess,
-    setGetUserItemProcess,
-  ] = React.useState<GetUserItemProcess>({
+  const [getUserItemProcess, setGetUserItemProcess] = React.useState<GetUserItemProcess>({
     status: Status.INITIAL,
   });
 
@@ -117,10 +108,7 @@ export const App = () => {
           status: Status.SUCCESS,
           data: getCurrentAuthenticatedUserResponse,
         });
-        getUserItem(
-          getCurrentAuthenticatedUserResponse.username,
-          getCurrentSessionResponse.getIdToken().getJwtToken()
-        );
+        getUserItem(getCurrentAuthenticatedUserResponse.username, getCurrentSessionResponse.getIdToken().getJwtToken());
       } catch (getCurrentAuthenticatedUserError) {
         toast.error("Could not get user information");
         setGetCurrentAuthenticatedUserProcess({
@@ -146,8 +134,7 @@ export const App = () => {
   React.useEffect(() => {
     if (
       getCurrentSessionProcess.status === Status.ERROR &&
-      (getCurrentAuthenticatedUserProcess.status === Status.SUCCESS ||
-        getUserItemProcess.status === Status.SUCCESS)
+      (getCurrentAuthenticatedUserProcess.status === Status.SUCCESS || getUserItemProcess.status === Status.SUCCESS)
     ) {
       setGetCurrentAuthenticatedUserProcess({
         status: Status.ERROR,
@@ -161,19 +148,13 @@ export const App = () => {
   }, [getCurrentSessionProcess.status]);
 
   React.useEffect(() => {
-    if (
-      getUserItemProcess.status === Status.SUCCESS &&
-      getCurrentSessionProcess.status === Status.SUCCESS
-    ) {
+    if (getUserItemProcess.status === Status.SUCCESS && getCurrentSessionProcess.status === Status.SUCCESS) {
       if (getUserItemProcess.data.partner) {
-        getPairedUser(
-          getUserItemProcess.data.partner.S,
-          getCurrentSessionProcess.data.getIdToken().getJwtToken()
-        );
+        getPairedUser(getUserItemProcess.data.partner.S, getCurrentSessionProcess.data.getIdToken().getJwtToken());
       } else if (getUserItemProcess.data.outgoingRequests) {
         getPairedUser(
           getUserItemProcess.data.outgoingRequests.S,
-          getCurrentSessionProcess.data.getIdToken().getJwtToken()
+          getCurrentSessionProcess.data.getIdToken().getJwtToken(),
         );
       }
     }
@@ -194,6 +175,13 @@ export const App = () => {
   // );
   // console.log(getPairedUserProcess, "getPairedUserProcess");
 
+  const ContentWrapper = styled.div`
+    margin: 0 auto ${`${sizingScale[9]}px`} auto;
+    width: ${`${sizingScale[13]}px`};
+    display: flex;
+    flex-direction: column;
+  `;
+
   return (
     <ContentWrapper>
       <NavigationBar
@@ -203,20 +191,13 @@ export const App = () => {
       <div className="container">
         <Route exact path="/">
           {({ match }) => (
-            <CSSTransition
-              in={match !== null}
-              timeout={1000}
-              classNames="page"
-              unmountOnExit
-            >
+            <CSSTransition in={match !== null} timeout={1000} classNames="page" unmountOnExit>
               <div className="page">
                 <MainView
                   getCurrentSessionProcess={getCurrentSessionProcess}
                   getUserItemProcess={getUserItemProcess}
                   getUserItem={getUserItem}
-                  getCurrentAuthenticatedUserProcess={
-                    getCurrentAuthenticatedUserProcess
-                  }
+                  getCurrentAuthenticatedUserProcess={getCurrentAuthenticatedUserProcess}
                   getPairedUserProcess={getPairedUserProcess}
                 />
               </div>
@@ -225,12 +206,7 @@ export const App = () => {
         </Route>
         <Route exact path="/login">
           {({ match }) => (
-            <CSSTransition
-              in={match !== null}
-              timeout={300}
-              classNames="page"
-              unmountOnExit
-            >
+            <CSSTransition in={match !== null} timeout={300} classNames="page" unmountOnExit>
               <div className="page">
                 <LogIn initiateSession={getUserInfo} />
               </div>
@@ -239,12 +215,7 @@ export const App = () => {
         </Route>
         <Route exact path="/signup">
           {({ match }) => (
-            <CSSTransition
-              in={match !== null}
-              timeout={300}
-              classNames="page"
-              unmountOnExit
-            >
+            <CSSTransition in={match !== null} timeout={300} classNames="page" unmountOnExit>
               <div className="page">
                 <SignUp />
               </div>
@@ -253,18 +224,11 @@ export const App = () => {
         </Route>
         <Route exact path="/user">
           {({ match }) => (
-            <CSSTransition
-              in={match !== null}
-              timeout={300}
-              classNames="page"
-              unmountOnExit
-            >
+            <CSSTransition in={match !== null} timeout={300} classNames="page" unmountOnExit>
               <div className="page">
                 <AccountSettingsView
                   getCurrentSessionProcess={getCurrentSessionProcess}
-                  getCurrentAuthenticatedUserProcess={
-                    getCurrentAuthenticatedUserProcess
-                  }
+                  getCurrentAuthenticatedUserProcess={getCurrentAuthenticatedUserProcess}
                   initiateSession={getUserInfo}
                   getUserItemProcess={getUserItemProcess}
                   getUserItem={getUserItem}
@@ -276,17 +240,10 @@ export const App = () => {
         </Route>
         <Route exact path="/love">
           {({ match }) => (
-            <CSSTransition
-              in={match !== null}
-              timeout={300}
-              classNames="page"
-              unmountOnExit
-            >
+            <CSSTransition in={match !== null} timeout={300} classNames="page" unmountOnExit>
               <div className="page">
                 <PartnershipView
-                  getCurrentAuthenticatedUserProcess={
-                    getCurrentAuthenticatedUserProcess
-                  }
+                  getCurrentAuthenticatedUserProcess={getCurrentAuthenticatedUserProcess}
                   getUserItemProcess={getUserItemProcess}
                   getCurrentSessionProcess={getCurrentSessionProcess}
                   getPairedUserProcess={getPairedUserProcess}
@@ -299,17 +256,10 @@ export const App = () => {
         </Route>
         <Route exact path="/matches">
           {({ match }) => (
-            <CSSTransition
-              in={match !== null}
-              timeout={300}
-              classNames="page"
-              unmountOnExit
-            >
+            <CSSTransition in={match !== null} timeout={300} classNames="page" unmountOnExit>
               <div className="page">
                 <MatchesView
-                  getCurrentAuthenticatedUserProcess={
-                    getCurrentAuthenticatedUserProcess
-                  }
+                  getCurrentAuthenticatedUserProcess={getCurrentAuthenticatedUserProcess}
                   getUserItemProcess={getUserItemProcess}
                   getCurrentSessionProcess={getCurrentSessionProcess}
                   getPairedUserProcess={getPairedUserProcess}
@@ -320,12 +270,7 @@ export const App = () => {
         </Route>
         <Route exact path="/movie/:id">
           {({ match }) => (
-            <CSSTransition
-              in={match !== null}
-              timeout={300}
-              classNames="page"
-              unmountOnExit
-            >
+            <CSSTransition in={match !== null} timeout={300} classNames="page" unmountOnExit>
               <div className="page">
                 <MovieView
                   getUserItemProcess={getUserItemProcess}
@@ -350,10 +295,3 @@ export const App = () => {
     </ContentWrapper>
   );
 };
-
-const ContentWrapper = styled.div`
-  margin: 0 auto ${`${sizingScale[9]}px`} auto;
-  width: ${`${sizingScale[13]}px`};
-  display: flex;
-  flex-direction: column;
-`;

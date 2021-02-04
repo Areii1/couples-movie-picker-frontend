@@ -17,7 +17,7 @@ import {
 } from "../logIn/LogIn";
 import { PrimaryHeadline } from "../../styles/Styles";
 
-export const SignUp = () => {
+export const SignUp: React.FC = () => {
   const [
     signupUsernameFieldValue,
     setSignupUsernameFieldValue,

@@ -1,9 +1,13 @@
 import React from "react";
 import styled from "styled-components";
+import { toast } from "react-toastify";
 import { ProfileBall } from "../../../components/profileBall/ProfileBall";
 import { HeartIcon, AnimateType } from "../../../components/icons/HeartIcon";
 import { Puff } from "../../../components/puff/Puff";
-import { TransparentButton, Mark } from "../../accountSettingsView/pictureSection/PictureSection";
+import {
+  TransparentButton,
+  Mark,
+} from "../../accountSettingsView/pictureSection/PictureSectionStyles";
 import { Process, Status, GetCurrentSessionProcess, GetUserItemProcess } from "../../../App";
 import { rejectIncomingRequest } from "../../../apiService/rejectIncomingRequest";
 import { acceptIncomingRequest } from "../../../apiService/acceptIncomingRequest";
@@ -15,7 +19,6 @@ import {
 } from "../PartnershipViewStyles";
 import { SecondaryHeadline } from "../../../styles/Styles";
 import { sizingScale } from "../../../styles/Variables";
-import { toast } from "react-toastify";
 
 type Props = {
   getUserItemProcess: GetUserItemProcess;

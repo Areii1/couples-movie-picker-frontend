@@ -6,7 +6,7 @@ import { ColdIcon } from "../../../../components/icons/ColdIcon";
 import { ProfileBall } from "../../../../components/profileBall/ProfileBall";
 import { bucketUrl } from "../../../../config/Config";
 import { borderRadius, sizingScale } from "../../../../styles/Variables";
-import { TransparentButton } from "../../../accountSettingsView/pictureSection/PictureSection";
+import { TransparentButton } from "../../../accountSettingsView/pictureSection/PictureSectionStyles";
 import { EvaluationItemUseCase } from "../MovieEvaluationSection";
 import { getScoreTextColor } from "./UserEvaluationItemUtilityFunctions";
 
@@ -39,9 +39,7 @@ export const UserEvaluationItem = (props: Props) => {
         {props.useCase === EvaluationItemUseCase.USER && (
           <IconWrapper>
             <TransparentButton
-              onClick={() =>
-                props.updateEvaluating ? props.updateEvaluating(true) : {}
-              }
+              onClick={() => (props.updateEvaluating ? props.updateEvaluating(true) : {})}
               title="reevaluate movie"
             >
               {parseInt(props.evaluatedMovieItem.M.score.N, 10) >= 50 && (

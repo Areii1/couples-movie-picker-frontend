@@ -5,7 +5,7 @@ import { borderRadius, sizingScale } from "../../styles/Variables";
 import {
   Mark,
   TransparentButton,
-} from "../../views/accountSettingsView/pictureSection/PictureSection";
+} from "../../views/accountSettingsView/pictureSection/PictureSectionStyles";
 import { Button, ButtonText } from "../../views/logIn/LogInStyles";
 
 type Props = {
@@ -38,12 +38,7 @@ export const ConfirmModal = (props: Props) => {
             </Button>
           </ButtonWrapper>
           <ButtonWrapper>
-            <Button
-              type="button"
-              title="cancel"
-              onClick={props.closeModal}
-              error={false}
-            >
+            <Button type="button" title="cancel" onClick={props.closeModal} error={false}>
               <ButtonText>Cancel</ButtonText>
             </Button>
           </ButtonWrapper>

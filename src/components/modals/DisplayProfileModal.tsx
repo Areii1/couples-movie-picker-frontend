@@ -4,7 +4,7 @@ import { sizingScale } from "../../styles/Variables";
 import {
   Mark,
   TransparentButton,
-} from "../../views/accountSettingsView/pictureSection/PictureSection";
+} from "../../views/accountSettingsView/pictureSection/PictureSectionStyles";
 import { ModalBackground, CloseButtonWrapper } from "./ConfirmModal";
 
 type Props = {

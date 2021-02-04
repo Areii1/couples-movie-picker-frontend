@@ -1,12 +1,7 @@
 import React from "react";
 import styled, { keyframes } from "styled-components";
 import { CardContentWrapper } from "../logIn/LogInStyles";
-import {
-  GetUserItemProcess,
-  Status,
-  Process,
-  GetCurrentSessionProcess,
-} from "../../App";
+import { GetUserItemProcess, Status, Process, GetCurrentSessionProcess } from "../../App";
 import { LikedMoviesListItem } from "../../types/Types";
 import { getTrendingMovies } from "../../apiService/getTrendingMovies";
 import { borderRadius, sizingScale } from "../../styles/Variables";
@@ -16,7 +11,7 @@ import { ScoreText } from "../mainView/imageSection/ImageSection";
 import { TertiaryHeadline } from "../../styles/Styles";
 import { DownwardArrow } from "../../components/icons/DownwardArrow";
 import { MovieListTriggerButton } from "../../views/partnershipView/likedMoviesSection/LikedMoviesSection";
-import { TransparentButton } from "../accountSettingsView/pictureSection/PictureSection";
+import { TransparentButton } from "../accountSettingsView/pictureSection/PictureSectionStyles";
 
 type Props = {
   getPairedUserProcess: GetUserItemProcess;
@@ -26,15 +21,13 @@ type Props = {
 };
 
 export const MatchesView = (props: Props) => {
-  const [
-    getTrendingMoviesProcess,
-    setGetTrendingMoviesProcess,
-  ] = React.useState<Process>({ status: Status.INITIAL });
+  const [getTrendingMoviesProcess, setGetTrendingMoviesProcess] = React.useState<Process>({
+    status: Status.INITIAL,
+  });
 
-  const [
-    dislikedMoviesListExpanded,
-    setDislikedMoviesListExpanded,
-  ] = React.useState<boolean>(false);
+  const [dislikedMoviesListExpanded, setDislikedMoviesListExpanded] = React.useState<boolean>(
+    false,
+  );
 
   const getMovies = async () => {
     try {
@@ -73,13 +66,13 @@ export const MatchesView = (props: Props) => {
           ) {
             const partnerHasLikedMovie = props.getPairedUserProcess.data.likedMovies.L.find(
               (partnerLikedMovie: LikedMoviesListItem) =>
-                partnerLikedMovie.M.id.S === userLikedMovie.M.id.S
+                partnerLikedMovie.M.id.S === userLikedMovie.M.id.S,
             );
             return partnerHasLikedMovie;
           } else {
             return true;
           }
-        }
+        },
       );
     } else {
       return [];
@@ -93,14 +86,12 @@ export const MatchesView = (props: Props) => {
         props.getPairedUserProcess.data.likedMovies
       ) {
         const partnerScoreA = props.getPairedUserProcess.data.likedMovies.L.find(
-          (likedMovie: LikedMoviesListItem) =>
-            likedMovie.M.id.S === movie.M.id.S
+          (likedMovie: LikedMoviesListItem) => likedMovie.M.id.S === movie.M.id.S,
         );
         if (partnerScoreA) {
           return {
             id: movie.M.id.S,
-            commonScore:
-              parseInt(movie.M.score.N, 10) + parseInt(partnerScoreA.M.score.N),
+            commonScore: parseInt(movie.M.score.N, 10) + parseInt(partnerScoreA.M.score.N),
           };
         } else {
           return undefined;
@@ -128,11 +119,9 @@ export const MatchesView = (props: Props) => {
     if (sortedMovies) {
       const matchedMoviesDetails = sortedMovies.map((matchedMovie: any) => {
         if (getTrendingMoviesProcess.status === Status.SUCCESS) {
-          const matchedMovieDetails = getTrendingMoviesProcess.data.results.find(
-            (movie: any) => {
-              return movie.id === parseInt(matchedMovie.id, 10);
-            }
-          );
+          const matchedMovieDetails = getTrendingMoviesProcess.data.results.find((movie: any) => {
+            return movie.id === parseInt(matchedMovie.id, 10);
+          });
           return {
             ...matchedMovieDetails,
             commonScore: matchedMovie.commonScore,
@@ -142,7 +131,7 @@ export const MatchesView = (props: Props) => {
         }
       });
       const filteredList = matchedMoviesDetails.filter(
-        (movieDetailsItems) => movieDetailsItems !== undefined
+        (movieDetailsItems) => movieDetailsItems !== undefined,
       );
       return filteredList;
     } else {
@@ -153,7 +142,7 @@ export const MatchesView = (props: Props) => {
   const getMatchesLikedListItems = () => {
     const matchedMoviesDetails = getMatchedMoviesDetails();
     const likedMatchedMoviesDetails = matchedMoviesDetails.filter(
-      (matchedMovie) => matchedMovie.commonScore > 100
+      (matchedMovie) => matchedMovie.commonScore > 100,
     );
     if (likedMatchedMoviesDetails) {
       return likedMatchedMoviesDetails.map((movie: any) => {
@@ -161,9 +150,7 @@ export const MatchesView = (props: Props) => {
           <MatchesListItem>
             <Link to={`movie/${movie.id}`} title={`${movie.title}`}>
               <TextWrapper>
-                <ScoreText score={movie.commonScore / 2}>
-                  {movie.commonScore / 2}
-                </ScoreText>
+                <ScoreText score={movie.commonScore / 2}>{movie.commonScore / 2}</ScoreText>
               </TextWrapper>
               <ImageOverlay id="matches-view-image-overlay" />
               <Image
@@ -182,7 +169,7 @@ export const MatchesView = (props: Props) => {
   const getMatchesDislikedListItems = () => {
     const matchedMoviesDetails = getMatchedMoviesDetails();
     const disLikedMatchedMoviesDetails = matchedMoviesDetails.filter(
-      (matchedMovie) => matchedMovie.commonScore < 100
+      (matchedMovie) => matchedMovie.commonScore < 100,
     );
     if (disLikedMatchedMoviesDetails) {
       return disLikedMatchedMoviesDetails.map((movie: any) => {
@@ -190,9 +177,7 @@ export const MatchesView = (props: Props) => {
           <MatchesListItem>
             <Link to={`movie/${movie.id}`} title={`${movie.title}`}>
               <TextWrapper>
-                <ScoreText score={movie.commonScore / 2}>
-                  {movie.commonScore / 2}
-                </ScoreText>
+                <ScoreText score={movie.commonScore / 2}>{movie.commonScore / 2}</ScoreText>
               </TextWrapper>
               <ImageOverlay id="matches-view-image-overlay" />
               <Image
@@ -220,9 +205,7 @@ export const MatchesView = (props: Props) => {
               {!dislikedMoviesListExpanded && (
                 <DislikedMoviesListWrapper>
                   <TransparentButton
-                    onClick={() =>
-                      setDislikedMoviesListExpanded(!dislikedMoviesListExpanded)
-                    }
+                    onClick={() => setDislikedMoviesListExpanded(!dislikedMoviesListExpanded)}
                     title="show disliked movies"
                   >
                     <DownwardArrow size={30} />

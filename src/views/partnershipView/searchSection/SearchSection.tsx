@@ -7,7 +7,7 @@ import { Form, InputField } from "../../logIn/LogInStyles";
 import { getUser } from "../../../apiService/getUser";
 import { pairWithUser } from "../../../apiService/pairWithUser";
 import { Puff } from "../../../components/puff/Puff";
-import { TransparentButton } from "../../accountSettingsView/pictureSection/PictureSection";
+import { TransparentButton } from "../../accountSettingsView/pictureSection/PictureSectionStyles";
 import {
   FoundUserWrapper,
   MatchSectionWrapper,

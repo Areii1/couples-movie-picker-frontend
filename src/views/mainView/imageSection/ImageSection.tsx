@@ -3,12 +3,8 @@ import styled, { keyframes, css } from "styled-components";
 import { GetUserItemProcess, Process, Status } from "../../../App";
 import { AnimateType, HeartIcon } from "../../../components/icons/HeartIcon";
 import { ProfileBall } from "../../../components/profileBall/ProfileBall";
-import {
-  borderRadius,
-  fontSizes,
-  sizingScale,
-} from "../../../styles/Variables";
-import { TransparentButton } from "../../accountSettingsView/pictureSection/PictureSection";
+import { borderRadius, fontSizes, sizingScale } from "../../../styles/Variables";
+import { TransparentButton } from "../../accountSettingsView/pictureSection/PictureSectionStyles";
 import { getScoreTextColor } from "../../movieView/movieEvaluationSection/userEvaluationItem/UserEvaluationItemUtilityFunctions";
 import { LikeMovieProcess } from "../MainView";
 import {
@@ -39,19 +35,14 @@ type Props = {
 };
 
 export const ImageSection = (props: Props) => {
-  const [
-    partnerScoreHovering,
-    setPartnerScoreHovering,
-  ] = React.useState<boolean>(false);
+  const [partnerScoreHovering, setPartnerScoreHovering] = React.useState<boolean>(false);
 
-  const [hoveringOver, setHoveringOver] = React.useState<HoveringOver>(
-    HoveringOver.NONE
-  );
+  const [hoveringOver, setHoveringOver] = React.useState<HoveringOver>(HoveringOver.NONE);
 
   const partnerEvaluatedMovie = getPartnerEvaluatedMovie(
     props.filteredList,
     props.swipingIndex,
-    props.getPairedUserProcess
+    props.getPairedUserProcess,
   );
 
   return (
@@ -59,9 +50,7 @@ export const ImageSection = (props: Props) => {
       <EvaluateButtonLeft
         onMouseEnter={() => setHoveringOver(HoveringOver.LEFT)}
         onMouseLeave={() => setHoveringOver(HoveringOver.NONE)}
-        onClick={() =>
-          props.evaluateItem(props.filteredList[props.swipingIndex].id, 0)
-        }
+        onClick={() => props.evaluateItem(props.filteredList[props.swipingIndex].id, 0)}
         title="dislike movie"
         hovering={
           props.evaluateMovieProcess.status !== Status.LOADING
@@ -79,9 +68,7 @@ export const ImageSection = (props: Props) => {
       <EvaluateButtonRight
         onMouseEnter={() => setHoveringOver(HoveringOver.RIGHT)}
         onMouseLeave={() => setHoveringOver(HoveringOver.NONE)}
-        onClick={() =>
-          props.evaluateItem(props.filteredList[props.swipingIndex].id, 100)
-        }
+        onClick={() => props.evaluateItem(props.filteredList[props.swipingIndex].id, 100)}
         title="like movie"
         hovering={
           props.evaluateMovieProcess.status !== Status.LOADING
@@ -92,40 +79,22 @@ export const ImageSection = (props: Props) => {
       >
         {hoveringOver === HoveringOver.RIGHT && (
           <IconWrapper>
-            <HeartIcon
-              size={sizingScale[7]}
-              isRed={false}
-              animate={AnimateType.NONE}
-            />
+            <HeartIcon size={sizingScale[7]} isRed={false} animate={AnimateType.NONE} />
           </IconWrapper>
         )}
       </EvaluateButtonRight>
       <Image
-        src={getImageSrc(
-          props.evaluateMovieProcess,
-          props.filteredList,
-          props.swipingIndex
-        )}
-        alt={getImageAlt(
-          props.evaluateMovieProcess,
-          props.filteredList,
-          props.swipingIndex
-        )}
+        src={getImageSrc(props.evaluateMovieProcess, props.filteredList, props.swipingIndex)}
+        alt={getImageAlt(props.evaluateMovieProcess, props.filteredList, props.swipingIndex)}
       />
       {props.evaluateMovieProcess.status === Status.LOADING && (
         <SwipingImageWrapper score={props.evaluateMovieProcess.score}>
           <SwipingImageContentWrapper>
             <SwipingImageIconWrapper>
               {props.evaluateMovieProcess.score >= 50 && (
-                <HeartIcon
-                  size={sizingScale[10]}
-                  isRed={false}
-                  animate={AnimateType.NONE}
-                />
+                <HeartIcon size={sizingScale[10]} isRed={false} animate={AnimateType.NONE} />
               )}
-              {props.evaluateMovieProcess.score < 50 && (
-                <SwipingMark>✕</SwipingMark>
-              )}
+              {props.evaluateMovieProcess.score < 50 && <SwipingMark>✕</SwipingMark>}
             </SwipingImageIconWrapper>
             <Image
               src={`https://image.tmdb.org/t/p/w500/${
@@ -140,15 +109,10 @@ export const ImageSection = (props: Props) => {
         props.evaluateMovieProcess.status !== Status.LOADING &&
         props.getPairedUserProcess.status === Status.SUCCESS &&
         partnerEvaluatedMovie &&
-        userEvaluationItemIsNotBlockedByHoverEffect(
-          partnerEvaluatedMovie,
-          hoveringOver
-        ) && (
+        userEvaluationItemIsNotBlockedByHoverEffect(partnerEvaluatedMovie, hoveringOver) && (
           <PartnerScoreWrapper
             title={`${props.getPairedUserProcess.data.username.S} ${
-              partnerEvaluatedMovie.M.score.N >= 50
-                ? "liked this movie"
-                : "didn't like this movie"
+              partnerEvaluatedMovie.M.score.N >= 50 ? "liked this movie" : "didn't like this movie"
             }`}
             onMouseEnter={() => setPartnerScoreHovering(true)}
             onMouseLeave={() => setPartnerScoreHovering(false)}
@@ -179,9 +143,7 @@ export const ImageSection = (props: Props) => {
                   {partnerEvaluatedMovie.M.score.N}
                 </ScoreText>
               )}
-              {partnerEvaluatedMovie === undefined && (
-                <NotEvaluatedText>?</NotEvaluatedText>
-              )}
+              {partnerEvaluatedMovie === undefined && <NotEvaluatedText>?</NotEvaluatedText>}
               {partnerScoreHovering && (
                 <PartnerScoreCloseButtonWrapper>
                   <TransparentButton title="dont't show partner score">
@@ -316,10 +278,8 @@ type PartnerScoreWrapperProps = {
 const PartnerScoreWrapper = styled.div`
   position: absolute;
   top: ${`calc(50% - ${sizingScale[7] / 2}px)`};
-  left: ${(props: PartnerScoreWrapperProps) =>
-    props.score < 50 ? 0 : "unset"};
-  right: ${(props: PartnerScoreWrapperProps) =>
-    props.score >= 50 ? 0 : "unset"};
+  left: ${(props: PartnerScoreWrapperProps) => (props.score < 50 ? 0 : "unset")};
+  right: ${(props: PartnerScoreWrapperProps) => (props.score >= 50 ? 0 : "unset")};
   width: ${`${sizingScale[8] + 10}px`};
   height: ${`${sizingScale[7]}px`};
   background-color: rgba(255, 255, 255, 0.5);

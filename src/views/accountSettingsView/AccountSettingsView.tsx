@@ -1,5 +1,4 @@
 import React from "react";
-import styled from "styled-components";
 import { toast } from "react-toastify";
 import { Auth } from "aws-amplify";
 import { Redirect } from "react-router";
@@ -7,9 +6,14 @@ import { Link } from "react-router-dom";
 import { GetCurrentSessionProcess, GetUserItemProcess, Process, Status } from "../../App";
 import { SecondaryHeadline, PrimaryHeadline } from "../../styles/Styles";
 import { Puff } from "../../components/puff/Puff";
-import { Button, ButtonText, CardContentWrapper } from "../logIn/LogInStyles";
+import { Button, ButtonText } from "../logIn/LogInStyles";
 import { PictureSection } from "./pictureSection/PictureSection";
-import { sizingScale, fontSizes } from "../../styles/Variables";
+import {
+  Section,
+  TextWrapper,
+  Text,
+  SettingsCardContentWrapper,
+} from "./AccountSettingsViewStyles";
 // import { updatePreference } from "../../apiService/updatePreference";
 
 type Props = {
@@ -157,25 +161,6 @@ export const AccountSettingsView = (props: Props) => {
     </SettingsCardContentWrapper>
   );
 };
-
-export const Section = styled.div`
-  text-align: start;
-  margin-top: ${`${sizingScale[5]}px`};
-`;
-
-const TextWrapper = styled.div`
-  margin-top: ${`${sizingScale[3]}px`};
-`;
-
-const Text = styled.p`
-  font-size: ${`${fontSizes[2]}px`};
-  font-weight: 400;
-  text-align: center;
-`;
-
-const SettingsCardContentWrapper = styled(CardContentWrapper)`
-  text-align: center;
-`;
 
 // const SectionContentWrapper = styled.div`
 //   margin-top: ${`${sizingScale[3]}px`};

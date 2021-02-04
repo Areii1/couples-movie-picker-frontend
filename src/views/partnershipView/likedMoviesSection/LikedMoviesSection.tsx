@@ -10,7 +10,7 @@ import { SecondaryHeadline } from "../../../styles/Styles";
 import {
   TransparentButton,
   Mark,
-} from "../../accountSettingsView/pictureSection/PictureSection";
+} from "../../accountSettingsView/pictureSection/PictureSectionStyles";
 
 type Props = {
   getUserItemProcess: GetUserItemProcess;
@@ -18,23 +18,15 @@ type Props = {
 };
 
 export const LikedMoviesSection = (props: Props) => {
-  const [yourLikesExpanded, setYourLikesExpanded] = React.useState<boolean>(
-    false
-  );
-  const [
-    partnersLikesExpanded,
-    setPartnersLikesExpanded,
-  ] = React.useState<boolean>(false);
+  const [yourLikesExpanded, setYourLikesExpanded] = React.useState<boolean>(false);
+  const [partnersLikesExpanded, setPartnersLikesExpanded] = React.useState<boolean>(false);
 
   const getLikedMovieListItems = (list: LikedMoviesList) => {
     return list.L.map((listItem: LikedMoviesListItem) => {
       if (props.getUserItemProcess.status === Status.SUCCESS) {
         return (
           <MovieListItem>
-            <Link
-              to={`/movie/${listItem.M.id.S}`}
-              title={`view movie ${listItem.M.id.S}`}
-            >
+            <Link to={`/movie/${listItem.M.id.S}`} title={`view movie ${listItem.M.id.S}`}>
               <TertiaryHeadline>{listItem.M.id.S}</TertiaryHeadline>
             </Link>
             <Text>{`(${listItem.M.score.N})`}</Text>
@@ -69,9 +61,7 @@ export const LikedMoviesSection = (props: Props) => {
               </MovieListTriggerButton>
               {yourLikesExpanded && (
                 <MovieList>
-                  {getLikedMovieListItems(
-                    props.getUserItemProcess.data.likedMovies
-                  )}
+                  {getLikedMovieListItems(props.getUserItemProcess.data.likedMovies)}
                 </MovieList>
               )}
             </MovieListWrapper>
@@ -88,9 +78,7 @@ export const LikedMoviesSection = (props: Props) => {
               </MovieListTriggerButton>
               {partnersLikesExpanded && (
                 <MovieList>
-                  {getLikedMovieListItems(
-                    props.getPairedUserProcess.data.likedMovies
-                  )}
+                  {getLikedMovieListItems(props.getPairedUserProcess.data.likedMovies)}
                 </MovieList>
               )}
             </MovieListWrapper>

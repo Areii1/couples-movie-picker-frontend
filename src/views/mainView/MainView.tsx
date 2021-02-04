@@ -9,7 +9,7 @@ import { getTrendingMovies } from "../../apiService/getTrendingMovies";
 import { evaluateMovie } from "../../apiService/evaluateMovie";
 import { ImageIcon } from "../../components/icons/ImageIcon";
 import { bucketUrl } from "../../config/Config";
-import { DisplayProfile } from "../../components/modals/DisplayProfileModal";
+import { DisplayProfile } from "../../components/modals/displayProfileModal/DisplayProfileModal";
 import { ImageSection } from "./imageSection/ImageSection";
 import {
   Wrapper,

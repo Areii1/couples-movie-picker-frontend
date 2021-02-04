@@ -11,8 +11,8 @@ import { TransparentButton } from "../../accountSettingsView/pictureSection/Pict
 import { Puff } from "../../../components/puff/Puff";
 import { bucketUrl } from "../../../config/Config";
 import { SecondaryHeadline } from "../../../styles/Styles";
-import { ConfirmModal } from "../../../components/modals/ConfirmModal";
-import { DisplayProfile } from "../../../components/modals/DisplayProfileModal";
+import { ConfirmModal } from "../../../components/modals/confirmModal/ConfirmModal";
+import { DisplayProfile } from "../../../components/modals/displayProfileModal/DisplayProfileModal";
 import {
   BallOverlay,
   PartnerBallWrapper,

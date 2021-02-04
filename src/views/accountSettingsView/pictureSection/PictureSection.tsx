@@ -10,7 +10,7 @@ import { GetCurrentSessionProcess, Process, Status } from "../../../App";
 import { Section } from "../AccountSettingsViewStyles";
 import { Puff } from "../../../components/puff/Puff";
 import { SecondaryHeadline } from "../../../styles/Styles";
-import { ConfirmModal } from "../../../components/modals/ConfirmModal";
+import { ConfirmModal } from "../../../components/modals/confirmModal/ConfirmModal";
 import {
   ProfileBallOverlay,
   LoadingIconWrapper,

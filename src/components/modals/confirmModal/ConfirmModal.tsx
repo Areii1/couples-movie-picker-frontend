@@ -1,12 +1,17 @@
 import React from "react";
-import styled from "styled-components";
-import { SecondaryHeadline } from "../../styles/Styles";
-import { borderRadius, sizingScale } from "../../styles/Variables";
+import { SecondaryHeadline } from "../../../styles/Styles";
 import {
   Mark,
   TransparentButton,
-} from "../../views/accountSettingsView/pictureSection/PictureSectionStyles";
-import { Button, ButtonText } from "../../views/logIn/LogInStyles";
+} from "../../../views/accountSettingsView/pictureSection/PictureSectionStyles";
+import { Button, ButtonText } from "../../../views/logIn/LogInStyles";
+import {
+  ModalBackground,
+  Modal,
+  CloseButtonWrapper,
+  ButtonWrapper,
+  ButtonsWrapper,
+} from "./ConfirmModalStyles";
 
 type Props = {
   closeModal: () => void;
@@ -47,38 +52,3 @@ export const ConfirmModal = (props: Props) => {
     </ModalBackground>
   );
 };
-
-export const ModalBackground = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0, 0, 0, 0.7);
-`;
-
-export const Modal = styled.div`
-  position: relative;
-  background-color: white;
-  margin: ${`${sizingScale[10]}px`} auto 0 auto;
-  width: ${`${sizingScale[12]}px`};
-  padding: ${`${sizingScale[6]}px`} ${`${sizingScale[6]}px`};
-  border-radius: ${`${borderRadius}px`};
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-`;
-
-export const CloseButtonWrapper = styled.div`
-  position: absolute;
-  top: ${`${sizingScale[1]}px`};
-  right: ${`${sizingScale[2]}px`};
-`;
-
-const ButtonWrapper = styled.div`
-  margin-right: ${`${sizingScale[2]}px`};
-`;
-
-const ButtonsWrapper = styled.div`
-  display: flex;
-`;

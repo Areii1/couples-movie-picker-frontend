@@ -2,7 +2,7 @@ import React from "react";
 import { toast } from "react-toastify";
 import { uploadProfilePicture } from "../../../apiService/uploadProfilePicture";
 import { removeProfilePicture } from "../../../apiService/removeProfilePicture";
-import { ImageIcon } from "../../../components/icons/ImageIcon";
+import { ImageIcon } from "../../../components/icons/imageIcon/ImageIcon";
 import { ProfileBall } from "../../../components/profileBall/ProfileBall";
 import { randomizeProfilePicture } from "../../../apiService/randomizeProfilePicture";
 import { bucketUrl } from "../../../config/Config";

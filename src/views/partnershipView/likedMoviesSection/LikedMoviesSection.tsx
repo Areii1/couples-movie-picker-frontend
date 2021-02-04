@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { Status, GetUserItemProcess } from "../../../App";
-import { DownwardArrow } from "../../../components/icons/DownwardArrow";
+import { DownwardArrow } from "../../../components/icons/downwardArrow/DownwardArrow";
 import { LikedMoviesList, LikedMoviesListItem } from "../../../types/Types";
 import { TertiaryHeadline, SecondaryHeadline } from "../../../styles/Styles";
 import {

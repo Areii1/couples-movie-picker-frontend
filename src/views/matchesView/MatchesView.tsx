@@ -6,7 +6,7 @@ import { GetUserItemProcess, Status, Process, GetCurrentSessionProcess } from ".
 import { LikedMoviesListItem } from "../../types/Types";
 import { getTrendingMovies } from "../../apiService/getTrendingMovies";
 import { ScoreText } from "../mainView/imageSection/ImageSectionStyles";
-import { DownwardArrow } from "../../components/icons/DownwardArrow";
+import { DownwardArrow } from "../../components/icons/downwardArrow/DownwardArrow";
 import { TransparentButton } from "../accountSettingsView/pictureSection/PictureSectionStyles";
 import {
   MatchesList,

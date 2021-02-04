@@ -7,7 +7,7 @@ import { SecondaryHeadline } from "../../styles/Styles";
 import { sizingScale } from "../../styles/Variables";
 import { getTrendingMovies } from "../../apiService/getTrendingMovies";
 import { evaluateMovie } from "../../apiService/evaluateMovie";
-import { ImageIcon } from "../../components/icons/ImageIcon";
+import { ImageIcon } from "../../components/icons/imageIcon/ImageIcon";
 import { bucketUrl } from "../../config/Config";
 import { DisplayProfile } from "../../components/modals/displayProfileModal/DisplayProfileModal";
 import { ImageSection } from "./imageSection/ImageSection";

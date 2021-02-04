@@ -1,6 +1,6 @@
 import React from "react";
 import { UserEvaluationItem } from "./userEvaluationItem/UserEvaluationItem";
-import { AnimateType, HeartIcon } from "../../../components/icons/HeartIcon";
+import { AnimateType, HeartIcon } from "../../../components/icons/heartIcon/HeartIcon";
 import { Process, GetUserItemProcess, Status } from "../../../App";
 import { MovieTertiaryHeadline } from "../MovieViewStyles";
 import { getEvaluatedMovieItem } from "../MovieViewUtilityFunctions";

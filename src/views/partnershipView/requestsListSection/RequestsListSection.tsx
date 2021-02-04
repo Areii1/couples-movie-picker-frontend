@@ -1,7 +1,7 @@
 import React from "react";
 import { toast } from "react-toastify";
 import { ProfileBall } from "../../../components/profileBall/ProfileBall";
-import { HeartIcon, AnimateType } from "../../../components/icons/HeartIcon";
+import { HeartIcon, AnimateType } from "../../../components/icons/heartIcon/HeartIcon";
 import { Puff } from "../../../components/puff/Puff";
 import {
   TransparentButton,

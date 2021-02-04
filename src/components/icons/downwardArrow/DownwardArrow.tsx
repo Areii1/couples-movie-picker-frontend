@@ -1,5 +1,5 @@
 import React from "react";
-import styled, { keyframes } from "styled-components";
+import { Svg } from "./DownwardArrowStyles";
 
 type Props = {
   size: number;
@@ -42,7 +42,3 @@ export const DownwardArrow = (props: Props) => {
     </Svg>
   );
 };
-
-const Svg = styled.svg`
-  enable-background: new 0 0 512 512;
-`;

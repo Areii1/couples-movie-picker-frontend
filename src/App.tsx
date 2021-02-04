@@ -1,5 +1,4 @@
 import React from "react";
-import styled from "styled-components";
 import { Route } from "react-router-dom";
 import "./App.css";
 import { CSSTransition } from "react-transition-group";
@@ -15,10 +14,10 @@ import { getUser } from "./apiService/getUser";
 import { PartnershipView } from "./views/partnershipView/PartnershipView";
 import { getCurrentSession, getCurrentAuthenticatedUser } from "./apiService/getUserInformation";
 import { UserInfo } from "./types/Types";
-import { sizingScale } from "./styles/Variables";
 import { MatchesView } from "./views/matchesView/MatchesView";
 import { MovieView } from "./views/movieView/MovieView";
 import "react-toastify/dist/ReactToastify.css";
+import { ContentWrapper } from "./AppStyles";
 
 configureAmplify();
 
@@ -48,11 +47,17 @@ export type GetUserItemProcess =
   | { status: Status.ERROR; error: Error };
 
 export const App: React.FunctionComponent = () => {
-  const [getCurrentSessionProcess, setGetCurrentSessionProcess] = React.useState<GetCurrentSessionProcess>({
+  const [
+    getCurrentSessionProcess,
+    setGetCurrentSessionProcess,
+  ] = React.useState<GetCurrentSessionProcess>({
     status: Status.INITIAL,
   });
 
-  const [getCurrentAuthenticatedUserProcess, setGetCurrentAuthenticatedUserProcess] = React.useState<Process>({
+  const [
+    getCurrentAuthenticatedUserProcess,
+    setGetCurrentAuthenticatedUserProcess,
+  ] = React.useState<Process>({
     status: Status.INITIAL,
   });
 
@@ -108,7 +113,10 @@ export const App: React.FunctionComponent = () => {
           status: Status.SUCCESS,
           data: getCurrentAuthenticatedUserResponse,
         });
-        getUserItem(getCurrentAuthenticatedUserResponse.username, getCurrentSessionResponse.getIdToken().getJwtToken());
+        getUserItem(
+          getCurrentAuthenticatedUserResponse.username,
+          getCurrentSessionResponse.getIdToken().getJwtToken(),
+        );
       } catch (getCurrentAuthenticatedUserError) {
         toast.error("Could not get user information");
         setGetCurrentAuthenticatedUserProcess({
@@ -134,7 +142,8 @@ export const App: React.FunctionComponent = () => {
   React.useEffect(() => {
     if (
       getCurrentSessionProcess.status === Status.ERROR &&
-      (getCurrentAuthenticatedUserProcess.status === Status.SUCCESS || getUserItemProcess.status === Status.SUCCESS)
+      (getCurrentAuthenticatedUserProcess.status === Status.SUCCESS ||
+        getUserItemProcess.status === Status.SUCCESS)
     ) {
       setGetCurrentAuthenticatedUserProcess({
         status: Status.ERROR,
@@ -148,9 +157,15 @@ export const App: React.FunctionComponent = () => {
   }, [getCurrentSessionProcess.status]);
 
   React.useEffect(() => {
-    if (getUserItemProcess.status === Status.SUCCESS && getCurrentSessionProcess.status === Status.SUCCESS) {
+    if (
+      getUserItemProcess.status === Status.SUCCESS &&
+      getCurrentSessionProcess.status === Status.SUCCESS
+    ) {
       if (getUserItemProcess.data.partner) {
-        getPairedUser(getUserItemProcess.data.partner.S, getCurrentSessionProcess.data.getIdToken().getJwtToken());
+        getPairedUser(
+          getUserItemProcess.data.partner.S,
+          getCurrentSessionProcess.data.getIdToken().getJwtToken(),
+        );
       } else if (getUserItemProcess.data.outgoingRequests) {
         getPairedUser(
           getUserItemProcess.data.outgoingRequests.S,
@@ -167,20 +182,10 @@ export const App: React.FunctionComponent = () => {
     setGetUserItemProcess({ status: Status.INITIAL });
   };
 
-  // console.log(getUserItemProcess, "getUserItemProcess");
-  // console.log(getCurrentSessionProcess, "getCurrentSessionProcess");
-  // console.log(
-  //   getCurrentAuthenticatedUserProcess,
-  //   "getCurrentAuthenticatedUserProcess"
-  // );
-  // console.log(getPairedUserProcess, "getPairedUserProcess");
-
-  const ContentWrapper = styled.div`
-    margin: 0 auto ${`${sizingScale[9]}px`} auto;
-    width: ${`${sizingScale[13]}px`};
-    display: flex;
-    flex-direction: column;
-  `;
+  console.log(getUserItemProcess, "getUserItemProcess");
+  console.log(getCurrentSessionProcess, "getCurrentSessionProcess");
+  console.log(getCurrentAuthenticatedUserProcess, "getCurrentAuthenticatedUserProcess");
+  console.log(getPairedUserProcess, "getPairedUserProcess");
 
   return (
     <ContentWrapper>

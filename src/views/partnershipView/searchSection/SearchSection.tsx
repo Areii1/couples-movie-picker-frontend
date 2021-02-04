@@ -1,7 +1,7 @@
 import React, { FormEvent } from "react";
 import { toast } from "react-toastify";
 import { GetCurrentSessionProcess, GetUserItemProcess, Process, Status } from "../../../App";
-import { SearchIcon } from "../../../components/icons/SearchIcon";
+import { SearchIcon } from "../../../components/icons/searchIcon/SearchIcon";
 import { Form, InputField } from "../../logIn/LogInStyles";
 import { getUser } from "../../../apiService/getUser";
 import { pairWithUser } from "../../../apiService/pairWithUser";
@@ -15,7 +15,7 @@ import {
   ButtonsWrapper,
 } from "../PartnershipViewStyles";
 import { ProfileBall } from "../../../components/profileBall/ProfileBall";
-import { AnimateType, HeartIcon } from "../../../components/icons/HeartIcon";
+import { AnimateType, HeartIcon } from "../../../components/icons/heartIcon/HeartIcon";
 import { bucketUrl } from "../../../config/Config";
 import { SecondaryHeadline } from "../../../styles/Styles";
 import { FormWrapper, InputFieldWrapper, SearchIconButton } from "./SearchSectionStyles";

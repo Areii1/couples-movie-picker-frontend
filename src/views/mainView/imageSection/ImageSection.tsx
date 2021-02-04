@@ -1,6 +1,6 @@
 import React from "react";
 import { GetUserItemProcess, Process, Status } from "../../../App";
-import { AnimateType, HeartIcon } from "../../../components/icons/HeartIcon";
+import { AnimateType, HeartIcon } from "../../../components/icons/heartIcon/HeartIcon";
 import { ProfileBall } from "../../../components/profileBall/ProfileBall";
 import { sizingScale } from "../../../styles/Variables";
 import { TransparentButton } from "../../accountSettingsView/pictureSection/PictureSectionStyles";

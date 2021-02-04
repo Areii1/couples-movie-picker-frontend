@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { HeartIcon, AnimateType } from "../icons/HeartIcon";
-import { FireIcon } from "../icons/FireIcon";
+import { HeartIcon, AnimateType } from "../icons/heartIcon/HeartIcon";
+import { FireIcon } from "../icons/fireIcon/FireIcon";
 import { GetUserItemProcess, Process, Status } from "../../App";
 import { ProfileBall } from "../profileBall/ProfileBall";
 import { bucketUrl } from "../../config/Config";

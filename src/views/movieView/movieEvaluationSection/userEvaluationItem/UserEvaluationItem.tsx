@@ -1,7 +1,7 @@
 import React from "react";
 import { GetUserItemProcess, Process, Status } from "../../../../App";
-import { FireIcon } from "../../../../components/icons/FireIcon";
-import { ColdIcon } from "../../../../components/icons/ColdIcon";
+import { FireIcon } from "../../../../components/icons/fireIcon/FireIcon";
+import { ColdIcon } from "../../../../components/icons/coldIcon/ColdIcon";
 import { ProfileBall } from "../../../../components/profileBall/ProfileBall";
 import { bucketUrl } from "../../../../config/Config";
 import { TransparentButton } from "../../../accountSettingsView/pictureSection/PictureSectionStyles";

@@ -1,5 +1,5 @@
 import React from "react";
-import styled, { keyframes, css } from "styled-components";
+import { Svg } from "./SearchIconStyles";
 
 type Props = {
   size: number;
@@ -29,31 +29,3 @@ export const SearchIcon = (props: Props) => {
     </Svg>
   );
 };
-
-const lighten = keyframes`
-  from {
-    fill: gray;
-  }
-  to {
-    fill: lightgray;
-  }
-`;
-
-type SvgProps = {
-  animate: boolean;
-};
-
-const Svg = styled.svg`
-  enable-background: new 0 0 391.837 391.837;
-
-  :hover {
-    path {
-      animation: ${(props: SvgProps) =>
-        props.animate
-          ? css`
-              ${lighten} 0.3s linear forwards
-            `
-          : "unset"};
-    }
-  }
-`;

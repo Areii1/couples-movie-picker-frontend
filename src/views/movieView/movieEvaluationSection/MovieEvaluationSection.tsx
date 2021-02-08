@@ -103,7 +103,6 @@ export const MovieEvaluationSection = (props: Props) => {
           {!evaluating && (
             <UserEvaluationItemWrapper>
               <UserEvaluationItem
-                getMovieDetailsProcess={props.getMovieDetailsProcess}
                 getUserItemProcess={props.getUserItemProcess}
                 evaluatedMovieItem={userEvaluatedMovieItem}
                 updateEvaluating={setEvaluating}
@@ -114,7 +113,6 @@ export const MovieEvaluationSection = (props: Props) => {
           {partnerEvaluatedMovieItem && (
             <UserEvaluationItemWrapper>
               <UserEvaluationItem
-                getMovieDetailsProcess={props.getMovieDetailsProcess}
                 getUserItemProcess={props.getPairedUserProcess}
                 evaluatedMovieItem={partnerEvaluatedMovieItem}
                 useCase={EvaluationItemUseCase.PARTNER}

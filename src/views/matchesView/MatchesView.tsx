@@ -27,7 +27,6 @@ export const MatchesView = (props: Props) => {
   const [getTrendingMoviesProcess, setGetTrendingMoviesProcess] = React.useState<Process>({
     status: Status.INITIAL,
   });
-
   const [dislikedMoviesListExpanded, setDislikedMoviesListExpanded] = React.useState<boolean>(
     false,
   );

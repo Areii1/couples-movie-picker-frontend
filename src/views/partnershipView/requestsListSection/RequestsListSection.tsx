@@ -113,7 +113,7 @@ export const RequestsListSection = (props: Props) => {
               <FoundUserWrapper>
                 <ProfileWrapper>
                   <ProfileBall
-                    firstName={request.S}
+                    firstName={request}
                     image={undefined}
                     isCurrentUser={false}
                     size={30}

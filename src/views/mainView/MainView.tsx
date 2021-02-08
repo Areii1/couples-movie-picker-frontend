@@ -119,7 +119,7 @@ export const MainView = (props: Props) => {
 
   const getFilteredList = () => {
     if (getTrendingMoviesProcess.status === Status.SUCCESS) {
-      return getTrendingMoviesProcess.data.results.filter((movie: LikedMoviesListItem) => {
+      return getTrendingMoviesProcess.data.results.filter((movie: any) => {
         if (
           props.getUserItemProcess.status === Status.SUCCESS &&
           props.getUserItemProcess.data.likedMovies
@@ -193,7 +193,6 @@ export const MainView = (props: Props) => {
             <div>
               <ImageSection
                 getUserItemProcess={props.getUserItemProcess}
-                getCurrentAuthenticatedUserProcess={props.getCurrentAuthenticatedUserProcess}
                 getPairedUserProcess={props.getPairedUserProcess}
                 filteredList={filteredList}
                 swipingIndex={swipingIndex}

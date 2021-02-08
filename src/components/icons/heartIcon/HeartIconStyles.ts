@@ -52,6 +52,6 @@ export const Svg = styled.svg`
   enable-background: new 0 0 391.837 391.837;
 
   :hover {
-    ${(props: SvgProps) => getAnimation(props.animate, props.isRed, props.size)};
+    ${(props: SvgProps) => getAnimation(props.animate, props.isRed)};
   }
 `;

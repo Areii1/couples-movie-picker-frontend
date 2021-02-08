@@ -1,4 +1,4 @@
-const getRedColor = (score: number) => {
+const getRedColor = (score: number): number => {
   if (score >= 50) {
     const scorePercent = score / 100;
     return 255 - Math.floor(scorePercent * 2);
@@ -7,7 +7,7 @@ const getRedColor = (score: number) => {
     return 120 - Math.floor(scorePercent * 80);
   }
 };
-const getGreenColor = (score: number) => {
+const getGreenColor = (score: number): number => {
   if (score >= 50) {
     const scorePercent = score / 100;
     return 186 - Math.floor(scorePercent * 85);
@@ -16,7 +16,7 @@ const getGreenColor = (score: number) => {
     return 175 - Math.floor(scorePercent * 46);
   }
 };
-const getBlueColor = (score: number) => {
+const getBlueColor = (score: number): number => {
   if (score >= 50) {
     const scorePercent = score / 100;
     return 166 - Math.floor(scorePercent * 112);
@@ -26,8 +26,6 @@ const getBlueColor = (score: number) => {
   }
 };
 
-export const getScoreTextColor = (score: number) => {
-  return `rgb(${getRedColor(score)},${getGreenColor(score)},${getBlueColor(
-    score
-  )})`;
+export const getScoreTextColor = (score: number): string => {
+  return `rgb(${getRedColor(score)},${getGreenColor(score)},${getBlueColor(score)})`;
 };

@@ -76,7 +76,7 @@ export const RequestsListSection = (props: Props) => {
       props.getCurrentSessionProcess.status === Status.SUCCESS
     ) {
       const acceptableRequest = props.getUserItemProcess.data.incomingRequests?.SS.find(
-        (request: any) => acceptUsername === request,
+        (request: string) => acceptUsername === request,
       );
       if (acceptableRequest) {
         try {
@@ -107,7 +107,7 @@ export const RequestsListSection = (props: Props) => {
   const getRequestListItems = () => {
     if (props.getUserItemProcess.status === Status.SUCCESS) {
       const requestListItems = props.getUserItemProcess.data.incomingRequests?.SS.map(
-        (request: any) => {
+        (request: string) => {
           return (
             <RequestListItem>
               <FoundUserWrapper>

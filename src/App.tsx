@@ -264,9 +264,7 @@ export const App: React.FunctionComponent = () => {
             <CSSTransition in={match !== null} timeout={300} classNames="page" unmountOnExit>
               <div className="page">
                 <MatchesView
-                  getCurrentAuthenticatedUserProcess={getCurrentAuthenticatedUserProcess}
                   getUserItemProcess={getUserItemProcess}
-                  getCurrentSessionProcess={getCurrentSessionProcess}
                   getPairedUserProcess={getPairedUserProcess}
                 />
               </div>

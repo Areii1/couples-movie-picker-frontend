@@ -103,7 +103,7 @@ export const MovieView = (props: Props) => {
     if (getMovieDetailsProcess.status === Status.SUCCESS) {
       if (getMovieDetailsProcess.data.genres.length > 3) {
         const filteredList = getMovieDetailsProcess.data.genres.filter(
-          (detail: any, index: number) => index < 3,
+          (detail: string, index: number) => index < 3,
         );
         return filteredList.map((genre: any) => genre.name).join(", ");
       } else {

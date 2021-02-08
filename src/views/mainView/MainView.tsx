@@ -21,6 +21,7 @@ import {
   ImageWrapper,
   TitleWrapper,
 } from "./MainViewStyles";
+import { LikedMoviesListItem } from "../../types/Types";
 
 type Props = {
   getCurrentSessionProcess: Process;
@@ -118,14 +119,14 @@ export const MainView = (props: Props) => {
 
   const getFilteredList = () => {
     if (getTrendingMoviesProcess.status === Status.SUCCESS) {
-      return getTrendingMoviesProcess.data.results.filter((movie: any) => {
+      return getTrendingMoviesProcess.data.results.filter((movie: LikedMoviesListItem) => {
         if (
           props.getUserItemProcess.status === Status.SUCCESS &&
           props.getUserItemProcess.data.likedMovies
         ) {
           return (
             props.getUserItemProcess.data.likedMovies.L.find(
-              (likedMovie: any) => movie.id === parseInt(likedMovie.M.id.S, 10),
+              (likedMovie: LikedMoviesListItem) => movie.id === parseInt(likedMovie.M.id.S, 10),
             ) === undefined
           );
         } else {
@@ -159,11 +160,12 @@ export const MainView = (props: Props) => {
     ) {
       const filteredList = getFilteredList();
       const userEvaluatedLastMovieItem = evaluateMovieProcess.data.Attributes.likedMovies.L.find(
-        (likedMovie: any) => filteredList[swipingIndex - 1].id === parseInt(likedMovie.M.id.S, 10),
+        (likedMovie: LikedMoviesListItem) =>
+          filteredList[swipingIndex - 1].id === parseInt(likedMovie.M.id.S, 10),
       );
       if (userEvaluatedLastMovieItem && parseInt(userEvaluatedLastMovieItem.M.score.N, 10) >= 50) {
         const pairedUserEvaluatedLastItem = props.getPairedUserProcess.data.likedMovies.L.find(
-          (likedMovie: any) =>
+          (likedMovie: LikedMoviesListItem) =>
             filteredList[swipingIndex - 1].id === parseInt(likedMovie.M.id.S, 10),
         );
         if (
@@ -190,7 +192,6 @@ export const MainView = (props: Props) => {
           {filteredList.length > 0 && (
             <div>
               <ImageSection
-                getCurrentSessionProcess={props.getCurrentSessionProcess}
                 getUserItemProcess={props.getUserItemProcess}
                 getCurrentAuthenticatedUserProcess={props.getCurrentAuthenticatedUserProcess}
                 getPairedUserProcess={props.getPairedUserProcess}

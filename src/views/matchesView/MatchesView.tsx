@@ -82,8 +82,15 @@ export const MatchesView = (props: Props) => {
     }
   };
 
-  const getProcessedMatchedMovies = (matchedMovies: any[]) => {
-    return matchedMovies.map((movie: any) => {
+  type ProcessedMatchedMovies = {
+    id: string;
+    commonScore: number;
+  };
+
+  const getProcessedMatchedMovies = (
+    matchedMovies: LikedMoviesListItem[],
+  ): Array<ProcessedMatchedMovies | undefined> => {
+    return matchedMovies.map((movie: LikedMoviesListItem) => {
       if (
         props.getPairedUserProcess.status === Status.SUCCESS &&
         props.getPairedUserProcess.data.likedMovies
@@ -105,16 +112,22 @@ export const MatchesView = (props: Props) => {
     });
   };
 
-  const getSortedMatchedMovies = (matchedMovies: any[]) => {
-    return matchedMovies.sort((a: any, b: any) => {
-      if (a.commonScore < b.commonScore) {
-        return 1;
-      } else if (a.commonScore > b.commonScore) {
-        return -1;
-      } else {
-        return 0;
-      }
-    });
+  const getSortedMatchedMovies = (matchedMovies: Array<ProcessedMatchedMovies | undefined>) => {
+    return matchedMovies.sort(
+      (a: ProcessedMatchedMovies | undefined, b: ProcessedMatchedMovies | undefined) => {
+        if (a && b) {
+          if (a.commonScore < b.commonScore) {
+            return 1;
+          } else if (a.commonScore > b.commonScore) {
+            return -1;
+          } else {
+            return 0;
+          }
+        } else {
+          return 0;
+        }
+      },
+    );
   };
 
   const getMatchedMoviesDetails = () => {

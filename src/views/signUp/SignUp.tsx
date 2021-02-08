@@ -2,7 +2,7 @@ import { Auth } from "aws-amplify";
 import { toast } from "react-toastify";
 import React, { FormEvent } from "react";
 import { Link, Redirect } from "react-router-dom";
-import { Status } from "../../App";
+import { Process, Status } from "../../App";
 import { Puff } from "../../components/puff/Puff";
 import {
   FormWrapper,
@@ -23,7 +23,7 @@ export const SignUp: React.FC = () => {
     signupConfirmPasswordFieldValue,
     setSignupConfirmPasswordFieldValue,
   ] = React.useState<string>("");
-  const [signUpProcess, setSignUpProcess] = React.useState<any>({
+  const [signUpProcess, setSignUpProcess] = React.useState<Process>({
     status: Status.INITIAL,
   });
 

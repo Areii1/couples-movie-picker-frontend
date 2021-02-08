@@ -147,11 +147,11 @@ export const AccountSettingsView = (props: Props) => {
       {props.getCurrentSessionProcess.status === Status.ERROR && (
         <TextWrapper>
           <Text>
-            No current user, please{" "}
+            No current user, please
             <Link to="/signup" title="signup">
               register
-            </Link>{" "}
-            or{" "}
+            </Link>
+            or
             <Link to="/login" title="login">
               login
             </Link>

@@ -1,15 +1,17 @@
 import styled from "styled-components";
 import { borderRadius, shadowColor, sizingScale } from "../../styles/Variables";
 
-export const List = styled.ul`
-  width: ${`${sizingScale[11]}px`};
-  list-style-type: none;
-  padding: 0;
+export const Wrapper = styled.div`
   background-color: white;
-  display: flex;
   border-radius: ${`${borderRadius}px`};
-  margin: ${`${sizingScale[3]}px`} auto 0 auto;
   box-shadow: 10px 5px 5px ${shadowColor};
+  margin: ${`${sizingScale[3]}px`} auto 0 auto;
+`;
+
+export const List = styled.ul`
+  padding: 0;
+  list-style-type: none;
+  display: flex;
 `;
 
 export const ListItem = styled.li`

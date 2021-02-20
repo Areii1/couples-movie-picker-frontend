@@ -179,6 +179,7 @@ export const MainView = (props: Props) => {
   }, [evaluateMovieProcess.status]);
 
   const filteredList = getFilteredList();
+  console.log(filteredList, "filteredList");
   return (
     <Wrapper>
       {!viewInitialized && !viewErrored && (
@@ -189,7 +190,7 @@ export const MainView = (props: Props) => {
       )}
       {viewInitialized && (
         <>
-          {filteredList.length > 0 && (
+          {filteredList.length > 0 && filteredList[swipingIndex] !== undefined && (
             <div>
               <ImageSection
                 getUserItemProcess={props.getUserItemProcess}
@@ -217,7 +218,7 @@ export const MainView = (props: Props) => {
               </DetailsSection>
             </div>
           )}
-          {filteredList.length === 0 && (
+          {(filteredList.length === 0 || filteredList[swipingIndex] === undefined) && (
             <>
               <ImageWrapper>
                 <ImageIcon size={sizingScale[10]} animate={false} color="gray" />

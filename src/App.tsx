@@ -187,17 +187,17 @@ export const App: React.FunctionComponent = () => {
   console.log(getCurrentAuthenticatedUserProcess, "getCurrentAuthenticatedUserProcess");
   console.log(getPairedUserProcess, "getPairedUserProcess");
 
-  const sessionInitialized =
-    getCurrentSessionProcess.status === Status.SUCCESS &&
-    getUserItemProcess.status === Status.SUCCESS &&
-    getCurrentAuthenticatedUserProcess.status === Status.SUCCESS;
+  // const sessionInitialized =
+  //   getCurrentSessionProcess.status === Status.SUCCESS &&
+  //   getUserItemProcess.status === Status.SUCCESS &&
+  //   getCurrentAuthenticatedUserProcess.status === Status.SUCCESS;
 
   return (
     <ContentWrapper>
       <NavigationBar
         getCurrentAuthenticatedUserProcess={getCurrentAuthenticatedUserProcess}
         getUserItemProcess={getUserItemProcess}
-        sessionInitialized={sessionInitialized}
+        getCurrentSessionProcess={getCurrentSessionProcess}
       />
       <div className="container">
         <Route exact path="/">

@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Process, Status, GetUserItemProcess } from "../../App";
 import { FireMeter } from "../../components/fireMeter/FireMeter";
@@ -181,61 +181,66 @@ export const MainView = (props: Props) => {
   const filteredList = getFilteredList();
   console.log(filteredList, "filteredList");
   return (
-    <Wrapper>
-      {!viewInitialized && !viewErrored && (
-        <div>
-          <ImagePlaceholder />
-          <TitlePlaceholder />
-        </div>
-      )}
-      {viewInitialized && (
-        <>
-          {filteredList.length > 0 && filteredList[swipingIndex] !== undefined && (
+    <>
+      {props.getCurrentSessionProcess.status !== Status.ERROR && (
+        <Wrapper>
+          {!viewInitialized && !viewErrored && (
             <div>
-              <ImageSection
-                getUserItemProcess={props.getUserItemProcess}
-                getPairedUserProcess={props.getPairedUserProcess}
-                filteredList={filteredList}
-                swipingIndex={swipingIndex}
-                evaluateMovieProcess={evaluateMovieProcess}
-                evaluateItem={evaluateItem}
-                setModalOpen={setModalOpen}
-              />
-              <DetailsSection>
-                <Link
-                  to={`movie/${filteredList[swipingIndex].id}`}
-                  title={filteredList[swipingIndex].original_title}
-                >
-                  <Title>{filteredList[swipingIndex].original_title}</Title>
-                </Link>
-                <FireMeterWrapper>
-                  <FireMeter
-                    evaluateItem={evaluateItem}
-                    movieId={filteredList[swipingIndex].id}
-                    likeMovieProcess={evaluateMovieProcess}
-                  />
-                </FireMeterWrapper>
-              </DetailsSection>
+              <ImagePlaceholder />
+              <TitlePlaceholder />
             </div>
           )}
-          {(filteredList.length === 0 || filteredList[swipingIndex] === undefined) && (
+          {viewInitialized && (
             <>
-              <ImageWrapper>
-                <ImageIcon size={sizingScale[10]} animate={false} color="gray" />
-              </ImageWrapper>
-              <TitleWrapper>
-                <SecondaryHeadline>Everything swiped</SecondaryHeadline>
-              </TitleWrapper>
+              {filteredList.length > 0 && filteredList[swipingIndex] !== undefined && (
+                <div>
+                  <ImageSection
+                    getUserItemProcess={props.getUserItemProcess}
+                    getPairedUserProcess={props.getPairedUserProcess}
+                    filteredList={filteredList}
+                    swipingIndex={swipingIndex}
+                    evaluateMovieProcess={evaluateMovieProcess}
+                    evaluateItem={evaluateItem}
+                    setModalOpen={setModalOpen}
+                  />
+                  <DetailsSection>
+                    <Link
+                      to={`movie/${filteredList[swipingIndex].id}`}
+                      title={filteredList[swipingIndex].original_title}
+                    >
+                      <Title>{filteredList[swipingIndex].original_title}</Title>
+                    </Link>
+                    <FireMeterWrapper>
+                      <FireMeter
+                        evaluateItem={evaluateItem}
+                        movieId={filteredList[swipingIndex].id}
+                        likeMovieProcess={evaluateMovieProcess}
+                      />
+                    </FireMeterWrapper>
+                  </DetailsSection>
+                </div>
+              )}
+              {(filteredList.length === 0 || filteredList[swipingIndex] === undefined) && (
+                <>
+                  <ImageWrapper>
+                    <ImageIcon size={sizingScale[10]} animate={false} color="gray" />
+                  </ImageWrapper>
+                  <TitleWrapper>
+                    <SecondaryHeadline>Everything swiped</SecondaryHeadline>
+                  </TitleWrapper>
+                </>
+              )}
             </>
           )}
-        </>
+          {modalOpen && props.getPairedUserProcess.status === Status.SUCCESS && (
+            <DisplayProfile
+              closeModal={() => setModalOpen(false)}
+              source={`${bucketUrl}/${props.getPairedUserProcess.data.profilePicture.S}`}
+            />
+          )}
+        </Wrapper>
       )}
-      {modalOpen && props.getPairedUserProcess.status === Status.SUCCESS && (
-        <DisplayProfile
-          closeModal={() => setModalOpen(false)}
-          source={`${bucketUrl}/${props.getPairedUserProcess.data.profilePicture.S}`}
-        />
-      )}
-    </Wrapper>
+      {props.getCurrentSessionProcess.status === Status.ERROR && <Redirect to="/signup" />}
+    </>
   );
 };

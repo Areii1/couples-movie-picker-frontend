@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { HeartIcon, AnimateType } from "../icons/heartIcon/HeartIcon";
 import { FireIcon } from "../icons/fireIcon/FireIcon";
-import { GetUserItemProcess, Process, Status } from "../../App";
+import { GetUserItemProcess, Process, Status, GetCurrentSessionProcess } from "../../App";
 import { ProfileBall } from "../profileBall/ProfileBall";
 import { bucketUrl } from "../../config/Config";
 import { sizingScale } from "../../styles/Variables";
@@ -11,7 +11,7 @@ import { List, ListItem, IconWrapper, Wrapper } from "./NavigationBarStyles";
 type Props = {
   getCurrentAuthenticatedUserProcess: Process;
   getUserItemProcess: GetUserItemProcess;
-  sessionInitialized: boolean;
+  getCurrentSessionProcess: GetCurrentSessionProcess;
 };
 
 export const NavigationBar = (props: Props) => {
@@ -22,7 +22,7 @@ export const NavigationBar = (props: Props) => {
       : undefined;
   return (
     <>
-      {props.sessionInitialized && (
+      {props.getCurrentSessionProcess.status !== Status.ERROR && (
         <Wrapper>
           <List>
             <ListItem>
@@ -61,7 +61,7 @@ export const NavigationBar = (props: Props) => {
           </List>
         </Wrapper>
       )}
-      {!props.sessionInitialized && (
+      {props.getCurrentSessionProcess.status === Status.ERROR && (
         <Wrapper>
           <List>
             <ListItem>

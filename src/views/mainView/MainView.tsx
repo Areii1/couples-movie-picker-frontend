@@ -5,9 +5,11 @@ import {
   Process,
   Status,
   GetUserItemProcess,
+  GetCurrentSessionProcess,
   ProcessInitial,
   ProcessSuccess,
   ProcessError,
+  GetCurrentSessionProcessSuccess,
 } from "../../App";
 import { FireMeter } from "../../components/fireMeter/FireMeter";
 import { SecondaryHeadline } from "../../styles/Styles";
@@ -31,7 +33,7 @@ import {
 import { LikedMoviesListItem } from "../../types/Types";
 
 type Props = {
-  getCurrentSessionProcess: Process;
+  getCurrentSessionProcess: GetCurrentSessionProcess;
   getUserItemProcess: GetUserItemProcess;
   getUserItem: (username: string, jwtToken: string) => void;
   getCurrentAuthenticatedUserProcess: Process;
@@ -77,16 +79,16 @@ export const MainView = (props: Props) => {
     }
   };
 
-  const evaluateItem = async (movieId: string, score: number) => {
-    if (
-      props.getCurrentSessionProcess.status === Status.SUCCESS &&
-      getTrendingMoviesProcess.status === Status.SUCCESS &&
-      evaluateMovieProcess.status !== Status.LOADING
-    ) {
+  const evaluateItem = async (
+    movieId: string,
+    score: number,
+    givenGetCurrentSessionProcess: GetCurrentSessionProcessSuccess,
+  ) => {
+    if (evaluateMovieProcess.status !== Status.LOADING) {
       try {
         setEvaluateMovieProcess({ status: Status.LOADING, score });
         const likeMovieResponse = await evaluateMovie(
-          props.getCurrentSessionProcess.data.getIdToken().getJwtToken(),
+          givenGetCurrentSessionProcess.data.getIdToken().getJwtToken(),
           movieId,
           score,
         );
@@ -103,6 +105,8 @@ export const MainView = (props: Props) => {
           error: likeMovieError,
         });
       }
+    } else {
+      toast.info("Can't perform action before the first one is finished");
     }
   };
 
@@ -196,48 +200,53 @@ export const MainView = (props: Props) => {
               <TitlePlaceholder />
             </div>
           )}
-          {viewInitialized && (
-            <>
-              {filteredList.length > 0 && filteredList[swipingIndex] !== undefined && (
-                <div>
-                  <ImageSection
-                    getUserItemProcess={props.getUserItemProcess}
-                    getPairedUserProcess={props.getPairedUserProcess}
-                    filteredList={filteredList}
-                    swipingIndex={swipingIndex}
-                    evaluateMovieProcess={evaluateMovieProcess}
-                    evaluateItem={evaluateItem}
-                    setModalOpen={setModalOpen}
-                  />
-                  <DetailsSection>
-                    <Link
-                      to={`movie/${filteredList[swipingIndex].id}`}
-                      title={filteredList[swipingIndex].original_title}
-                    >
-                      <Title>{filteredList[swipingIndex].original_title}</Title>
-                    </Link>
-                    <FireMeterWrapper>
-                      <FireMeter
-                        evaluateItem={evaluateItem}
-                        movieId={filteredList[swipingIndex].id}
-                        evaluateMovieProcess={evaluateMovieProcess}
-                      />
-                    </FireMeterWrapper>
-                  </DetailsSection>
-                </div>
-              )}
-              {(filteredList.length === 0 || filteredList[swipingIndex] === undefined) && (
-                <>
-                  <ImageWrapper>
-                    <ImageIcon size={sizingScale[10]} animate={false} color="gray" />
-                  </ImageWrapper>
-                  <TitleWrapper>
-                    <SecondaryHeadline>Everything swiped</SecondaryHeadline>
-                  </TitleWrapper>
-                </>
-              )}
-            </>
-          )}
+          {props.getCurrentAuthenticatedUserProcess.status === Status.SUCCESS &&
+            props.getCurrentSessionProcess.status === Status.SUCCESS &&
+            props.getUserItemProcess.status === Status.SUCCESS &&
+            getTrendingMoviesProcess.status === Status.SUCCESS && (
+              <>
+                {filteredList.length > 0 && filteredList[swipingIndex] !== undefined && (
+                  <div>
+                    <ImageSection
+                      getCurrentSessionProcess={props.getCurrentSessionProcess}
+                      getUserItemProcess={props.getUserItemProcess}
+                      getPairedUserProcess={props.getPairedUserProcess}
+                      filteredList={filteredList}
+                      swipingIndex={swipingIndex}
+                      evaluateMovieProcess={evaluateMovieProcess}
+                      evaluateItem={evaluateItem}
+                      setModalOpen={setModalOpen}
+                    />
+                    <DetailsSection>
+                      <Link
+                        to={`movie/${filteredList[swipingIndex].id}`}
+                        title={filteredList[swipingIndex].original_title}
+                      >
+                        <Title>{filteredList[swipingIndex].original_title}</Title>
+                      </Link>
+                      <FireMeterWrapper>
+                        <FireMeter
+                          getCurrentSessionProcess={props.getCurrentSessionProcess}
+                          evaluateItem={evaluateItem}
+                          movieId={filteredList[swipingIndex].id}
+                          evaluateMovieProcess={evaluateMovieProcess}
+                        />
+                      </FireMeterWrapper>
+                    </DetailsSection>
+                  </div>
+                )}
+                {(filteredList.length === 0 || filteredList[swipingIndex] === undefined) && (
+                  <>
+                    <ImageWrapper>
+                      <ImageIcon size={sizingScale[10]} animate={false} color="gray" />
+                    </ImageWrapper>
+                    <TitleWrapper>
+                      <SecondaryHeadline>Everything swiped</SecondaryHeadline>
+                    </TitleWrapper>
+                  </>
+                )}
+              </>
+            )}
           {modalOpen && props.getPairedUserProcess.status === Status.SUCCESS && (
             <DisplayProfile
               closeModal={() => setModalOpen(false)}

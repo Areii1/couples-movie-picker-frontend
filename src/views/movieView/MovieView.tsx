@@ -165,6 +165,7 @@ export const MovieView = (props: Props) => {
               getUserItemProcess={props.getUserItemProcess}
               evaluateItem={evaluateItem}
               likeMovieProcess={likeMovieProcess}
+              getCurrentSessionProcess={props.getCurrentSessionProcess}
             />
             <MovieViewSection>
               <SecondaryHeadline>Overview</SecondaryHeadline>

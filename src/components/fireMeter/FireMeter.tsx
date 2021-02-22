@@ -2,14 +2,19 @@ import React from "react";
 import { FireIcon } from "../icons/fireIcon/FireIcon";
 import { ColdIcon } from "../icons/coldIcon/ColdIcon";
 import { sizingScale } from "../../styles/Variables";
-import { Status } from "../../App";
+import { GetCurrentSessionProcessSuccess, Status } from "../../App";
 import { EvaluateMovieProcess } from "../../views/mainView/MainView";
 import { Wrapper, ColdIconButton, HotIconButton, MeterSwitchButton } from "./FireMeterStyles";
 
 type Props = {
-  evaluateItem: (movieId: string, score: number) => void;
+  evaluateItem: (
+    movieId: string,
+    score: number,
+    givenGetCurrentSessionProcess: GetCurrentSessionProcessSuccess,
+  ) => void;
   evaluateMovieProcess: EvaluateMovieProcess;
   movieId: string;
+  getCurrentSessionProcess: GetCurrentSessionProcessSuccess;
 };
 
 export const FireMeter = (props: Props) => {
@@ -21,14 +26,14 @@ export const FireMeter = (props: Props) => {
 
   const handleHotIconButtonClick = () => {
     setScore(100);
-    props.evaluateItem(props.movieId, 100);
+    props.evaluateItem(props.movieId, 100, props.getCurrentSessionProcess);
   };
   const handleColdIconButtonClick = () => {
     setScore(0);
-    props.evaluateItem(props.movieId, 0);
+    props.evaluateItem(props.movieId, 0, props.getCurrentSessionProcess);
   };
   const switchButtonClick = () => {
-    props.evaluateItem(props.movieId, score);
+    props.evaluateItem(props.movieId, score, props.getCurrentSessionProcess);
   };
 
   const handleOnMouseDown = () => {
@@ -39,7 +44,7 @@ export const FireMeter = (props: Props) => {
 
   const handleOnMouseUp = () => {
     setIsDragging(false);
-    props.evaluateItem(props.movieId, score);
+    props.evaluateItem(props.movieId, score, props.getCurrentSessionProcess);
   };
 
   const keyDownHandler = (event: any) => {

@@ -1,7 +1,7 @@
 import React from "react";
 import { UserEvaluationItem } from "./userEvaluationItem/UserEvaluationItem";
 import { AnimateType, HeartIcon } from "../../../components/icons/heartIcon/HeartIcon";
-import { Process, GetUserItemProcess, Status } from "../../../App";
+import { Process, GetUserItemProcess, Status, GetCurrentSessionProcess } from "../../../App";
 import { MovieTertiaryHeadline } from "../MovieViewStyles";
 import { getEvaluatedMovieItem } from "../MovieViewUtilityFunctions";
 import { FireMeter } from "../../../components/fireMeter/FireMeter";
@@ -18,6 +18,7 @@ type Props = {
   getUserItemProcess: GetUserItemProcess;
   evaluateItem: (movieId: string, score: number) => void;
   likeMovieProcess: EvaluateMovieProcess;
+  getCurrentSessionProcess: GetCurrentSessionProcess;
 };
 
 export enum EvaluationItemUseCase {
@@ -74,7 +75,8 @@ export const MovieEvaluationSection = (props: Props) => {
   const partnerEvaluatedMovieItem = getUserEvaluaedMovieItem(props.getPairedUserProcess);
   return (
     <UserEvaluationWrapper>
-      {props.getUserItemProcess.status === Status.SUCCESS &&
+      {props.getCurrentSessionProcess.status === Status.SUCCESS &&
+        props.getUserItemProcess.status === Status.SUCCESS &&
         props.getMovieDetailsProcess.status === Status.SUCCESS &&
         (userEvaluatedMovieItem === undefined || evaluating) && (
           <FireMeterWrapper>
@@ -82,6 +84,7 @@ export const MovieEvaluationSection = (props: Props) => {
               evaluateItem={props.evaluateItem}
               movieId={props.getMovieDetailsProcess.data.id}
               evaluateMovieProcess={props.likeMovieProcess}
+              getCurrentSessionProcess={props.getCurrentSessionProcess}
             />
           </FireMeterWrapper>
         )}

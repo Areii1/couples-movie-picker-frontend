@@ -1,5 +1,5 @@
 import React from "react";
-import { GetUserItemProcess, Status } from "../../../App";
+import { GetCurrentSessionProcessSuccess, GetUserItemProcess, Status } from "../../../App";
 import { AnimateType, HeartIcon } from "../../../components/icons/heartIcon/HeartIcon";
 import { ProfileBall } from "../../../components/profileBall/ProfileBall";
 import { sizingScale } from "../../../styles/Variables";
@@ -39,12 +39,17 @@ export enum HoveringOver {
 }
 
 type Props = {
+  getCurrentSessionProcess: GetCurrentSessionProcessSuccess;
   getUserItemProcess: GetUserItemProcess;
   getPairedUserProcess: GetUserItemProcess;
   filteredList: any[];
   swipingIndex: number;
   evaluateMovieProcess: EvaluateMovieProcess;
-  evaluateItem: (movieId: string, score: number) => void;
+  evaluateItem: (
+    movieId: string,
+    score: number,
+    getCurrentSessionProcess: GetCurrentSessionProcessSuccess,
+  ) => void;
   setModalOpen: (value: boolean) => void;
 };
 
@@ -64,7 +69,13 @@ export const ImageSection = (props: Props) => {
       <EvaluateButtonLeft
         onMouseEnter={() => setHoveringOver(HoveringOver.LEFT)}
         onMouseLeave={() => setHoveringOver(HoveringOver.NONE)}
-        onClick={() => props.evaluateItem(props.filteredList[props.swipingIndex].id, 0)}
+        onClick={() =>
+          props.evaluateItem(
+            props.filteredList[props.swipingIndex].id,
+            0,
+            props.getCurrentSessionProcess,
+          )
+        }
         title="dislike movie"
         hovering={
           props.evaluateMovieProcess.status !== Status.LOADING
@@ -82,7 +93,13 @@ export const ImageSection = (props: Props) => {
       <EvaluateButtonRight
         onMouseEnter={() => setHoveringOver(HoveringOver.RIGHT)}
         onMouseLeave={() => setHoveringOver(HoveringOver.NONE)}
-        onClick={() => props.evaluateItem(props.filteredList[props.swipingIndex].id, 100)}
+        onClick={() =>
+          props.evaluateItem(
+            props.filteredList[props.swipingIndex].id,
+            100,
+            props.getCurrentSessionProcess,
+          )
+        }
         title="like movie"
         hovering={
           props.evaluateMovieProcess.status !== Status.LOADING

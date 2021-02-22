@@ -31,6 +31,7 @@ import {
   Image,
   ScoreText,
 } from "./ImageSectionStyles";
+import { Movie } from "../../../types/Types";
 
 export enum HoveringOver {
   LEFT,
@@ -42,7 +43,7 @@ type Props = {
   getCurrentSessionProcess: GetCurrentSessionProcessSuccess;
   getUserItemProcess: GetUserItemProcess;
   getPairedUserProcess: GetUserItemProcess;
-  filteredList: any[];
+  filteredList: Movie[];
   swipingIndex: number;
   evaluateMovieProcess: EvaluateMovieProcess;
   evaluateItem: (

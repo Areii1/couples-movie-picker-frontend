@@ -1,6 +1,12 @@
 import React, { FormEvent } from "react";
 import { toast } from "react-toastify";
-import { GetCurrentSessionProcess, GetUserItemProcess, Process, Status } from "../../../App";
+import {
+  GetCurrentSessionProcess,
+  GetCurrentSessionProcessSuccess,
+  GetUserItemProcess,
+  Process,
+  Status,
+} from "../../../App";
 import { SearchIcon } from "../../../components/icons/searchIcon/SearchIcon";
 import { Form, InputField } from "../../logIn/LogInStyles";
 import { getUser } from "../../../apiService/getUser";
@@ -25,6 +31,11 @@ type Props = {
   getCurrentSessionProcess: GetCurrentSessionProcess;
   getUserItemProcess: GetUserItemProcess;
   getUserItem: (username: string, jwtToken: string) => void;
+};
+
+type Success = {
+  status: Status.SUCCESS;
+  data: any;
 };
 
 export const SearchSection = (props: Props) => {
@@ -64,37 +75,87 @@ export const SearchSection = (props: Props) => {
     }
   };
 
-  const pairWith = async () => {
-    if (
-      searchProcess.status === Status.SUCCESS &&
-      props.getCurrentSessionProcess.status === Status.SUCCESS &&
-      props.getUserItemProcess.status === Status.SUCCESS
-    ) {
-      try {
-        setSearchProcess({ status: Status.INITIAL });
-        setPairingProcess({ status: Status.LOADING });
-        const pairWithUserResponse = await pairWithUser(
-          searchProcess.data.username.S,
-          props.getCurrentSessionProcess.data.getIdToken().getJwtToken(),
-        );
-        toast.success(`Pairing request sent to ${searchProcess.data.username.S}`);
-        setPairingProcess({
-          status: Status.SUCCESS,
-          data: pairWithUserResponse,
-        });
-        props.getUserItem(
-          props.getUserItemProcess.data.username.S,
-          props.getCurrentSessionProcess.data.getIdToken().getJwtToken(),
-        );
-      } catch (pairWithUserError) {
-        toast.error("Could not complete request");
-        setPairingProcess({ status: Status.ERROR, error: pairWithUserError });
-      }
+  const pairWith = async (
+    getCurrentSessionProcess: GetCurrentSessionProcessSuccess,
+    getUserItemProcess: Success,
+    givenSearchProcess: Success,
+  ) => {
+    try {
+      setSearchProcess({ status: Status.INITIAL });
+      setPairingProcess({ status: Status.LOADING });
+      const pairWithUserResponse = await pairWithUser(
+        givenSearchProcess.data.username.S,
+        getCurrentSessionProcess.data.getIdToken().getJwtToken(),
+      );
+      toast.success(`Pairing request sent to ${givenSearchProcess.data.username.S}`);
+      setPairingProcess({
+        status: Status.SUCCESS,
+        data: pairWithUserResponse,
+      });
+      props.getUserItem(
+        getUserItemProcess.data.username.S,
+        getCurrentSessionProcess.data.getIdToken().getJwtToken(),
+      );
+    } catch (pairWithUserError) {
+      toast.error("Could not complete request");
+      setPairingProcess({ status: Status.ERROR, error: pairWithUserError });
     }
   };
 
-  const searchedUserIsTaken =
-    searchProcess.status === Status.SUCCESS && searchProcess.data.partner !== undefined;
+  const getFoundUserWrapper = (
+    givenGetCurrentSessionProcess: GetCurrentSessionProcessSuccess,
+    givenGetUserItemProcess: Success,
+    givenSearchProcess: Success,
+  ) => {
+    const searchedUserIsTaken =
+      searchProcess.status === Status.SUCCESS && searchProcess.data.partner !== undefined;
+    return (
+      <FoundUserWrapper>
+        <ProfileWrapper>
+          <ProfileBall
+            firstName={givenSearchProcess.data.username.S}
+            image={
+              givenSearchProcess.data.profilePicture
+                ? `${bucketUrl}/${givenSearchProcess.data.profilePicture.S}`
+                : undefined
+            }
+            isCurrentUser={false}
+            size={40}
+            animate={false}
+            fontSize={25}
+            showText
+            shadow={false}
+            border={false}
+          />
+          <ProfileText isPartnered={searchedUserIsTaken}>
+            {givenSearchProcess.data.partner
+              ? `${givenSearchProcess.data.username.S} is already partnered with ${givenSearchProcess.data.partner.S}`
+              : givenSearchProcess.data.username.S}
+          </ProfileText>
+        </ProfileWrapper>
+        {!searchedUserIsTaken && (
+          <ButtonsWrapper>
+            {pairingProcess.status === Status.INITIAL && (
+              <TransparentButton
+                onClick={() =>
+                  pairWith(
+                    givenGetCurrentSessionProcess,
+                    givenGetUserItemProcess,
+                    givenSearchProcess,
+                  )
+                }
+                title={`pair with ${givenSearchProcess.data.username.S}`}
+              >
+                <HeartIcon size={30} animate={AnimateType.COLOR} isRed={false} />
+              </TransparentButton>
+            )}
+            {pairingProcess.status === Status.LOADING && <Puff size={20} fill="lightblue" />}
+            {pairingProcess.status === Status.SUCCESS && <div />}
+          </ButtonsWrapper>
+        )}
+      </FoundUserWrapper>
+    );
+  };
 
   return (
     <MatchSectionWrapper>
@@ -115,46 +176,14 @@ export const SearchSection = (props: Props) => {
         </Form>
       </FormWrapper>
       {searchProcess.status === Status.LOADING && <Puff size={50} fill="lightblue" />}
-      {searchProcess.status === Status.SUCCESS && (
-        <FoundUserWrapper>
-          <ProfileWrapper>
-            <ProfileBall
-              firstName={searchProcess.data.username.S}
-              image={
-                searchProcess.data.profilePicture
-                  ? `${bucketUrl}/${searchProcess.data.profilePicture.S}`
-                  : undefined
-              }
-              isCurrentUser={false}
-              size={40}
-              animate={false}
-              fontSize={25}
-              showText
-              shadow={false}
-              border={false}
-            />
-            <ProfileText isPartnered={searchedUserIsTaken}>
-              {searchProcess.data.partner
-                ? `${searchProcess.data.username.S} is already partnered with ${searchProcess.data.partner.S}`
-                : searchProcess.data.username.S}
-            </ProfileText>
-          </ProfileWrapper>
-          {!searchedUserIsTaken && (
-            <ButtonsWrapper>
-              {pairingProcess.status === Status.INITIAL && (
-                <TransparentButton
-                  onClick={() => pairWith()}
-                  title={`pair with ${searchProcess.data.username.S}`}
-                >
-                  <HeartIcon size={30} animate={AnimateType.COLOR} isRed={false} />
-                </TransparentButton>
-              )}
-              {pairingProcess.status === Status.LOADING && <Puff size={20} fill="lightblue" />}
-              {pairingProcess.status === Status.SUCCESS && <div />}
-            </ButtonsWrapper>
-          )}
-        </FoundUserWrapper>
-      )}
+      {searchProcess.status === Status.SUCCESS &&
+        props.getUserItemProcess.status === Status.SUCCESS &&
+        props.getCurrentSessionProcess.status === Status.SUCCESS &&
+        getFoundUserWrapper(
+          props.getCurrentSessionProcess,
+          props.getUserItemProcess,
+          searchProcess,
+        )}
     </MatchSectionWrapper>
   );
 };

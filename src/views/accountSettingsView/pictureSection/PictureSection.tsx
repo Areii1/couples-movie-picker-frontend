@@ -8,7 +8,6 @@ import { randomizeProfilePicture } from "../../../apiService/randomizeProfilePic
 import { bucketUrl } from "../../../config/Config";
 import { GetCurrentSessionProcess, Process, Status } from "../../../App";
 import { Section } from "../AccountSettingsViewStyles";
-import { Puff } from "../../../components/puff/Puff";
 import { SecondaryHeadline } from "../../../styles/Styles";
 import { ConfirmModal } from "../../../components/modals/confirmModal/ConfirmModal";
 import {
@@ -24,6 +23,7 @@ import {
   TransparentButton,
   ExtraButtonsWrapper,
 } from "./PictureSectionStyles";
+import { Puff } from "../../../components/puff/Puff";
 
 type Props = {
   getCurrentAuthenticatedUserProcess: Process;

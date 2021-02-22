@@ -40,6 +40,8 @@ export type GetCurrentSessionProcess =
   | { status: Status.SUCCESS; data: CognitoUserSession }
   | { status: Status.ERROR; error: Error };
 
+export type GetCurrentSessionProcessSuccess = { status: Status.SUCCESS; data: CognitoUserSession };
+
 export type GetUserItemProcess =
   | { status: Status.INITIAL }
   | { status: Status.LOADING }
@@ -186,11 +188,6 @@ export const App: React.FunctionComponent = () => {
   console.log(getCurrentSessionProcess, "getCurrentSessionProcess");
   console.log(getCurrentAuthenticatedUserProcess, "getCurrentAuthenticatedUserProcess");
   console.log(getPairedUserProcess, "getPairedUserProcess");
-
-  // const sessionInitialized =
-  //   getCurrentSessionProcess.status === Status.SUCCESS &&
-  //   getUserItemProcess.status === Status.SUCCESS &&
-  //   getCurrentAuthenticatedUserProcess.status === Status.SUCCESS;
 
   return (
     <ContentWrapper>

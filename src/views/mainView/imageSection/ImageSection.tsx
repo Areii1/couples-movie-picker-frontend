@@ -4,7 +4,7 @@ import { AnimateType, HeartIcon } from "../../../components/icons/heartIcon/Hear
 import { ProfileBall } from "../../../components/profileBall/ProfileBall";
 import { sizingScale } from "../../../styles/Variables";
 import { TransparentButton } from "../../accountSettingsView/pictureSection/PictureSectionStyles";
-import { LikeMovieProcess } from "../MainView";
+import { EvaluateMovieProcess } from "../MainView";
 import {
   userEvaluationItemIsNotBlockedByHoverEffect,
   getImageAlt,
@@ -43,7 +43,7 @@ type Props = {
   getPairedUserProcess: GetUserItemProcess;
   filteredList: any[];
   swipingIndex: number;
-  evaluateMovieProcess: LikeMovieProcess;
+  evaluateMovieProcess: EvaluateMovieProcess;
   evaluateItem: (movieId: string, score: number) => void;
   setModalOpen: (value: boolean) => void;
 };

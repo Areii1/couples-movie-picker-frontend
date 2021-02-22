@@ -4,6 +4,7 @@ import {
   GetCurrentSessionProcess,
   GetCurrentSessionProcessSuccess,
   GetUserItemProcess,
+  GetUserItemProcessSuccess,
   Process,
   Status,
 } from "../../../App";
@@ -31,11 +32,6 @@ type Props = {
   getCurrentSessionProcess: GetCurrentSessionProcess;
   getUserItemProcess: GetUserItemProcess;
   getUserItem: (username: string, jwtToken: string) => void;
-};
-
-type Success = {
-  status: Status.SUCCESS;
-  data: any;
 };
 
 export const SearchSection = (props: Props) => {
@@ -77,8 +73,8 @@ export const SearchSection = (props: Props) => {
 
   const pairWith = async (
     getCurrentSessionProcess: GetCurrentSessionProcessSuccess,
-    getUserItemProcess: Success,
-    givenSearchProcess: Success,
+    getUserItemProcess: GetUserItemProcessSuccess,
+    givenSearchProcess: GetUserItemProcessSuccess,
   ) => {
     try {
       setSearchProcess({ status: Status.INITIAL });
@@ -104,8 +100,8 @@ export const SearchSection = (props: Props) => {
 
   const getFoundUserWrapper = (
     givenGetCurrentSessionProcess: GetCurrentSessionProcessSuccess,
-    givenGetUserItemProcess: Success,
-    givenSearchProcess: Success,
+    givenGetUserItemProcess: GetUserItemProcessSuccess,
+    givenSearchProcess: GetUserItemProcessSuccess,
   ) => {
     const searchedUserIsTaken =
       searchProcess.status === Status.SUCCESS && searchProcess.data.partner !== undefined;

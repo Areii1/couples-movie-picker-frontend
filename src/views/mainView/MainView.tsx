@@ -1,7 +1,14 @@
 import React from "react";
 import { Link, Redirect } from "react-router-dom";
 import { toast } from "react-toastify";
-import { Process, Status, GetUserItemProcess } from "../../App";
+import {
+  Process,
+  Status,
+  GetUserItemProcess,
+  ProcessInitial,
+  ProcessSuccess,
+  ProcessError,
+} from "../../App";
 import { FireMeter } from "../../components/fireMeter/FireMeter";
 import { SecondaryHeadline } from "../../styles/Styles";
 import { sizingScale } from "../../styles/Variables";
@@ -31,13 +38,13 @@ type Props = {
   getPairedUserProcess: GetUserItemProcess;
 };
 
-export type LikeMovieProcess =
-  | {
-      status: Status.INITIAL;
-    }
-  | { status: Status.LOADING; score: number }
-  | { status: Status.SUCCESS; data: any }
-  | { status: Status.ERROR; error: any };
+export type EvaluateMovieProcessLoading = { status: Status.LOADING; score: number };
+
+export type EvaluateMovieProcess =
+  | ProcessInitial
+  | EvaluateMovieProcessLoading
+  | ProcessSuccess
+  | ProcessError;
 
 export const MainView = (props: Props) => {
   const [getTrendingMoviesProcess, setGetTrendingMoviesProcess] = React.useState<Process>({
@@ -46,7 +53,7 @@ export const MainView = (props: Props) => {
 
   const [swipingIndex, setSwipingIndex] = React.useState<number>(0);
 
-  const [evaluateMovieProcess, setEvaluateMovieProcess] = React.useState<LikeMovieProcess>({
+  const [evaluateMovieProcess, setEvaluateMovieProcess] = React.useState<EvaluateMovieProcess>({
     status: Status.INITIAL,
   });
 
@@ -179,7 +186,6 @@ export const MainView = (props: Props) => {
   }, [evaluateMovieProcess.status]);
 
   const filteredList = getFilteredList();
-  console.log(filteredList, "filteredList");
   return (
     <>
       {props.getCurrentSessionProcess.status !== Status.ERROR && (
@@ -214,7 +220,7 @@ export const MainView = (props: Props) => {
                       <FireMeter
                         evaluateItem={evaluateItem}
                         movieId={filteredList[swipingIndex].id}
-                        likeMovieProcess={evaluateMovieProcess}
+                        evaluateMovieProcess={evaluateMovieProcess}
                       />
                     </FireMeterWrapper>
                   </DetailsSection>

@@ -1,6 +1,6 @@
 import { GetUserItemProcess, Status } from "../../../App";
 import { getEvaluatedMovieItem } from "../../movieView/MovieViewUtilityFunctions";
-import { LikeMovieProcess } from "../MainView";
+import { EvaluateMovieProcess } from "../MainView";
 import { HoveringOver } from "./ImageSection";
 
 export const getIsPartnered = (
@@ -34,7 +34,7 @@ export const getPartnerEvaluatedMovie = (
 };
 
 export const getImageSrc = (
-  evaluateMovieProcess: LikeMovieProcess,
+  evaluateMovieProcess: EvaluateMovieProcess,
   filteredList: any[],
   swipingIndex: number,
 ): string => {
@@ -50,7 +50,7 @@ export const getImageSrc = (
 };
 
 export const getImageAlt = (
-  evaluateMovieProcess: LikeMovieProcess,
+  evaluateMovieProcess: EvaluateMovieProcess,
   filteredList: any[],
   swipingIndex: number,
 ): string => {

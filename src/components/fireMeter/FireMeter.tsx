@@ -3,12 +3,12 @@ import { FireIcon } from "../icons/fireIcon/FireIcon";
 import { ColdIcon } from "../icons/coldIcon/ColdIcon";
 import { sizingScale } from "../../styles/Variables";
 import { Status } from "../../App";
-import { LikeMovieProcess } from "../../views/mainView/MainView";
+import { EvaluateMovieProcess } from "../../views/mainView/MainView";
 import { Wrapper, ColdIconButton, HotIconButton, MeterSwitchButton } from "./FireMeterStyles";
 
 type Props = {
   evaluateItem: (movieId: string, score: number) => void;
-  likeMovieProcess: LikeMovieProcess;
+  evaluateMovieProcess: EvaluateMovieProcess;
   movieId: string;
 };
 
@@ -87,37 +87,37 @@ export const FireMeter = (props: Props) => {
   }, []);
 
   React.useEffect(() => {
-    if (props.likeMovieProcess.status === Status.SUCCESS) {
+    if (props.evaluateMovieProcess.status === Status.SUCCESS) {
       setScore(50);
     }
-  }, [props.likeMovieProcess.status]);
+  }, [props.evaluateMovieProcess.status]);
 
   return (
     <Wrapper
       onMouseUp={handleOnMouseUp}
-      isLoading={props.likeMovieProcess.status === Status.LOADING}
+      isLoading={props.evaluateMovieProcess.status === Status.LOADING}
     >
       <ColdIconButton
         onClick={handleColdIconButtonClick}
         title="horrible"
-        disabled={props.likeMovieProcess.status === Status.LOADING}
+        disabled={props.evaluateMovieProcess.status === Status.LOADING}
       >
         <ColdIcon
           size={sizingScale[6]}
           score={score}
-          isGray={props.likeMovieProcess.status === Status.LOADING}
+          isGray={props.evaluateMovieProcess.status === Status.LOADING}
           animate={false}
         />
       </ColdIconButton>
       <HotIconButton
         onClick={handleHotIconButtonClick}
         title="awesome"
-        disabled={props.likeMovieProcess.status === Status.LOADING}
+        disabled={props.evaluateMovieProcess.status === Status.LOADING}
       >
         <FireIcon
           size={sizingScale[6]}
           score={score}
-          isGray={props.likeMovieProcess.status === Status.LOADING}
+          isGray={props.evaluateMovieProcess.status === Status.LOADING}
           animate={false}
         />
       </HotIconButton>
@@ -126,7 +126,7 @@ export const FireMeter = (props: Props) => {
         onMouseDown={handleOnMouseDown}
         isDragging={isDragging}
         score={score}
-        disabled={props.likeMovieProcess.status === Status.LOADING}
+        disabled={props.evaluateMovieProcess.status === Status.LOADING}
       >
         <h5>{score}</h5>
       </MeterSwitchButton>

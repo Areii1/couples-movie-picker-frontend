@@ -7,7 +7,14 @@ import {
   TransparentButton,
   Mark,
 } from "../../accountSettingsView/pictureSection/PictureSectionStyles";
-import { Process, Status, GetCurrentSessionProcess, GetUserItemProcess } from "../../../App";
+import {
+  Process,
+  Status,
+  GetCurrentSessionProcess,
+  GetCurrentSessionProcessSuccess,
+  GetUserItemProcess,
+  GetUserItemProcessSuccess,
+} from "../../../App";
 import { rejectIncomingRequest } from "../../../apiService/rejectIncomingRequest";
 import { acceptIncomingRequest } from "../../../apiService/acceptIncomingRequest";
 import {
@@ -70,40 +77,55 @@ export const RequestsListSection = (props: Props) => {
     }
   };
 
-  const acceptIncoming = async (acceptUsername: string) => {
-    if (
-      props.getUserItemProcess.status === Status.SUCCESS &&
-      props.getCurrentSessionProcess.status === Status.SUCCESS
-    ) {
-      const acceptableRequest = props.getUserItemProcess.data.incomingRequests?.SS.find(
-        (request: string) => acceptUsername === request,
-      );
-      if (acceptableRequest) {
-        try {
-          setAcceptIncomingRequestProcess({ status: Status.LOADING });
-          const acceptIncomingRequestResponse = await acceptIncomingRequest(
-            acceptUsername,
-            props.getCurrentSessionProcess.data.getIdToken().getJwtToken(),
-          );
-          toast.success(`Partnered with ${acceptUsername}`);
-          setAcceptIncomingRequestProcess({
-            status: Status.SUCCESS,
-            data: acceptIncomingRequestResponse,
-          });
-          props.getUserItem(
-            props.getUserItemProcess.data.username.S,
-            props.getCurrentSessionProcess.data.getIdToken().getJwtToken(),
-          );
-        } catch (accpetIncomingRequestError) {
-          toast.error("Could not accept request");
-          setAcceptIncomingRequestProcess({
-            status: Status.ERROR,
-            error: accpetIncomingRequestError,
-          });
-        }
+  const acceptIncoming = async (
+    acceptUsername: string,
+    givenGetUserItemProcess: GetUserItemProcessSuccess,
+    givenGetCurrentSessionProcess: GetCurrentSessionProcessSuccess,
+  ) => {
+    const acceptableRequest = givenGetUserItemProcess.data.incomingRequests?.SS.find(
+      (request: string) => acceptUsername === request,
+    );
+    if (acceptableRequest) {
+      try {
+        setAcceptIncomingRequestProcess({ status: Status.LOADING });
+        const acceptIncomingRequestResponse = await acceptIncomingRequest(
+          acceptUsername,
+          givenGetCurrentSessionProcess.data.getIdToken().getJwtToken(),
+        );
+        toast.success(`Partnered with ${acceptUsername}`);
+        setAcceptIncomingRequestProcess({
+          status: Status.SUCCESS,
+          data: acceptIncomingRequestResponse,
+        });
+        props.getUserItem(
+          givenGetUserItemProcess.data.username.S,
+          givenGetCurrentSessionProcess.data.getIdToken().getJwtToken(),
+        );
+      } catch (accpetIncomingRequestError) {
+        toast.error("Could not accept request");
+        setAcceptIncomingRequestProcess({
+          status: Status.ERROR,
+          error: accpetIncomingRequestError,
+        });
       }
     }
   };
+
+  const getAcceptIncomingButton = (
+    request: string,
+    givenGetUserItemProcess: GetUserItemProcessSuccess,
+    givenGetCurrentSessionProcess: GetCurrentSessionProcessSuccess,
+  ) => (
+    <TransparentButton
+      onClick={() =>
+        acceptIncoming(request, givenGetUserItemProcess, givenGetCurrentSessionProcess)
+      }
+      title="confirm"
+    >
+      <HeartIcon size={30} animate={AnimateType.NONE} isRed={false} />
+    </TransparentButton>
+  );
+
   const getRequestListItems = () => {
     if (props.getUserItemProcess.status === Status.SUCCESS) {
       const requestListItems = props.getUserItemProcess.data.incomingRequests?.SS.map(
@@ -137,11 +159,14 @@ export const RequestsListSection = (props: Props) => {
                     <Puff size={20} fill="lightblue" />
                   )}
                   {rejectIncomingRequestProcess.status === Status.SUCCESS && <div />}
-                  {acceptIncomingRequestProcess.status === Status.INITIAL && (
-                    <TransparentButton onClick={() => acceptIncoming(request)} title="confirm">
-                      <HeartIcon size={30} animate={AnimateType.NONE} isRed={false} />
-                    </TransparentButton>
-                  )}
+                  {acceptIncomingRequestProcess.status === Status.INITIAL &&
+                    props.getUserItemProcess.status === Status.SUCCESS &&
+                    props.getCurrentSessionProcess.status === Status.SUCCESS &&
+                    getAcceptIncomingButton(
+                      request,
+                      props.getUserItemProcess,
+                      props.getCurrentSessionProcess,
+                    )}
                   {acceptIncomingRequestProcess.status === Status.LOADING && (
                     <Puff size={20} fill="lightblue" />
                   )}
@@ -157,6 +182,7 @@ export const RequestsListSection = (props: Props) => {
       return undefined;
     }
   };
+
   return (
     <SectionWrapper>
       <SecondaryHeadline>Requests</SecondaryHeadline>

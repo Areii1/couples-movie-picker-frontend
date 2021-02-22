@@ -6,7 +6,7 @@ import { getMovieDetails } from "../../apiService/getMovieDetails";
 import { PrimaryHeadline, SecondaryHeadline } from "../../styles/Styles";
 import { MovieEvaluationSection } from "./movieEvaluationSection/MovieEvaluationSection";
 import { evaluateMovie } from "../../apiService/evaluateMovie";
-import { LikeMovieProcess } from "../mainView/MainView";
+import { EvaluateMovieProcess } from "../mainView/MainView";
 import { ImagePlaceholder, TitlePlaceholder } from "../mainView/MainViewStyles";
 import {
   MovieViewSection,
@@ -35,7 +35,7 @@ export const MovieView = (props: Props) => {
     status: Status.INITIAL,
   });
 
-  const [likeMovieProcess, setLikeMovieProcess] = React.useState<LikeMovieProcess>({
+  const [likeMovieProcess, setLikeMovieProcess] = React.useState<EvaluateMovieProcess>({
     status: Status.INITIAL,
   });
 

@@ -5,7 +5,7 @@ import { Process, GetUserItemProcess, Status } from "../../../App";
 import { MovieTertiaryHeadline } from "../MovieViewStyles";
 import { getEvaluatedMovieItem } from "../MovieViewUtilityFunctions";
 import { FireMeter } from "../../../components/fireMeter/FireMeter";
-import { LikeMovieProcess } from "../../mainView/MainView";
+import { EvaluateMovieProcess } from "../../mainView/MainView";
 import {
   UserEvaluationWrapper,
   UserEvaluationItemWrapper,
@@ -17,7 +17,7 @@ type Props = {
   getPairedUserProcess: GetUserItemProcess;
   getUserItemProcess: GetUserItemProcess;
   evaluateItem: (movieId: string, score: number) => void;
-  likeMovieProcess: LikeMovieProcess;
+  likeMovieProcess: EvaluateMovieProcess;
 };
 
 export enum EvaluationItemUseCase {
@@ -81,7 +81,7 @@ export const MovieEvaluationSection = (props: Props) => {
             <FireMeter
               evaluateItem={props.evaluateItem}
               movieId={props.getMovieDetailsProcess.data.id}
-              likeMovieProcess={props.likeMovieProcess}
+              evaluateMovieProcess={props.likeMovieProcess}
             />
           </FireMeterWrapper>
         )}

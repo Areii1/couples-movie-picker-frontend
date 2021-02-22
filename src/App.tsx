@@ -28,25 +28,33 @@ export enum Status {
   ERROR,
 }
 
-export type Process =
-  | { status: Status.INITIAL }
-  | { status: Status.LOADING }
-  | { status: Status.SUCCESS; data: any }
-  | { status: Status.ERROR; error: Error };
+export type ProcessInitial = {
+  status: Status.INITIAL;
+};
 
-export type GetCurrentSessionProcess =
-  | { status: Status.INITIAL }
-  | { status: Status.LOADING }
-  | { status: Status.SUCCESS; data: CognitoUserSession }
-  | { status: Status.ERROR; error: Error };
+export type ProcessLoading = {
+  status: Status.LOADING;
+};
+
+export type ProcessSuccess = { status: Status.SUCCESS; data: any };
+
+export type ProcessError = { status: Status.ERROR; error: Error };
+
+export type Process = ProcessInitial | ProcessLoading | ProcessSuccess | ProcessError;
 
 export type GetCurrentSessionProcessSuccess = { status: Status.SUCCESS; data: CognitoUserSession };
+export type GetCurrentSessionProcess =
+  | ProcessInitial
+  | ProcessLoading
+  | GetCurrentSessionProcessSuccess
+  | ProcessError;
 
+export type GetUserItemProcessSuccess = { status: Status.SUCCESS; data: UserInfo };
 export type GetUserItemProcess =
-  | { status: Status.INITIAL }
-  | { status: Status.LOADING }
-  | { status: Status.SUCCESS; data: UserInfo }
-  | { status: Status.ERROR; error: Error };
+  | ProcessInitial
+  | ProcessLoading
+  | GetUserItemProcessSuccess
+  | ProcessError;
 
 export const App: React.FunctionComponent = () => {
   const [

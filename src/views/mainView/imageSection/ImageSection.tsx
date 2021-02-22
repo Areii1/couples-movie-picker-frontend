@@ -46,7 +46,7 @@ type Props = {
   swipingIndex: number;
   evaluateMovieProcess: EvaluateMovieProcess;
   evaluateItem: (
-    movieId: string,
+    movieId: number,
     score: number,
     getCurrentSessionProcess: GetCurrentSessionProcessSuccess,
   ) => void;

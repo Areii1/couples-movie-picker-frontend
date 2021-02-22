@@ -8,12 +8,12 @@ import { Wrapper, ColdIconButton, HotIconButton, MeterSwitchButton } from "./Fir
 
 type Props = {
   evaluateItem: (
-    movieId: string,
+    movieId: number,
     score: number,
     givenGetCurrentSessionProcess: GetCurrentSessionProcessSuccess,
   ) => void;
   evaluateMovieProcess: EvaluateMovieProcess;
-  movieId: string;
+  movieId: number;
   getCurrentSessionProcess: GetCurrentSessionProcessSuccess;
 };
 

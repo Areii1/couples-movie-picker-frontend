@@ -61,7 +61,7 @@ export const MovieView = (props: Props) => {
     }
   };
 
-  const evaluateItem = async (movieId: string, score: number) => {
+  const evaluateItem = async (movieId: number, score: number) => {
     if (
       props.getCurrentSessionProcess.status === Status.SUCCESS &&
       getMovieDetailsProcess.status === Status.SUCCESS &&

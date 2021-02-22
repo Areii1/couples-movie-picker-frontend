@@ -7,6 +7,7 @@ import {
   GetUserItemProcess,
   GetCurrentSessionProcess,
   ProcessInitial,
+  ProcessLoading,
   ProcessSuccess,
   ProcessError,
   GetCurrentSessionProcessSuccess,
@@ -30,7 +31,7 @@ import {
   ImageWrapper,
   TitleWrapper,
 } from "./MainViewStyles";
-import { LikedMoviesListItem } from "../../types/Types";
+import { LikedMoviesListItem, Movie } from "../../types/Types";
 
 type Props = {
   getCurrentSessionProcess: GetCurrentSessionProcess;
@@ -48,8 +49,18 @@ export type EvaluateMovieProcess =
   | ProcessSuccess
   | ProcessError;
 
+export type GetTrendingMovieProcessSuccess = { status: Status.SUCCESS; data: Movie[] };
+export type GetTrendingMoviesProcess =
+  | ProcessInitial
+  | ProcessLoading
+  | GetTrendingMovieProcessSuccess
+  | ProcessError;
+
 export const MainView = (props: Props) => {
-  const [getTrendingMoviesProcess, setGetTrendingMoviesProcess] = React.useState<Process>({
+  const [
+    getTrendingMoviesProcess,
+    setGetTrendingMoviesProcess,
+  ] = React.useState<GetTrendingMoviesProcess>({
     status: Status.INITIAL,
   });
 
@@ -68,7 +79,7 @@ export const MainView = (props: Props) => {
       const parsedGetTrendingMoviesResponse = await getTrendingMoviesResponse.json();
       setGetTrendingMoviesProcess({
         status: Status.SUCCESS,
-        data: parsedGetTrendingMoviesResponse,
+        data: parsedGetTrendingMoviesResponse.results,
       });
     } catch (getTrendingMoviesError) {
       toast.error("Could not fetch movies list");
@@ -80,7 +91,7 @@ export const MainView = (props: Props) => {
   };
 
   const evaluateItem = async (
-    movieId: string,
+    movieId: number,
     score: number,
     givenGetCurrentSessionProcess: GetCurrentSessionProcessSuccess,
   ) => {
@@ -130,7 +141,7 @@ export const MainView = (props: Props) => {
 
   const getFilteredList = () => {
     if (getTrendingMoviesProcess.status === Status.SUCCESS) {
-      return getTrendingMoviesProcess.data.results.filter((movie: any) => {
+      return getTrendingMoviesProcess.data.filter((movie: Movie) => {
         if (
           props.getUserItemProcess.status === Status.SUCCESS &&
           props.getUserItemProcess.data.likedMovies
@@ -190,6 +201,7 @@ export const MainView = (props: Props) => {
   }, [evaluateMovieProcess.status]);
 
   const filteredList = getFilteredList();
+  console.log(getTrendingMoviesProcess, "getTrendingMoviesProcess");
   return (
     <>
       {props.getCurrentSessionProcess.status !== Status.ERROR && (

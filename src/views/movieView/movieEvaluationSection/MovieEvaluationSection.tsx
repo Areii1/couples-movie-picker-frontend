@@ -16,7 +16,7 @@ type Props = {
   getMovieDetailsProcess: Process;
   getPairedUserProcess: GetUserItemProcess;
   getUserItemProcess: GetUserItemProcess;
-  evaluateItem: (movieId: string, score: number) => void;
+  evaluateItem: (movieId: number, score: number) => void;
   likeMovieProcess: EvaluateMovieProcess;
   getCurrentSessionProcess: GetCurrentSessionProcess;
 };

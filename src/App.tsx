@@ -56,6 +56,10 @@ export type GetUserItemProcess =
   | GetUserItemProcessSuccess
   | ProcessError;
 
+export const GetCurrentSessionProcessContext = React.createContext<GetCurrentSessionProcess>({
+  status: Status.INITIAL,
+});
+
 export const App: React.FunctionComponent = () => {
   const [
     getCurrentSessionProcess,
@@ -199,104 +203,105 @@ export const App: React.FunctionComponent = () => {
 
   return (
     <ContentWrapper>
-      <NavigationBar
-        getCurrentAuthenticatedUserProcess={getCurrentAuthenticatedUserProcess}
-        getUserItemProcess={getUserItemProcess}
-        getCurrentSessionProcess={getCurrentSessionProcess}
-      />
-      <div className="container">
-        <Route exact path="/">
-          {({ match }) => (
-            <CSSTransition in={match !== null} timeout={1000} classNames="page" unmountOnExit>
-              <div className="page">
-                <MainView
-                  getCurrentSessionProcess={getCurrentSessionProcess}
-                  getUserItemProcess={getUserItemProcess}
-                  getUserItem={getUserItem}
-                  getCurrentAuthenticatedUserProcess={getCurrentAuthenticatedUserProcess}
-                  getPairedUserProcess={getPairedUserProcess}
-                />
-              </div>
-            </CSSTransition>
-          )}
-        </Route>
-        <Route exact path="/login">
-          {({ match }) => (
-            <CSSTransition in={match !== null} timeout={300} classNames="page" unmountOnExit>
-              <div className="page">
-                <LogIn initiateSession={getUserInfo} />
-              </div>
-            </CSSTransition>
-          )}
-        </Route>
-        <Route exact path="/signup">
-          {({ match }) => (
-            <CSSTransition in={match !== null} timeout={300} classNames="page" unmountOnExit>
-              <div className="page">
-                <SignUp />
-              </div>
-            </CSSTransition>
-          )}
-        </Route>
-        <Route exact path="/user">
-          {({ match }) => (
-            <CSSTransition in={match !== null} timeout={300} classNames="page" unmountOnExit>
-              <div className="page">
-                <AccountSettingsView
-                  getCurrentSessionProcess={getCurrentSessionProcess}
-                  getCurrentAuthenticatedUserProcess={getCurrentAuthenticatedUserProcess}
-                  initiateSession={getUserInfo}
-                  getUserItemProcess={getUserItemProcess}
-                  getUserItem={getUserItem}
-                  resetState={resetState}
-                />
-              </div>
-            </CSSTransition>
-          )}
-        </Route>
-        <Route exact path="/love">
-          {({ match }) => (
-            <CSSTransition in={match !== null} timeout={300} classNames="page" unmountOnExit>
-              <div className="page">
-                <PartnershipView
-                  getCurrentAuthenticatedUserProcess={getCurrentAuthenticatedUserProcess}
-                  getUserItemProcess={getUserItemProcess}
-                  getCurrentSessionProcess={getCurrentSessionProcess}
-                  getPairedUserProcess={getPairedUserProcess}
-                  getPairedUser={getPairedUser}
-                  getUserItem={getUserItem}
-                />
-              </div>
-            </CSSTransition>
-          )}
-        </Route>
-        <Route exact path="/matches">
-          {({ match }) => (
-            <CSSTransition in={match !== null} timeout={300} classNames="page" unmountOnExit>
-              <div className="page">
-                <MatchesView
-                  getUserItemProcess={getUserItemProcess}
-                  getPairedUserProcess={getPairedUserProcess}
-                />
-              </div>
-            </CSSTransition>
-          )}
-        </Route>
-        <Route exact path="/movie/:id">
-          {({ match }) => (
-            <CSSTransition in={match !== null} timeout={300} classNames="page" unmountOnExit>
-              <div className="page">
-                <MovieView
-                  getUserItemProcess={getUserItemProcess}
-                  getCurrentSessionProcess={getCurrentSessionProcess}
-                  getUserItem={getUserItem}
-                  getPairedUserProcess={getPairedUserProcess}
-                />
-              </div>
-            </CSSTransition>
-          )}
-        </Route>
-      </div>
+      <GetCurrentSessionProcessContext.Provider value={getCurrentSessionProcess}>
+        <NavigationBar
+          getCurrentAuthenticatedUserProcess={getCurrentAuthenticatedUserProcess}
+          getUserItemProcess={getUserItemProcess}
+        />
+        <div className="container">
+          <Route exact path="/">
+            {({ match }) => (
+              <CSSTransition in={match !== null} timeout={1000} classNames="page" unmountOnExit>
+                <div className="page">
+                  <MainView
+                    getCurrentSessionProcess={getCurrentSessionProcess}
+                    getUserItemProcess={getUserItemProcess}
+                    getUserItem={getUserItem}
+                    getCurrentAuthenticatedUserProcess={getCurrentAuthenticatedUserProcess}
+                    getPairedUserProcess={getPairedUserProcess}
+                  />
+                </div>
+              </CSSTransition>
+            )}
+          </Route>
+          <Route exact path="/login">
+            {({ match }) => (
+              <CSSTransition in={match !== null} timeout={300} classNames="page" unmountOnExit>
+                <div className="page">
+                  <LogIn initiateSession={getUserInfo} />
+                </div>
+              </CSSTransition>
+            )}
+          </Route>
+          <Route exact path="/signup">
+            {({ match }) => (
+              <CSSTransition in={match !== null} timeout={300} classNames="page" unmountOnExit>
+                <div className="page">
+                  <SignUp />
+                </div>
+              </CSSTransition>
+            )}
+          </Route>
+          <Route exact path="/user">
+            {({ match }) => (
+              <CSSTransition in={match !== null} timeout={300} classNames="page" unmountOnExit>
+                <div className="page">
+                  <AccountSettingsView
+                    getCurrentSessionProcess={getCurrentSessionProcess}
+                    getCurrentAuthenticatedUserProcess={getCurrentAuthenticatedUserProcess}
+                    initiateSession={getUserInfo}
+                    getUserItemProcess={getUserItemProcess}
+                    getUserItem={getUserItem}
+                    resetState={resetState}
+                  />
+                </div>
+              </CSSTransition>
+            )}
+          </Route>
+          <Route exact path="/love">
+            {({ match }) => (
+              <CSSTransition in={match !== null} timeout={300} classNames="page" unmountOnExit>
+                <div className="page">
+                  <PartnershipView
+                    getCurrentAuthenticatedUserProcess={getCurrentAuthenticatedUserProcess}
+                    getUserItemProcess={getUserItemProcess}
+                    getCurrentSessionProcess={getCurrentSessionProcess}
+                    getPairedUserProcess={getPairedUserProcess}
+                    getPairedUser={getPairedUser}
+                    getUserItem={getUserItem}
+                  />
+                </div>
+              </CSSTransition>
+            )}
+          </Route>
+          <Route exact path="/matches">
+            {({ match }) => (
+              <CSSTransition in={match !== null} timeout={300} classNames="page" unmountOnExit>
+                <div className="page">
+                  <MatchesView
+                    getUserItemProcess={getUserItemProcess}
+                    getPairedUserProcess={getPairedUserProcess}
+                  />
+                </div>
+              </CSSTransition>
+            )}
+          </Route>
+          <Route exact path="/movie/:id">
+            {({ match }) => (
+              <CSSTransition in={match !== null} timeout={300} classNames="page" unmountOnExit>
+                <div className="page">
+                  <MovieView
+                    getUserItemProcess={getUserItemProcess}
+                    getCurrentSessionProcess={getCurrentSessionProcess}
+                    getUserItem={getUserItem}
+                    getPairedUserProcess={getPairedUserProcess}
+                  />
+                </div>
+              </CSSTransition>
+            )}
+          </Route>
+        </div>
+      </GetCurrentSessionProcessContext.Provider>
       <ToastContainer
         position="bottom-left"
         autoClose={10000}

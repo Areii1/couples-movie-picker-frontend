@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { HeartIcon, AnimateType } from "../icons/heartIcon/HeartIcon";
 import { FireIcon } from "../icons/fireIcon/FireIcon";
-import { GetUserItemProcess, Process, Status, GetCurrentSessionProcess } from "../../App";
+import { GetUserItemProcess, Process, Status, GetCurrentSessionProcessContext } from "../../App";
 import { ProfileBall } from "../profileBall/ProfileBall";
 import { bucketUrl } from "../../config/Config";
 import { sizingScale } from "../../styles/Variables";
@@ -11,7 +11,6 @@ import { List, ListItem, IconWrapper, Wrapper } from "./NavigationBarStyles";
 type Props = {
   getCurrentAuthenticatedUserProcess: Process;
   getUserItemProcess: GetUserItemProcess;
-  getCurrentSessionProcess: GetCurrentSessionProcess;
 };
 
 export const NavigationBar = (props: Props) => {
@@ -20,9 +19,10 @@ export const NavigationBar = (props: Props) => {
     props.getUserItemProcess.status === Status.SUCCESS
       ? props.getCurrentAuthenticatedUserProcess.data.username
       : undefined;
+  const getCurrentSessionProcess = React.useContext(GetCurrentSessionProcessContext);
   return (
     <>
-      {props.getCurrentSessionProcess.status !== Status.ERROR && (
+      {getCurrentSessionProcess.status !== Status.ERROR && (
         <Wrapper>
           <List>
             <ListItem>
@@ -61,7 +61,7 @@ export const NavigationBar = (props: Props) => {
           </List>
         </Wrapper>
       )}
-      {props.getCurrentSessionProcess.status === Status.ERROR && (
+      {getCurrentSessionProcess.status === Status.ERROR && (
         <Wrapper>
           <List>
             <ListItem>

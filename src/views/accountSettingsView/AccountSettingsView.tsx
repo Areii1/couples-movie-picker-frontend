@@ -3,7 +3,13 @@ import { toast } from "react-toastify";
 import { Auth } from "aws-amplify";
 import { Redirect } from "react-router";
 import { Link } from "react-router-dom";
-import { GetCurrentSessionProcessContext, GetUserItemProcess, Process, Status } from "../../App";
+import {
+  GetCurrentSessionProcess,
+  GetCurrentSessionProcessContext,
+  GetUserItemProcess,
+  Process,
+  Status,
+} from "../../App";
 import { SecondaryHeadline, PrimaryHeadline } from "../../styles/Styles";
 import { Puff } from "../../components/puff/Puff";
 import { Button, ButtonText } from "../logIn/LogInStyles";
@@ -14,6 +20,71 @@ import {
   Text,
   SettingsCardContentWrapper,
 } from "./AccountSettingsViewStyles";
+
+const getViewContent = (
+  getCurrentSessionProcess: GetCurrentSessionProcess,
+  signOutProcessStatus: Status,
+  signOut: () => void,
+  getCurrentAuthenticatedUserProcess: Process,
+  getUserItemProcess: GetUserItemProcess,
+  getUserItem: (username: string) => void,
+) => {
+  switch (getCurrentSessionProcess.status) {
+    case Status.INITIAL: {
+      return <div />;
+    }
+    case Status.LOADING: {
+      return <Puff size={50} fill="blue" />;
+    }
+    case Status.SUCCESS: {
+      return (
+        <>
+          <PictureSection
+            getCurrentAuthenticatedUserProcess={getCurrentAuthenticatedUserProcess}
+            getUserItemProcess={getUserItemProcess}
+            jwtToken={getCurrentSessionProcess.data.getIdToken().getJwtToken()}
+            getUserItem={getUserItem}
+          />
+          <Section>
+            <SecondaryHeadline>Log out</SecondaryHeadline>
+            {signOutProcessStatus !== Status.LOADING && (
+              <Button
+                type="button"
+                onClick={signOut}
+                title="log out"
+                error={signOutProcessStatus === Status.ERROR}
+              >
+                <ButtonText>
+                  {signOutProcessStatus === Status.ERROR ? "Try again" : "Log out"}
+                </ButtonText>
+              </Button>
+            )}
+            {signOutProcessStatus === Status.LOADING && <Puff size={50} fill="lightblue" />}
+            {signOutProcessStatus === Status.SUCCESS && <Redirect to="/login" />}
+          </Section>
+        </>
+      );
+    }
+    case Status.ERROR: {
+      return (
+        <TextWrapper>
+          <Text>
+            No current user, please
+            <Link to="/signup" title="signup">
+              register
+            </Link>
+            or
+            <Link to="/login" title="login">
+              login
+            </Link>
+          </Text>
+        </TextWrapper>
+      );
+    }
+    default:
+      return <div />;
+  }
+};
 
 type Props = {
   getCurrentAuthenticatedUserProcess: Process;
@@ -52,47 +123,13 @@ export const AccountSettingsView = (props: Props) => {
   return (
     <SettingsCardContentWrapper>
       <PrimaryHeadline>Profile</PrimaryHeadline>
-      {getCurrentSessionProcess.status === Status.LOADING && <Puff size={50} fill="blue" />}
-      {getCurrentSessionProcess.status === Status.SUCCESS && (
-        <>
-          <PictureSection
-            getCurrentAuthenticatedUserProcess={props.getCurrentAuthenticatedUserProcess}
-            getUserItemProcess={props.getUserItemProcess}
-            jwtToken={getCurrentSessionProcess.data.getIdToken().getJwtToken()}
-            getUserItem={props.getUserItem}
-          />
-          <Section>
-            <SecondaryHeadline>Log out</SecondaryHeadline>
-            {signOutProcess.status !== Status.LOADING && (
-              <Button
-                type="button"
-                onClick={signOut}
-                title="log out"
-                error={signOutProcess.status === Status.ERROR}
-              >
-                <ButtonText>
-                  {signOutProcess.status === Status.ERROR ? "Try again" : "Log out"}
-                </ButtonText>
-              </Button>
-            )}
-            {signOutProcess.status === Status.LOADING && <Puff size={50} fill="lightblue" />}
-            {signOutProcess.status === Status.SUCCESS && <Redirect to="/login" />}
-          </Section>
-        </>
-      )}
-      {getCurrentSessionProcess.status === Status.ERROR && (
-        <TextWrapper>
-          <Text>
-            No current user, please
-            <Link to="/signup" title="signup">
-              register
-            </Link>
-            or
-            <Link to="/login" title="login">
-              login
-            </Link>
-          </Text>
-        </TextWrapper>
+      {getViewContent(
+        getCurrentSessionProcess,
+        signOutProcess.status,
+        signOut,
+        props.getCurrentAuthenticatedUserProcess,
+        props.getUserItemProcess,
+        props.getUserItem,
       )}
     </SettingsCardContentWrapper>
   );

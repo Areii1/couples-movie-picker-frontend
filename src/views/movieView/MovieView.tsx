@@ -1,7 +1,7 @@
 import React from "react";
 import { toast } from "react-toastify";
 import { useParams } from "react-router-dom";
-import { GetUserItemProcess, Process, Status } from "../../App";
+import { GetCurrentSessionProcess, GetUserItemProcess, Process, Status } from "../../App";
 import { getMovieDetails } from "../../apiService/getMovieDetails";
 import { PrimaryHeadline, SecondaryHeadline } from "../../styles/Styles";
 import { MovieEvaluationSection } from "./movieEvaluationSection/MovieEvaluationSection";
@@ -19,9 +19,88 @@ import {
   InfoList,
   InfoListItem,
 } from "./MovieViewStyles";
+import {
+  getGenresStr,
+  getRuntimeStr,
+  getAllAreInitial,
+  getOneIsLoading,
+  getOneIsErrored,
+} from "./MovieViewUtilityFunctions";
+
+const getMovieViewContent = (
+  getMovieDetailsProcess: Process,
+  getPairedUserProcess: GetUserItemProcess,
+  getUserItemProcess: GetUserItemProcess,
+  evaluateItem: (movieId: number, score: number) => void,
+  likeMovieProcess: EvaluateMovieProcess,
+  getCurrentSessionProcess: GetCurrentSessionProcess,
+) => {
+  const allAreInitial = getAllAreInitial([getMovieDetailsProcess, getCurrentSessionProcess]);
+  const oneIsLoading = getOneIsLoading([getMovieDetailsProcess, getCurrentSessionProcess]);
+  const oneIsErrored = getOneIsErrored([getMovieDetailsProcess, getCurrentSessionProcess]);
+
+  if (allAreInitial) {
+    return <div />;
+  } else if (oneIsErrored) {
+    return <div />;
+  } else if (oneIsLoading) {
+    return (
+      <div>
+        <ImagePlaceholder />
+        <TitlePlaceholder />
+      </div>
+    );
+  } else if (
+    getMovieDetailsProcess.status === Status.SUCCESS &&
+    getCurrentSessionProcess.status === Status.SUCCESS
+  ) {
+    return (
+      <>
+        <ImageSection>
+          <Image
+            src={`https://image.tmdb.org/t/p/w500/${getMovieDetailsProcess.data.backdrop_path}`}
+            alt={getMovieDetailsProcess.data.original_title}
+          />
+        </ImageSection>
+        <MovieViewCardContentWrapper>
+          <PrimaryHeadline>{getMovieDetailsProcess.data.original_title}</PrimaryHeadline>
+          <InfoList>
+            <InfoListItem>
+              <InfoListItemText title={getRuntimeStr(getMovieDetailsProcess)}>
+                {getRuntimeStr(getMovieDetailsProcess)}
+              </InfoListItemText>
+            </InfoListItem>
+            <InfoListItem>
+              <InfoListItemText>{getGenresStr(getMovieDetailsProcess)}</InfoListItemText>
+            </InfoListItem>
+            <InfoListItem>
+              <InfoListItemText title={getMovieDetailsProcess.data.release_date}>
+                {getMovieDetailsProcess.data.release_date.split("-")[0]}
+              </InfoListItemText>
+            </InfoListItem>
+          </InfoList>
+          <MovieEvaluationSection
+            movieId={getMovieDetailsProcess.data.id}
+            getPairedUserProcess={getPairedUserProcess}
+            getUserItemProcess={getUserItemProcess}
+            evaluateItem={evaluateItem}
+            likeMovieProcess={likeMovieProcess}
+            jwtToken={getCurrentSessionProcess.data.getIdToken().getJwtToken()}
+          />
+          <MovieViewSection>
+            <SecondaryHeadline>Overview</SecondaryHeadline>
+            <Text>{getMovieDetailsProcess.data.overview}</Text>
+          </MovieViewSection>
+        </MovieViewCardContentWrapper>
+      </>
+    );
+  } else {
+    return <div />;
+  }
+};
 
 type Props = {
-  getCurrentSessionProcess: Process;
+  getCurrentSessionProcess: GetCurrentSessionProcess;
   getUserItemProcess: GetUserItemProcess;
   getUserItem: (username: string, jwtToken: string) => void;
   getPairedUserProcess: GetUserItemProcess;
@@ -99,89 +178,15 @@ export const MovieView = (props: Props) => {
     }
   }, [props.getUserItemProcess.status]);
 
-  const getGenresStr = () => {
-    if (getMovieDetailsProcess.status === Status.SUCCESS) {
-      if (getMovieDetailsProcess.data.genres.length > 3) {
-        const filteredList = getMovieDetailsProcess.data.genres.filter(
-          (detail: string, index: number) => index < 3,
-        );
-        return filteredList.map((genre: any) => genre.name).join(", ");
-      } else {
-        return getMovieDetailsProcess.data.genres.map((genre: any) => genre.name).join(", ");
-      }
-    } else {
-      return "";
-    }
-  };
-
-  const getRuntimeStr = () => {
-    if (getMovieDetailsProcess.status === Status.SUCCESS) {
-      if (getMovieDetailsProcess.data.runtime > 60) {
-        const hours = Math.floor(getMovieDetailsProcess.data.runtime / 60);
-        const minutes = getMovieDetailsProcess.data.runtime - hours * 60;
-        return `${hours}h${minutes}min`;
-      } else {
-        return `${getMovieDetailsProcess.data.runtime}min`;
-      }
-    } else {
-      return "";
-    }
-  };
-
   return (
     <Wrapper>
-      {getMovieDetailsProcess.status === Status.LOADING && (
-        <div>
-          <ImagePlaceholder />
-          <TitlePlaceholder />
-        </div>
-      )}
-      {getMovieDetailsProcess.status === Status.SUCCESS && (
-        <>
-          <ImageSection>
-            <Image
-              src={`https://image.tmdb.org/t/p/w500/${getMovieDetailsProcess.data.backdrop_path}`}
-              alt={getMovieDetailsProcess.data.original_title}
-            />
-          </ImageSection>
-          <MovieViewCardContentWrapper>
-            <PrimaryHeadline>{getMovieDetailsProcess.data.original_title}</PrimaryHeadline>
-            <InfoList>
-              <InfoListItem>
-                <InfoListItemText title={getRuntimeStr()}>{getRuntimeStr()}</InfoListItemText>
-              </InfoListItem>
-              <InfoListItem>
-                <InfoListItemText>{getGenresStr()}</InfoListItemText>
-              </InfoListItem>
-              <InfoListItem>
-                <InfoListItemText title={getMovieDetailsProcess.data.release_date}>
-                  {getMovieDetailsProcess.data.release_date.split("-")[0]}
-                </InfoListItemText>
-              </InfoListItem>
-            </InfoList>
-            <MovieEvaluationSection
-              getMovieDetailsProcess={getMovieDetailsProcess}
-              getPairedUserProcess={props.getPairedUserProcess}
-              getUserItemProcess={props.getUserItemProcess}
-              evaluateItem={evaluateItem}
-              likeMovieProcess={likeMovieProcess}
-              getCurrentSessionProcess={props.getCurrentSessionProcess}
-            />
-            <MovieViewSection>
-              <SecondaryHeadline>Overview</SecondaryHeadline>
-              <Text>{getMovieDetailsProcess.data.overview}</Text>
-            </MovieViewSection>
-            {/* <MovieViewSection>
-            <SecondaryHeadline>Details</SecondaryHeadline>
-            <DetailItemWrapper>
-              <MovieTertiaryHeadline color="gray">
-                duration
-              </MovieTertiaryHeadline>
-              <Text>{getMovieDetailsProcess.data.runtime}</Text>
-            </DetailItemWrapper>
-          </MovieViewSection> */}
-          </MovieViewCardContentWrapper>
-        </>
+      {getMovieViewContent(
+        getMovieDetailsProcess,
+        props.getPairedUserProcess,
+        props.getUserItemProcess,
+        evaluateItem,
+        likeMovieProcess,
+        props.getCurrentSessionProcess,
       )}
     </Wrapper>
   );

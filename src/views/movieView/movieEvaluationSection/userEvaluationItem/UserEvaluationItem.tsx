@@ -12,10 +12,11 @@ import {
   UserEvaluatedItemWrapper,
   UserEvaluatedItemWrapperContentWrapper,
 } from "./UserEvaluationItemStyles";
+import { LikedMoviesListItem } from "../../../../types/Types";
 
 type Props = {
   getUserItemProcess: GetUserItemProcess;
-  evaluatedMovieItem: any;
+  evaluatedMovieItem: LikedMoviesListItem;
   updateEvaluating?: (value: boolean) => void;
   useCase: EvaluationItemUseCase;
 };

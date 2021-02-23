@@ -1,5 +1,5 @@
 import React from "react";
-import { GetCurrentSessionProcessSuccess, GetUserItemProcess, Status } from "../../../App";
+import { GetUserItemProcess, Status } from "../../../App";
 import { AnimateType, HeartIcon } from "../../../components/icons/heartIcon/HeartIcon";
 import { ProfileBall } from "../../../components/profileBall/ProfileBall";
 import { sizingScale } from "../../../styles/Variables";
@@ -40,17 +40,13 @@ export enum HoveringOver {
 }
 
 type Props = {
-  getCurrentSessionProcess: GetCurrentSessionProcessSuccess;
+  jwtToken: string;
   getUserItemProcess: GetUserItemProcess;
   getPairedUserProcess: GetUserItemProcess;
   filteredList: Movie[];
   swipingIndex: number;
   evaluateMovieProcess: EvaluateMovieProcess;
-  evaluateItem: (
-    movieId: number,
-    score: number,
-    getCurrentSessionProcess: GetCurrentSessionProcessSuccess,
-  ) => void;
+  evaluateItem: (movieId: number, score: number, jwtToken: string) => void;
   setModalOpen: (value: boolean) => void;
 };
 
@@ -71,11 +67,7 @@ export const ImageSection = (props: Props) => {
         onMouseEnter={() => setHoveringOver(HoveringOver.LEFT)}
         onMouseLeave={() => setHoveringOver(HoveringOver.NONE)}
         onClick={() =>
-          props.evaluateItem(
-            props.filteredList[props.swipingIndex].id,
-            0,
-            props.getCurrentSessionProcess,
-          )
+          props.evaluateItem(props.filteredList[props.swipingIndex].id, 0, props.jwtToken)
         }
         title="dislike movie"
         hovering={
@@ -95,11 +87,7 @@ export const ImageSection = (props: Props) => {
         onMouseEnter={() => setHoveringOver(HoveringOver.RIGHT)}
         onMouseLeave={() => setHoveringOver(HoveringOver.NONE)}
         onClick={() =>
-          props.evaluateItem(
-            props.filteredList[props.swipingIndex].id,
-            100,
-            props.getCurrentSessionProcess,
-          )
+          props.evaluateItem(props.filteredList[props.swipingIndex].id, 100, props.jwtToken)
         }
         title="like movie"
         hovering={

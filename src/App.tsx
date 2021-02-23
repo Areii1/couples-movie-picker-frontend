@@ -214,7 +214,6 @@ export const App: React.FunctionComponent = () => {
               <CSSTransition in={match !== null} timeout={1000} classNames="page" unmountOnExit>
                 <div className="page">
                   <MainView
-                    getCurrentSessionProcess={getCurrentSessionProcess}
                     getUserItemProcess={getUserItemProcess}
                     getUserItem={getUserItem}
                     getCurrentAuthenticatedUserProcess={getCurrentAuthenticatedUserProcess}

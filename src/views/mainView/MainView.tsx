@@ -5,12 +5,11 @@ import {
   Process,
   Status,
   GetUserItemProcess,
-  GetCurrentSessionProcess,
   ProcessInitial,
   ProcessLoading,
   ProcessSuccess,
   ProcessError,
-  GetCurrentSessionProcessSuccess,
+  GetCurrentSessionProcessContext,
 } from "../../App";
 import { FireMeter } from "../../components/fireMeter/FireMeter";
 import { SecondaryHeadline } from "../../styles/Styles";
@@ -34,7 +33,6 @@ import {
 import { LikedMoviesListItem, Movie } from "../../types/Types";
 
 type Props = {
-  getCurrentSessionProcess: GetCurrentSessionProcess;
   getUserItemProcess: GetUserItemProcess;
   getUserItem: (username: string, jwtToken: string) => void;
   getCurrentAuthenticatedUserProcess: Process;
@@ -72,6 +70,8 @@ export const MainView = (props: Props) => {
 
   const [modalOpen, setModalOpen] = React.useState<boolean>(false);
 
+  const getCurrentSessionProcess = React.useContext(GetCurrentSessionProcessContext);
+
   const getMovies = async () => {
     try {
       setGetTrendingMoviesProcess({ status: Status.LOADING });
@@ -90,19 +90,11 @@ export const MainView = (props: Props) => {
     }
   };
 
-  const evaluateItem = async (
-    movieId: number,
-    score: number,
-    givenGetCurrentSessionProcess: GetCurrentSessionProcessSuccess,
-  ) => {
+  const evaluateItem = async (movieId: number, score: number, jwtToken: string) => {
     if (evaluateMovieProcess.status !== Status.LOADING) {
       try {
         setEvaluateMovieProcess({ status: Status.LOADING, score });
-        const likeMovieResponse = await evaluateMovie(
-          givenGetCurrentSessionProcess.data.getIdToken().getJwtToken(),
-          movieId,
-          score,
-        );
+        const likeMovieResponse = await evaluateMovie(jwtToken, movieId, score);
         setSwipingIndex(swipingIndex + 1);
         setEvaluateMovieProcess({
           status: Status.SUCCESS,
@@ -124,11 +116,11 @@ export const MainView = (props: Props) => {
   React.useEffect(() => {
     if (
       props.getUserItemProcess.status === Status.SUCCESS &&
-      props.getCurrentSessionProcess.status === Status.SUCCESS
+      getCurrentSessionProcess.status === Status.SUCCESS
     ) {
       props.getUserItem(
         props.getUserItemProcess.data.username.S,
-        props.getCurrentSessionProcess.data.getIdToken().getJwtToken(),
+        getCurrentSessionProcess.data.getIdToken().getJwtToken(),
       );
     }
   }, []);
@@ -162,13 +154,13 @@ export const MainView = (props: Props) => {
 
   const viewInitialized =
     props.getCurrentAuthenticatedUserProcess.status === Status.SUCCESS &&
-    props.getCurrentSessionProcess.status === Status.SUCCESS &&
+    getCurrentSessionProcess.status === Status.SUCCESS &&
     props.getUserItemProcess.status === Status.SUCCESS &&
     getTrendingMoviesProcess.status === Status.SUCCESS;
 
   const viewErrored =
     props.getCurrentAuthenticatedUserProcess.status === Status.ERROR ||
-    props.getCurrentSessionProcess.status === Status.ERROR ||
+    getCurrentSessionProcess.status === Status.ERROR ||
     props.getUserItemProcess.status === Status.ERROR ||
     getTrendingMoviesProcess.status === Status.ERROR;
 
@@ -204,7 +196,7 @@ export const MainView = (props: Props) => {
   console.log(getTrendingMoviesProcess, "getTrendingMoviesProcess");
   return (
     <>
-      {props.getCurrentSessionProcess.status !== Status.ERROR && (
+      {getCurrentSessionProcess.status !== Status.ERROR && (
         <Wrapper>
           {!viewInitialized && !viewErrored && (
             <div>
@@ -213,14 +205,14 @@ export const MainView = (props: Props) => {
             </div>
           )}
           {props.getCurrentAuthenticatedUserProcess.status === Status.SUCCESS &&
-            props.getCurrentSessionProcess.status === Status.SUCCESS &&
+            getCurrentSessionProcess.status === Status.SUCCESS &&
             props.getUserItemProcess.status === Status.SUCCESS &&
             getTrendingMoviesProcess.status === Status.SUCCESS && (
               <>
                 {filteredList.length > 0 && filteredList[swipingIndex] !== undefined && (
                   <div>
                     <ImageSection
-                      getCurrentSessionProcess={props.getCurrentSessionProcess}
+                      jwtToken={getCurrentSessionProcess.data.getIdToken().getJwtToken()}
                       getUserItemProcess={props.getUserItemProcess}
                       getPairedUserProcess={props.getPairedUserProcess}
                       filteredList={filteredList}
@@ -238,7 +230,7 @@ export const MainView = (props: Props) => {
                       </Link>
                       <FireMeterWrapper>
                         <FireMeter
-                          getCurrentSessionProcess={props.getCurrentSessionProcess}
+                          jwtToken={getCurrentSessionProcess.data.getIdToken().getJwtToken()}
                           evaluateItem={evaluateItem}
                           movieId={filteredList[swipingIndex].id}
                           evaluateMovieProcess={evaluateMovieProcess}
@@ -267,7 +259,7 @@ export const MainView = (props: Props) => {
           )}
         </Wrapper>
       )}
-      {props.getCurrentSessionProcess.status === Status.ERROR && <Redirect to="/signup" />}
+      {getCurrentSessionProcess.status === Status.ERROR && <Redirect to="/signup" />}
     </>
   );
 };

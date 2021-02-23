@@ -81,10 +81,10 @@ export const MovieEvaluationSection = (props: Props) => {
         (userEvaluatedMovieItem === undefined || evaluating) && (
           <FireMeterWrapper>
             <FireMeter
+              jwtToken={props.getCurrentSessionProcess.data.getIdToken().getJwtToken()}
               evaluateItem={props.evaluateItem}
               movieId={props.getMovieDetailsProcess.data.id}
               evaluateMovieProcess={props.likeMovieProcess}
-              getCurrentSessionProcess={props.getCurrentSessionProcess}
             />
           </FireMeterWrapper>
         )}

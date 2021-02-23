@@ -20,11 +20,6 @@ import {
 import { GetTrendingMovieProcessSuccess, GetTrendingMoviesProcess } from "../mainView/MainView";
 import { getSortedMatchedMovies } from "./MatchesViewUtilityFunctions";
 
-type Props = {
-  getPairedUserProcess: GetUserItemProcess;
-  getUserItemProcess: GetUserItemProcess;
-};
-
 export type ProcessedMatchedMovies = {
   id: string;
   commonScore: number;
@@ -178,6 +173,11 @@ const getMatchesDislikedListItems = (
   } else {
     return [];
   }
+};
+
+type Props = {
+  getPairedUserProcess: GetUserItemProcess;
+  getUserItemProcess: GetUserItemProcess;
 };
 
 export const MatchesView = (props: Props) => {

@@ -3,7 +3,7 @@ import { toast } from "react-toastify";
 import { Auth } from "aws-amplify";
 import { Link, Redirect } from "react-router-dom";
 import { Puff } from "../../components/puff/Puff";
-import { Status } from "../../App";
+import { Status } from "../../types/Types";
 import {
   LoginCardContentWrapper,
   ContentWrapper,

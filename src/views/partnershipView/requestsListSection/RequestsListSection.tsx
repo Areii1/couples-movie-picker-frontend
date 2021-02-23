@@ -14,7 +14,7 @@ import {
   GetCurrentSessionProcessSuccess,
   GetUserItemProcess,
   GetUserItemProcessSuccess,
-} from "../../../App";
+} from "../../../types/Types";
 import { rejectIncomingRequest } from "../../../apiService/rejectIncomingRequest";
 import { acceptIncomingRequest } from "../../../apiService/acceptIncomingRequest";
 import {

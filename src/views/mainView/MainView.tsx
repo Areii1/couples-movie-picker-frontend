@@ -9,8 +9,10 @@ import {
   ProcessLoading,
   ProcessSuccess,
   ProcessError,
-  GetCurrentSessionProcessContext,
-} from "../../App";
+  LikedMoviesListItem,
+  Movie,
+} from "../../types/Types";
+import { GetCurrentSessionProcessContext } from "../../App";
 import { FireMeter } from "../../components/fireMeter/FireMeter";
 import { SecondaryHeadline } from "../../styles/Styles";
 import { sizingScale } from "../../styles/Variables";
@@ -30,7 +32,6 @@ import {
   ImageWrapper,
   TitleWrapper,
 } from "./MainViewStyles";
-import { LikedMoviesListItem, Movie } from "../../types/Types";
 
 type Props = {
   getUserItemProcess: GetUserItemProcess;

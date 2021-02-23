@@ -1,7 +1,12 @@
 import React from "react";
 import { toast } from "react-toastify";
 import { MatchSectionWrapper } from "../PartnershipViewStyles";
-import { Process, Status, GetCurrentSessionProcess, GetUserItemProcess } from "../../../App";
+import {
+  Process,
+  Status,
+  GetCurrentSessionProcess,
+  GetUserItemProcess,
+} from "../../../types/Types";
 import { PendingIcon } from "../../../components/icons/pendingIcon/PendingIcon";
 import { ProfileBall } from "../../../components/profileBall/ProfileBall";
 import { AnimateType, HeartIcon } from "../../../components/icons/heartIcon/HeartIcon";

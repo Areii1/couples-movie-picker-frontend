@@ -2,8 +2,12 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { CardContentWrapper } from "../logIn/LogInStyles";
-import { GetUserItemProcess, GetUserItemProcessSuccess, Status } from "../../App";
-import { LikedMoviesListItem } from "../../types/Types";
+import {
+  GetUserItemProcess,
+  GetUserItemProcessSuccess,
+  Status,
+  LikedMoviesListItem,
+} from "../../types/Types";
 import { getTrendingMovies } from "../../apiService/getTrendingMovies";
 import { ScoreText } from "../mainView/imageSection/ImageSectionStyles";
 import { DownwardArrow } from "../../components/icons/downwardArrow/DownwardArrow";

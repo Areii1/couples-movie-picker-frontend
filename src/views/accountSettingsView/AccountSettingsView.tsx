@@ -3,13 +3,8 @@ import { toast } from "react-toastify";
 import { Auth } from "aws-amplify";
 import { Redirect } from "react-router";
 import { Link } from "react-router-dom";
-import {
-  GetCurrentSessionProcess,
-  GetCurrentSessionProcessContext,
-  GetUserItemProcess,
-  Process,
-  Status,
-} from "../../App";
+import { GetCurrentSessionProcessContext } from "../../App";
+import { GetCurrentSessionProcess, GetUserItemProcess, Process, Status } from "../../types/Types";
 import { SecondaryHeadline, PrimaryHeadline } from "../../styles/Styles";
 import { Puff } from "../../components/puff/Puff";
 import { Button, ButtonText } from "../logIn/LogInStyles";

@@ -2,7 +2,7 @@ import React from "react";
 import { FireIcon } from "../icons/fireIcon/FireIcon";
 import { ColdIcon } from "../icons/coldIcon/ColdIcon";
 import { sizingScale } from "../../styles/Variables";
-import { Status } from "../../App";
+import { Status } from "../../types/Types";
 import { EvaluateMovieProcess } from "../../views/mainView/MainView";
 import { Wrapper, ColdIconButton, HotIconButton, MeterSwitchButton } from "./FireMeterStyles";
 

@@ -1,7 +1,7 @@
 import React from "react";
 import { toast } from "react-toastify";
 import { useParams } from "react-router-dom";
-import { GetCurrentSessionProcess, GetUserItemProcess, Process, Status } from "../../App";
+import { GetCurrentSessionProcess, GetUserItemProcess, Process, Status } from "../../types/Types";
 import { getMovieDetails } from "../../apiService/getMovieDetails";
 import { PrimaryHeadline, SecondaryHeadline } from "../../styles/Styles";
 import { MovieEvaluationSection } from "./movieEvaluationSection/MovieEvaluationSection";

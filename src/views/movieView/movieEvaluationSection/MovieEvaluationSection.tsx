@@ -1,7 +1,7 @@
 import React from "react";
 import { UserEvaluationItem } from "./userEvaluationItem/UserEvaluationItem";
 import { AnimateType, HeartIcon } from "../../../components/icons/heartIcon/HeartIcon";
-import { GetUserItemProcess, Status } from "../../../App";
+import { GetUserItemProcess, Status } from "../../../types/Types";
 import { MovieTertiaryHeadline } from "../MovieViewStyles";
 import { getEvaluatedMovieItem, getIsMatched } from "../MovieViewUtilityFunctions";
 import { FireMeter } from "../../../components/fireMeter/FireMeter";

@@ -7,7 +7,7 @@ import {
   GetUserItemProcessSuccess,
   Process,
   Status,
-} from "../../../App";
+} from "../../../types/Types";
 import { SearchIcon } from "../../../components/icons/searchIcon/SearchIcon";
 import { Form, InputField } from "../../logIn/LogInStyles";
 import { getUser } from "../../../apiService/getUser";

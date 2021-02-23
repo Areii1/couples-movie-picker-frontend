@@ -1,4 +1,4 @@
-import { GetUserItemProcess, Status } from "../../../App";
+import { GetUserItemProcess, Status } from "../../../types/Types";
 import { getEvaluatedMovieItem } from "../../movieView/MovieViewUtilityFunctions";
 import { EvaluateMovieProcess } from "../MainView";
 import { HoveringOver } from "./ImageSection";

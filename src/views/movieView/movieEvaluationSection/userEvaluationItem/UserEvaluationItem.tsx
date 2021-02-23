@@ -1,5 +1,5 @@
 import React from "react";
-import { GetUserItemProcess, Status } from "../../../../App";
+import { GetUserItemProcess, Status, LikedMoviesListItem } from "../../../../types/Types";
 import { FireIcon } from "../../../../components/icons/fireIcon/FireIcon";
 import { ColdIcon } from "../../../../components/icons/coldIcon/ColdIcon";
 import { ProfileBall } from "../../../../components/profileBall/ProfileBall";
@@ -12,7 +12,14 @@ import {
   UserEvaluatedItemWrapper,
   UserEvaluatedItemWrapperContentWrapper,
 } from "./UserEvaluationItemStyles";
-import { LikedMoviesListItem } from "../../../../types/Types";
+
+const getIconContent = (score: number) => {
+  if (score >= 50) {
+    return <FireIcon size={30} score={score - 50} animate={false} isGray={false} />;
+  } else {
+    return <ColdIcon size={30} score={score} animate={false} isGray={false} />;
+  }
+};
 
 type Props = {
   getUserItemProcess: GetUserItemProcess;
@@ -45,43 +52,13 @@ export const UserEvaluationItem = (props: Props) => {
               onClick={() => (props.updateEvaluating ? props.updateEvaluating(true) : {})}
               title="reevaluate movie"
             >
-              {parseInt(props.evaluatedMovieItem.M.score.N, 10) >= 50 && (
-                <FireIcon
-                  size={30}
-                  score={parseInt(props.evaluatedMovieItem.M.score.N, 10) - 50}
-                  animate={false}
-                  isGray={false}
-                />
-              )}
-              {parseInt(props.evaluatedMovieItem.M.score.N, 10) < 50 && (
-                <ColdIcon
-                  size={30}
-                  score={parseInt(props.evaluatedMovieItem.M.score.N, 10)}
-                  animate={false}
-                  isGray={false}
-                />
-              )}
+              {getIconContent(parseInt(props.evaluatedMovieItem.M.score.N, 10))}
             </TransparentButton>
           </IconWrapper>
         )}
         {props.useCase === EvaluationItemUseCase.PARTNER && (
           <IconWrapper>
-            {parseInt(props.evaluatedMovieItem.M.score.N, 10) >= 50 && (
-              <FireIcon
-                size={30}
-                score={parseInt(props.evaluatedMovieItem.M.score.N, 10) - 50}
-                animate={false}
-                isGray={false}
-              />
-            )}
-            {parseInt(props.evaluatedMovieItem.M.score.N, 10) < 50 && (
-              <ColdIcon
-                size={30}
-                score={parseInt(props.evaluatedMovieItem.M.score.N, 10)}
-                animate={false}
-                isGray={false}
-              />
-            )}
+            {getIconContent(parseInt(props.evaluatedMovieItem.M.score.N, 10))}
           </IconWrapper>
         )}
         <IconText score={parseInt(props.evaluatedMovieItem.M.score.N, 10)}>

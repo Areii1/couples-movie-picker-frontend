@@ -1,5 +1,4 @@
 import React from "react";
-import { GetUserItemProcess, Status } from "../../../App";
 import { AnimateType, HeartIcon } from "../../../components/icons/heartIcon/HeartIcon";
 import { ProfileBall } from "../../../components/profileBall/ProfileBall";
 import { sizingScale } from "../../../styles/Variables";
@@ -31,7 +30,7 @@ import {
   Image,
   ScoreText,
 } from "./ImageSectionStyles";
-import { Movie } from "../../../types/Types";
+import { Movie, GetUserItemProcess, Status } from "../../../types/Types";
 
 export enum HoveringOver {
   LEFT,
@@ -132,11 +131,13 @@ export const ImageSection = (props: Props) => {
         userEvaluationItemIsNotBlockedByHoverEffect(partnerEvaluatedMovie, hoveringOver) && (
           <PartnerScoreWrapper
             title={`${props.getPairedUserProcess.data.username.S} ${
-              partnerEvaluatedMovie.M.score.N >= 50 ? "liked this movie" : "didn't like this movie"
+              parseInt(partnerEvaluatedMovie.M.score.N, 10) >= 50
+                ? "liked this movie"
+                : "didn't like this movie"
             }`}
             onMouseEnter={() => setPartnerScoreHovering(true)}
             onMouseLeave={() => setPartnerScoreHovering(false)}
-            score={partnerEvaluatedMovie.M.score.N}
+            score={parseInt(partnerEvaluatedMovie.M.score.N, 10)}
           >
             <PartnerScoreContentWrapper>
               <TransparentButton
@@ -159,8 +160,8 @@ export const ImageSection = (props: Props) => {
                 />
               </TransparentButton>
               {partnerEvaluatedMovie !== undefined && (
-                <ScoreText score={partnerEvaluatedMovie.M.score.N}>
-                  {partnerEvaluatedMovie.M.score.N}
+                <ScoreText score={parseInt(partnerEvaluatedMovie.M.score.N, 10)}>
+                  {parseInt(partnerEvaluatedMovie.M.score.N, 10)}
                 </ScoreText>
               )}
               {partnerEvaluatedMovie === undefined && <NotEvaluatedText>?</NotEvaluatedText>}

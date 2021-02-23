@@ -6,7 +6,7 @@ import { ImageIcon } from "../../../components/icons/imageIcon/ImageIcon";
 import { ProfileBall } from "../../../components/profileBall/ProfileBall";
 import { randomizeProfilePicture } from "../../../apiService/randomizeProfilePicture";
 import { bucketUrl } from "../../../config/Config";
-import { Process, Status } from "../../../App";
+import { Process, Status } from "../../../types/Types";
 import { Section } from "../AccountSettingsViewStyles";
 import { SecondaryHeadline } from "../../../styles/Styles";
 import { ConfirmModal } from "../../../components/modals/confirmModal/ConfirmModal";

@@ -3,7 +3,6 @@ import { Route } from "react-router-dom";
 import "./App.css";
 import { CSSTransition } from "react-transition-group";
 import { ToastContainer, toast } from "react-toastify";
-import { CognitoUserSession } from "amazon-cognito-identity-js";
 import { configureAmplify } from "./config/Config";
 import { NavigationBar } from "./components/navigationBar/NavigationBar";
 import { MainView } from "./views/mainView/MainView";
@@ -13,48 +12,13 @@ import { AccountSettingsView } from "./views/accountSettingsView/AccountSettings
 import { getUser } from "./apiService/getUser";
 import { PartnershipView } from "./views/partnershipView/PartnershipView";
 import { getCurrentSession, getCurrentAuthenticatedUser } from "./apiService/getUserInformation";
-import { UserInfo } from "./types/Types";
+import { Status, Process, GetCurrentSessionProcess, GetUserItemProcess } from "./types/Types";
 import { MatchesView } from "./views/matchesView/MatchesView";
 import { MovieView } from "./views/movieView/MovieView";
 import "react-toastify/dist/ReactToastify.css";
 import { ContentWrapper } from "./AppStyles";
 
 configureAmplify();
-
-export enum Status {
-  INITIAL,
-  LOADING,
-  SUCCESS,
-  ERROR,
-}
-
-export type ProcessInitial = {
-  status: Status.INITIAL;
-};
-
-export type ProcessLoading = {
-  status: Status.LOADING;
-};
-
-export type ProcessSuccess = { status: Status.SUCCESS; data: any };
-
-export type ProcessError = { status: Status.ERROR; error: Error };
-
-export type Process = ProcessInitial | ProcessLoading | ProcessSuccess | ProcessError;
-
-export type GetCurrentSessionProcessSuccess = { status: Status.SUCCESS; data: CognitoUserSession };
-export type GetCurrentSessionProcess =
-  | ProcessInitial
-  | ProcessLoading
-  | GetCurrentSessionProcessSuccess
-  | ProcessError;
-
-export type GetUserItemProcessSuccess = { status: Status.SUCCESS; data: UserInfo };
-export type GetUserItemProcess =
-  | ProcessInitial
-  | ProcessLoading
-  | GetUserItemProcessSuccess
-  | ProcessError;
 
 export const GetCurrentSessionProcessContext = React.createContext<GetCurrentSessionProcess>({
   status: Status.INITIAL,
@@ -263,7 +227,6 @@ export const App: React.FunctionComponent = () => {
                   <PartnershipView
                     getCurrentAuthenticatedUserProcess={getCurrentAuthenticatedUserProcess}
                     getUserItemProcess={getUserItemProcess}
-                    getCurrentSessionProcess={getCurrentSessionProcess}
                     getPairedUserProcess={getPairedUserProcess}
                     getPairedUser={getPairedUser}
                     getUserItem={getUserItem}

@@ -2,7 +2,7 @@ import { Auth } from "aws-amplify";
 import { toast } from "react-toastify";
 import React, { FormEvent } from "react";
 import { Link, Redirect } from "react-router-dom";
-import { Process, Status } from "../../App";
+import { Process, Status } from "../../types/Types";
 import { Puff } from "../../components/puff/Puff";
 import {
   FormWrapper,

@@ -1,5 +1,4 @@
-import { Process, Status } from "../../App";
-import { LikedMoviesListItem } from "../../types/Types";
+import { Process, Status, LikedMoviesListItem } from "../../types/Types";
 
 export const getEvaluatedMovieItem = (
   getUserItemProcess: Process,

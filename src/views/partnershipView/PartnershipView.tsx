@@ -65,14 +65,14 @@ const getViewContent = (
           getUserItemProcess={getUserItemProcess}
           getCurrentAuthenticatedUserProcess={getCurrentAuthenticatedUserProcess}
           getPairedUserProcess={getPairedUserProcess}
-          getCurrentSessionProcess={getCurrentSessionProcess}
+          jwtToken={getCurrentSessionProcess.data.getIdToken().getJwtToken()}
           getUserItem={getUserItem}
           getPairedUser={getPairedUser}
         />
         {!requestPending && !isPartnered && (
           <SearchSection
             getCurrentAuthenticatedUserProcess={getCurrentAuthenticatedUserProcess}
-            getCurrentSessionProcess={getCurrentSessionProcess}
+            jwtToken={getCurrentSessionProcess.data.getIdToken().getJwtToken()}
             getUserItemProcess={getUserItemProcess}
             getUserItem={getUserItem}
           />
@@ -80,7 +80,7 @@ const getViewContent = (
         {requestsExist && (
           <RequestsListSection
             getUserItemProcess={getUserItemProcess}
-            getCurrentSessionProcess={getCurrentSessionProcess}
+            jwtToken={getCurrentSessionProcess.data.getIdToken().getJwtToken()}
             getUserItem={getUserItem}
           />
         )}

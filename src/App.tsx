@@ -1,22 +1,14 @@
 import React from "react";
-import { Route } from "react-router-dom";
 import "./App.css";
-import { CSSTransition } from "react-transition-group";
 import { ToastContainer, toast } from "react-toastify";
 import { configureAmplify } from "./config/Config";
 import { NavigationBar } from "./components/navigationBar/NavigationBar";
-import { MainView } from "./views/mainView/MainView";
-import { LogIn } from "./views/logIn/LogIn";
-import { SignUp } from "./views/signUp/SignUp";
-import { AccountSettingsView } from "./views/accountSettingsView/AccountSettingsView";
 import { getUser } from "./apiService/getUser";
-import { PartnershipView } from "./views/partnershipView/PartnershipView";
 import { getCurrentSession, getCurrentAuthenticatedUser } from "./apiService/getUserInformation";
 import { Status, Process, GetCurrentSessionProcess, GetUserItemProcess } from "./types/Types";
-import { MatchesView } from "./views/matchesView/MatchesView";
-import { MovieView } from "./views/movieView/MovieView";
 import "react-toastify/dist/ReactToastify.css";
 import { ContentWrapper } from "./AppStyles";
+import { CardAnimatedRoutes } from "./cardAnimatedRoutes/CardAnimatedRoutes";
 
 configureAmplify();
 
@@ -173,94 +165,16 @@ export const App: React.FunctionComponent = () => {
           getUserItemProcess={getUserItemProcess}
         />
         <div className="container">
-          <Route exact path="/">
-            {({ match }) => (
-              <CSSTransition in={match !== null} timeout={1000} classNames="page" unmountOnExit>
-                <div className="page">
-                  <MainView
-                    getUserItemProcess={getUserItemProcess}
-                    getUserItem={getUserItem}
-                    getCurrentAuthenticatedUserProcess={getCurrentAuthenticatedUserProcess}
-                    getPairedUserProcess={getPairedUserProcess}
-                  />
-                </div>
-              </CSSTransition>
-            )}
-          </Route>
-          <Route exact path="/login">
-            {({ match }) => (
-              <CSSTransition in={match !== null} timeout={300} classNames="page" unmountOnExit>
-                <div className="page">
-                  <LogIn initiateSession={getUserInfo} />
-                </div>
-              </CSSTransition>
-            )}
-          </Route>
-          <Route exact path="/signup">
-            {({ match }) => (
-              <CSSTransition in={match !== null} timeout={300} classNames="page" unmountOnExit>
-                <div className="page">
-                  <SignUp />
-                </div>
-              </CSSTransition>
-            )}
-          </Route>
-          <Route exact path="/user">
-            {({ match }) => (
-              <CSSTransition in={match !== null} timeout={300} classNames="page" unmountOnExit>
-                <div className="page">
-                  <AccountSettingsView
-                    getCurrentAuthenticatedUserProcess={getCurrentAuthenticatedUserProcess}
-                    initiateSession={getUserInfo}
-                    getUserItemProcess={getUserItemProcess}
-                    getUserItem={getUserItem}
-                    resetState={resetState}
-                  />
-                </div>
-              </CSSTransition>
-            )}
-          </Route>
-          <Route exact path="/love">
-            {({ match }) => (
-              <CSSTransition in={match !== null} timeout={300} classNames="page" unmountOnExit>
-                <div className="page">
-                  <PartnershipView
-                    getCurrentAuthenticatedUserProcess={getCurrentAuthenticatedUserProcess}
-                    getUserItemProcess={getUserItemProcess}
-                    getPairedUserProcess={getPairedUserProcess}
-                    getPairedUser={getPairedUser}
-                    getUserItem={getUserItem}
-                  />
-                </div>
-              </CSSTransition>
-            )}
-          </Route>
-          <Route exact path="/matches">
-            {({ match }) => (
-              <CSSTransition in={match !== null} timeout={300} classNames="page" unmountOnExit>
-                <div className="page">
-                  <MatchesView
-                    getUserItemProcess={getUserItemProcess}
-                    getPairedUserProcess={getPairedUserProcess}
-                  />
-                </div>
-              </CSSTransition>
-            )}
-          </Route>
-          <Route exact path="/movie/:id">
-            {({ match }) => (
-              <CSSTransition in={match !== null} timeout={300} classNames="page" unmountOnExit>
-                <div className="page">
-                  <MovieView
-                    getUserItemProcess={getUserItemProcess}
-                    getCurrentSessionProcess={getCurrentSessionProcess}
-                    getUserItem={getUserItem}
-                    getPairedUserProcess={getPairedUserProcess}
-                  />
-                </div>
-              </CSSTransition>
-            )}
-          </Route>
+          <CardAnimatedRoutes
+            getUserItemProcess={getUserItemProcess}
+            getUserItem={getUserItem}
+            getCurrentAuthenticatedUserProcess={getCurrentAuthenticatedUserProcess}
+            getPairedUserProcess={getPairedUserProcess}
+            getUserInfo={getUserInfo}
+            resetState={resetState}
+            getPairedUser={getPairedUser}
+            getCurrentSessionProcess={getCurrentSessionProcess}
+          />
         </div>
       </GetCurrentSessionProcessContext.Provider>
       <ToastContainer

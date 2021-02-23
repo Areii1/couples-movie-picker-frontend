@@ -1,12 +1,7 @@
 import React from "react";
 import { toast } from "react-toastify";
 import { MatchSectionWrapper } from "../PartnershipViewStyles";
-import {
-  Process,
-  Status,
-  GetCurrentSessionProcess,
-  GetUserItemProcess,
-} from "../../../types/Types";
+import { Process, Status, GetUserItemProcess } from "../../../types/Types";
 import { PendingIcon } from "../../../components/icons/pendingIcon/PendingIcon";
 import { ProfileBall } from "../../../components/profileBall/ProfileBall";
 import { AnimateType, HeartIcon } from "../../../components/icons/heartIcon/HeartIcon";
@@ -32,7 +27,7 @@ import {
 
 type Props = {
   getCurrentAuthenticatedUserProcess: Process;
-  getCurrentSessionProcess: GetCurrentSessionProcess;
+  jwtToken: string;
   getUserItemProcess: GetUserItemProcess;
   getPairedUserProcess: GetUserItemProcess;
   getUserItem: (username: string, jwtToken: string) => void;
@@ -58,7 +53,6 @@ export const DetailsSection = (props: Props) => {
 
   const cancelPairing = async () => {
     if (
-      props.getCurrentSessionProcess.status === Status.SUCCESS &&
       props.getUserItemProcess.status === Status.SUCCESS &&
       props.getCurrentAuthenticatedUserProcess.status === Status.SUCCESS &&
       props.getUserItemProcess.data.outgoingRequests !== undefined
@@ -67,21 +61,15 @@ export const DetailsSection = (props: Props) => {
         setCancelPairingRequestProcess({ status: Status.LOADING });
         const cancelPairingResponse = await cancelPairingRequest(
           props.getUserItemProcess.data.outgoingRequests.S,
-          props.getCurrentSessionProcess.data.getIdToken().getJwtToken(),
+          props.jwtToken,
         );
         toast.success("Cancelled pairing request");
         setCancelPairingRequestProcess({
           status: Status.SUCCESS,
           data: cancelPairingResponse,
         });
-        props.getUserItem(
-          props.getUserItemProcess.data.username.S,
-          props.getCurrentSessionProcess.data.getIdToken().getJwtToken(),
-        );
-        props.getPairedUser(
-          props.getUserItemProcess.data.outgoingRequests.S,
-          props.getCurrentSessionProcess.data.getIdToken().getJwtToken(),
-        );
+        props.getUserItem(props.getUserItemProcess.data.username.S, props.jwtToken);
+        props.getPairedUser(props.getUserItemProcess.data.outgoingRequests.S, props.jwtToken);
       } catch (cancelPairingError) {
         toast.error("Could not cancel pairing");
         setCancelPairingRequestProcess({
@@ -96,7 +84,6 @@ export const DetailsSection = (props: Props) => {
 
   const breakUp = async () => {
     if (
-      props.getCurrentSessionProcess.status === Status.SUCCESS &&
       props.getUserItemProcess.status === Status.SUCCESS &&
       props.getCurrentAuthenticatedUserProcess.status === Status.SUCCESS &&
       props.getPairedUserProcess.status === Status.SUCCESS &&
@@ -106,21 +93,15 @@ export const DetailsSection = (props: Props) => {
         setBreakUpPartnershipProcess({ status: Status.LOADING });
         const acceptIncomingRequestResponse = await breakUpPartnership(
           props.getUserItemProcess.data.partner.S,
-          props.getCurrentSessionProcess.data.getIdToken().getJwtToken(),
+          props.jwtToken,
         );
         setBreakUpPartnershipProcess({
           status: Status.SUCCESS,
           data: acceptIncomingRequestResponse,
         });
         toast.success("Broke up partnership");
-        props.getUserItem(
-          props.getUserItemProcess.data.username.S,
-          props.getCurrentSessionProcess.data.getIdToken().getJwtToken(),
-        );
-        props.getPairedUser(
-          props.getPairedUserProcess.data.username.S,
-          props.getCurrentSessionProcess.data.getIdToken().getJwtToken(),
-        );
+        props.getUserItem(props.getUserItemProcess.data.username.S, props.jwtToken);
+        props.getPairedUser(props.getPairedUserProcess.data.username.S, props.jwtToken);
       } catch (accpetIncomingRequestError) {
         toast.error("Could not break up partnership");
         setBreakUpPartnershipProcess({
@@ -196,8 +177,7 @@ export const DetailsSection = (props: Props) => {
 
   return (
     <MatchSectionWrapper>
-      {props.getCurrentSessionProcess.status === Status.SUCCESS &&
-        props.getUserItemProcess.status === Status.SUCCESS &&
+      {props.getUserItemProcess.status === Status.SUCCESS &&
         props.getCurrentAuthenticatedUserProcess.status === Status.SUCCESS && (
           <>
             <SecondaryHeadline>Details</SecondaryHeadline>

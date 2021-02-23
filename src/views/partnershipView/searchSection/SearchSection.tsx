@@ -1,8 +1,6 @@
 import React, { FormEvent } from "react";
 import { toast } from "react-toastify";
 import {
-  GetCurrentSessionProcess,
-  GetCurrentSessionProcessSuccess,
   GetUserItemProcess,
   GetUserItemProcessSuccess,
   Process,
@@ -29,7 +27,7 @@ import { FormWrapper, InputFieldWrapper, SearchIconButton } from "./SearchSectio
 
 type Props = {
   getCurrentAuthenticatedUserProcess: Process;
-  getCurrentSessionProcess: GetCurrentSessionProcess;
+  jwtToken: string;
   getUserItemProcess: GetUserItemProcess;
   getUserItem: (username: string, jwtToken: string) => void;
 };
@@ -47,15 +45,11 @@ export const SearchSection = (props: Props) => {
     event.preventDefault();
     if (
       props.getCurrentAuthenticatedUserProcess.status === Status.SUCCESS &&
-      props.getCurrentSessionProcess.status === Status.SUCCESS &&
       searchFieldValue.length > 0
     ) {
       try {
         setSearchProcess({ status: Status.LOADING });
-        const searchForUserResponse = await getUser(
-          searchFieldValue,
-          props.getCurrentSessionProcess.data.getIdToken().getJwtToken(),
-        );
+        const searchForUserResponse = await getUser(searchFieldValue, props.jwtToken);
         setSearchProcess({
           status: Status.SUCCESS,
           data: searchForUserResponse,
@@ -72,26 +66,20 @@ export const SearchSection = (props: Props) => {
   };
 
   const pairWith = async (
-    getCurrentSessionProcess: GetCurrentSessionProcessSuccess,
+    jwtToken: string,
     getUserItemProcess: GetUserItemProcessSuccess,
     givenSearchProcess: GetUserItemProcessSuccess,
   ) => {
     try {
       setSearchProcess({ status: Status.INITIAL });
       setPairingProcess({ status: Status.LOADING });
-      const pairWithUserResponse = await pairWithUser(
-        givenSearchProcess.data.username.S,
-        getCurrentSessionProcess.data.getIdToken().getJwtToken(),
-      );
+      const pairWithUserResponse = await pairWithUser(givenSearchProcess.data.username.S, jwtToken);
       toast.success(`Pairing request sent to ${givenSearchProcess.data.username.S}`);
       setPairingProcess({
         status: Status.SUCCESS,
         data: pairWithUserResponse,
       });
-      props.getUserItem(
-        getUserItemProcess.data.username.S,
-        getCurrentSessionProcess.data.getIdToken().getJwtToken(),
-      );
+      props.getUserItem(getUserItemProcess.data.username.S, jwtToken);
     } catch (pairWithUserError) {
       toast.error("Could not complete request");
       setPairingProcess({ status: Status.ERROR, error: pairWithUserError });
@@ -99,7 +87,7 @@ export const SearchSection = (props: Props) => {
   };
 
   const getFoundUserWrapper = (
-    givenGetCurrentSessionProcess: GetCurrentSessionProcessSuccess,
+    jwtToken: string,
     givenGetUserItemProcess: GetUserItemProcessSuccess,
     givenSearchProcess: GetUserItemProcessSuccess,
   ) => {
@@ -133,13 +121,7 @@ export const SearchSection = (props: Props) => {
           <ButtonsWrapper>
             {pairingProcess.status === Status.INITIAL && (
               <TransparentButton
-                onClick={() =>
-                  pairWith(
-                    givenGetCurrentSessionProcess,
-                    givenGetUserItemProcess,
-                    givenSearchProcess,
-                  )
-                }
+                onClick={() => pairWith(jwtToken, givenGetUserItemProcess, givenSearchProcess)}
                 title={`pair with ${givenSearchProcess.data.username.S}`}
               >
                 <HeartIcon size={30} animate={AnimateType.COLOR} isRed={false} />
@@ -174,12 +156,7 @@ export const SearchSection = (props: Props) => {
       {searchProcess.status === Status.LOADING && <Puff size={50} fill="lightblue" />}
       {searchProcess.status === Status.SUCCESS &&
         props.getUserItemProcess.status === Status.SUCCESS &&
-        props.getCurrentSessionProcess.status === Status.SUCCESS &&
-        getFoundUserWrapper(
-          props.getCurrentSessionProcess,
-          props.getUserItemProcess,
-          searchProcess,
-        )}
+        getFoundUserWrapper(props.jwtToken, props.getUserItemProcess, searchProcess)}
     </MatchSectionWrapper>
   );
 };

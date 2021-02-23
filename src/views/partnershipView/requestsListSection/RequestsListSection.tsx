@@ -10,8 +10,6 @@ import {
 import {
   Process,
   Status,
-  GetCurrentSessionProcess,
-  GetCurrentSessionProcessSuccess,
   GetUserItemProcess,
   GetUserItemProcessSuccess,
 } from "../../../types/Types";
@@ -28,7 +26,7 @@ import { SectionWrapper, RequestList, RequestListItem } from "./RequestsListSect
 
 type Props = {
   getUserItemProcess: GetUserItemProcess;
-  getCurrentSessionProcess: GetCurrentSessionProcess;
+  jwtToken: string;
   getUserItem: (username: string, jwtToken: string) => void;
 };
 
@@ -44,8 +42,7 @@ export const RequestsListSection = (props: Props) => {
   const rejectIncoming = async (rejectUsername: string) => {
     if (
       props.getUserItemProcess.status === Status.SUCCESS &&
-      props.getUserItemProcess.data.incomingRequests &&
-      props.getCurrentSessionProcess.status === Status.SUCCESS
+      props.getUserItemProcess.data.incomingRequests
     ) {
       const rejectableRequest = props.getUserItemProcess.data.incomingRequests.SS.find(
         (request: string) => rejectUsername === request,
@@ -55,17 +52,14 @@ export const RequestsListSection = (props: Props) => {
           setRejectIncomingRequestProcess({ status: Status.LOADING });
           const rejectIncomingRequestResponse = await rejectIncomingRequest(
             rejectableRequest,
-            props.getCurrentSessionProcess.data.getIdToken().getJwtToken(),
+            props.jwtToken,
           );
           setRejectIncomingRequestProcess({
             status: Status.SUCCESS,
             data: rejectIncomingRequestResponse,
           });
           toast.success("Rejected request");
-          props.getUserItem(
-            props.getUserItemProcess.data.username.S,
-            props.getCurrentSessionProcess.data.getIdToken().getJwtToken(),
-          );
+          props.getUserItem(props.getUserItemProcess.data.username.S, props.jwtToken);
         } catch (rejectIncomingRequestError) {
           toast.error("Could not reject request");
           setRejectIncomingRequestProcess({
@@ -80,7 +74,7 @@ export const RequestsListSection = (props: Props) => {
   const acceptIncoming = async (
     acceptUsername: string,
     givenGetUserItemProcess: GetUserItemProcessSuccess,
-    givenGetCurrentSessionProcess: GetCurrentSessionProcessSuccess,
+    jwtToken: string,
   ) => {
     const acceptableRequest = givenGetUserItemProcess.data.incomingRequests?.SS.find(
       (request: string) => acceptUsername === request,
@@ -88,19 +82,13 @@ export const RequestsListSection = (props: Props) => {
     if (acceptableRequest) {
       try {
         setAcceptIncomingRequestProcess({ status: Status.LOADING });
-        const acceptIncomingRequestResponse = await acceptIncomingRequest(
-          acceptUsername,
-          givenGetCurrentSessionProcess.data.getIdToken().getJwtToken(),
-        );
+        const acceptIncomingRequestResponse = await acceptIncomingRequest(acceptUsername, jwtToken);
         toast.success(`Partnered with ${acceptUsername}`);
         setAcceptIncomingRequestProcess({
           status: Status.SUCCESS,
           data: acceptIncomingRequestResponse,
         });
-        props.getUserItem(
-          givenGetUserItemProcess.data.username.S,
-          givenGetCurrentSessionProcess.data.getIdToken().getJwtToken(),
-        );
+        props.getUserItem(givenGetUserItemProcess.data.username.S, jwtToken);
       } catch (accpetIncomingRequestError) {
         toast.error("Could not accept request");
         setAcceptIncomingRequestProcess({
@@ -114,12 +102,10 @@ export const RequestsListSection = (props: Props) => {
   const getAcceptIncomingButton = (
     request: string,
     givenGetUserItemProcess: GetUserItemProcessSuccess,
-    givenGetCurrentSessionProcess: GetCurrentSessionProcessSuccess,
+    jwtToken: string,
   ) => (
     <TransparentButton
-      onClick={() =>
-        acceptIncoming(request, givenGetUserItemProcess, givenGetCurrentSessionProcess)
-      }
+      onClick={() => acceptIncoming(request, givenGetUserItemProcess, jwtToken)}
       title="confirm"
     >
       <HeartIcon size={30} animate={AnimateType.NONE} isRed={false} />
@@ -161,12 +147,7 @@ export const RequestsListSection = (props: Props) => {
                   {rejectIncomingRequestProcess.status === Status.SUCCESS && <div />}
                   {acceptIncomingRequestProcess.status === Status.INITIAL &&
                     props.getUserItemProcess.status === Status.SUCCESS &&
-                    props.getCurrentSessionProcess.status === Status.SUCCESS &&
-                    getAcceptIncomingButton(
-                      request,
-                      props.getUserItemProcess,
-                      props.getCurrentSessionProcess,
-                    )}
+                    getAcceptIncomingButton(request, props.getUserItemProcess, props.jwtToken)}
                   {acceptIncomingRequestProcess.status === Status.LOADING && (
                     <Puff size={20} fill="lightblue" />
                   )}

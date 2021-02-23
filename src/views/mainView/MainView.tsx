@@ -2,7 +2,6 @@ import React from "react";
 import { Link, Redirect } from "react-router-dom";
 import { toast } from "react-toastify";
 import {
-  Process,
   Status,
   GetUserItemProcess,
   ProcessInitial,
@@ -36,7 +35,6 @@ import {
 type Props = {
   getUserItemProcess: GetUserItemProcess;
   getUserItem: (username: string, jwtToken: string) => void;
-  getCurrentAuthenticatedUserProcess: Process;
   getPairedUserProcess: GetUserItemProcess;
 };
 
@@ -154,13 +152,11 @@ export const MainView = (props: Props) => {
   };
 
   const viewInitialized =
-    props.getCurrentAuthenticatedUserProcess.status === Status.SUCCESS &&
     getCurrentSessionProcess.status === Status.SUCCESS &&
     props.getUserItemProcess.status === Status.SUCCESS &&
     getTrendingMoviesProcess.status === Status.SUCCESS;
 
   const viewErrored =
-    props.getCurrentAuthenticatedUserProcess.status === Status.ERROR ||
     getCurrentSessionProcess.status === Status.ERROR ||
     props.getUserItemProcess.status === Status.ERROR ||
     getTrendingMoviesProcess.status === Status.ERROR;
@@ -194,7 +190,6 @@ export const MainView = (props: Props) => {
   }, [evaluateMovieProcess.status]);
 
   const filteredList = getFilteredList();
-  console.log(getTrendingMoviesProcess, "getTrendingMoviesProcess");
   return (
     <>
       {getCurrentSessionProcess.status !== Status.ERROR && (
@@ -205,8 +200,7 @@ export const MainView = (props: Props) => {
               <TitlePlaceholder />
             </div>
           )}
-          {props.getCurrentAuthenticatedUserProcess.status === Status.SUCCESS &&
-            getCurrentSessionProcess.status === Status.SUCCESS &&
+          {getCurrentSessionProcess.status === Status.SUCCESS &&
             props.getUserItemProcess.status === Status.SUCCESS &&
             getTrendingMoviesProcess.status === Status.SUCCESS && (
               <>

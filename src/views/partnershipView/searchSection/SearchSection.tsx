@@ -26,7 +26,6 @@ import { SecondaryHeadline } from "../../../styles/Styles";
 import { FormWrapper, InputFieldWrapper, SearchIconButton } from "./SearchSectionStyles";
 
 type Props = {
-  getCurrentAuthenticatedUserProcess: Process;
   jwtToken: string;
   getUserItemProcess: GetUserItemProcess;
   getUserItem: (username: string, jwtToken: string) => void;
@@ -43,10 +42,7 @@ export const SearchSection = (props: Props) => {
   });
   const searchUser = async (event: FormEvent) => {
     event.preventDefault();
-    if (
-      props.getCurrentAuthenticatedUserProcess.status === Status.SUCCESS &&
-      searchFieldValue.length > 0
-    ) {
+    if (searchFieldValue.length > 0) {
       try {
         setSearchProcess({ status: Status.LOADING });
         const searchForUserResponse = await getUser(searchFieldValue, props.jwtToken);

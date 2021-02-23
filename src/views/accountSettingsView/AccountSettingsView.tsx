@@ -20,7 +20,6 @@ const getViewContent = (
   getCurrentSessionProcess: GetCurrentSessionProcess,
   signOutProcessStatus: Status,
   signOut: () => void,
-  getCurrentAuthenticatedUserProcess: Process,
   getUserItemProcess: GetUserItemProcess,
   getUserItem: (username: string) => void,
 ) => {
@@ -35,7 +34,6 @@ const getViewContent = (
       return (
         <>
           <PictureSection
-            getCurrentAuthenticatedUserProcess={getCurrentAuthenticatedUserProcess}
             getUserItemProcess={getUserItemProcess}
             jwtToken={getCurrentSessionProcess.data.getIdToken().getJwtToken()}
             getUserItem={getUserItem}
@@ -82,7 +80,6 @@ const getViewContent = (
 };
 
 type Props = {
-  getCurrentAuthenticatedUserProcess: Process;
   initiateSession: () => void;
   getUserItemProcess: GetUserItemProcess;
   getUserItem: (username: string) => void;
@@ -122,7 +119,6 @@ export const AccountSettingsView = (props: Props) => {
         getCurrentSessionProcess,
         signOutProcess.status,
         signOut,
-        props.getCurrentAuthenticatedUserProcess,
         props.getUserItemProcess,
         props.getUserItem,
       )}

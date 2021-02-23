@@ -26,12 +26,13 @@ import {
   getOneIsLoading,
   getOneIsErrored,
 } from "./MovieViewUtilityFunctions";
+import { GetCurrentSessionProcessContext } from "../../App";
 
 const getMovieViewContent = (
   getMovieDetailsProcess: Process,
   getPairedUserProcess: GetUserItemProcess,
   getUserItemProcess: GetUserItemProcess,
-  evaluateItem: (movieId: number, score: number) => void,
+  evaluateItem: (movieId: number, score: number, jwtToken: string) => void,
   likeMovieProcess: EvaluateMovieProcess,
   getCurrentSessionProcess: GetCurrentSessionProcess,
 ) => {
@@ -100,7 +101,6 @@ const getMovieViewContent = (
 };
 
 type Props = {
-  getCurrentSessionProcess: GetCurrentSessionProcess;
   getUserItemProcess: GetUserItemProcess;
   getUserItem: (username: string, jwtToken: string) => void;
   getPairedUserProcess: GetUserItemProcess;
@@ -119,6 +119,8 @@ export const MovieView = (props: Props) => {
   });
 
   const { id } = useParams<ParamTypes>();
+
+  const getCurrentSessionProcess = React.useContext(GetCurrentSessionProcessContext);
 
   const getMovie = async () => {
     if (id) {
@@ -140,28 +142,20 @@ export const MovieView = (props: Props) => {
     }
   };
 
-  const evaluateItem = async (movieId: number, score: number) => {
+  const evaluateItem = async (movieId: number, score: number, jwtToken: string) => {
     if (
-      props.getCurrentSessionProcess.status === Status.SUCCESS &&
       getMovieDetailsProcess.status === Status.SUCCESS &&
       props.getUserItemProcess.status === Status.SUCCESS &&
       likeMovieProcess.status !== Status.LOADING
     ) {
       try {
         setLikeMovieProcess({ status: Status.LOADING, score });
-        const likeMovieResponse = await evaluateMovie(
-          props.getCurrentSessionProcess.data.getIdToken().getJwtToken(),
-          movieId,
-          score,
-        );
+        const likeMovieResponse = await evaluateMovie(jwtToken, movieId, score);
         setLikeMovieProcess({
           status: Status.SUCCESS,
           data: likeMovieResponse,
         });
-        props.getUserItem(
-          props.getUserItemProcess.data.username.S,
-          props.getCurrentSessionProcess.data.getIdToken().getJwtToken(),
-        );
+        props.getUserItem(props.getUserItemProcess.data.username.S, jwtToken);
       } catch (likeMovieError) {
         toast.error("Failed to evaluate movie");
         setLikeMovieProcess({
@@ -186,7 +180,7 @@ export const MovieView = (props: Props) => {
         props.getUserItemProcess,
         evaluateItem,
         likeMovieProcess,
-        props.getCurrentSessionProcess,
+        getCurrentSessionProcess,
       )}
     </Wrapper>
   );

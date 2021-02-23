@@ -16,7 +16,7 @@ type Props = {
   movieId: number;
   getPairedUserProcess: GetUserItemProcess;
   getUserItemProcess: GetUserItemProcess;
-  evaluateItem: (movieId: number, score: number) => void;
+  evaluateItem: (movieId: number, score: number, jwtToken: string) => void;
   likeMovieProcess: EvaluateMovieProcess;
   jwtToken: string;
 };

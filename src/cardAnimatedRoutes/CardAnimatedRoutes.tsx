@@ -8,17 +8,15 @@ import { AccountSettingsView } from "../views/accountSettingsView/AccountSetting
 import { PartnershipView } from "../views/partnershipView/PartnershipView";
 import { MatchesView } from "../views/matchesView/MatchesView";
 import { MovieView } from "../views/movieView/MovieView";
-import { GetCurrentSessionProcess, GetUserItemProcess, Process } from "../types/Types";
+import { GetUserItemProcess } from "../types/Types";
 
 type Props = {
   getUserItemProcess: GetUserItemProcess;
   getUserItem: (username: string, jwtToken?: string) => void;
-  getCurrentAuthenticatedUserProcess: Process;
   getPairedUserProcess: GetUserItemProcess;
   getPairedUser: (username: string, jwtToken?: string) => void;
   getUserInfo: () => void;
   resetState: () => void;
-  getCurrentSessionProcess: GetCurrentSessionProcess;
 };
 
 export const CardAnimatedRoutes = (props: Props) => {
@@ -31,7 +29,6 @@ export const CardAnimatedRoutes = (props: Props) => {
               <MainView
                 getUserItemProcess={props.getUserItemProcess}
                 getUserItem={props.getUserItem}
-                getCurrentAuthenticatedUserProcess={props.getCurrentAuthenticatedUserProcess}
                 getPairedUserProcess={props.getPairedUserProcess}
               />
             </div>
@@ -61,7 +58,6 @@ export const CardAnimatedRoutes = (props: Props) => {
           <CSSTransition in={match !== null} timeout={300} classNames="page" unmountOnExit>
             <div className="page">
               <AccountSettingsView
-                getCurrentAuthenticatedUserProcess={props.getCurrentAuthenticatedUserProcess}
                 initiateSession={props.getUserInfo}
                 getUserItemProcess={props.getUserItemProcess}
                 getUserItem={props.getUserItem}
@@ -76,7 +72,6 @@ export const CardAnimatedRoutes = (props: Props) => {
           <CSSTransition in={match !== null} timeout={300} classNames="page" unmountOnExit>
             <div className="page">
               <PartnershipView
-                getCurrentAuthenticatedUserProcess={props.getCurrentAuthenticatedUserProcess}
                 getUserItemProcess={props.getUserItemProcess}
                 getPairedUserProcess={props.getPairedUserProcess}
                 getPairedUser={props.getPairedUser}
@@ -104,7 +99,6 @@ export const CardAnimatedRoutes = (props: Props) => {
             <div className="page">
               <MovieView
                 getUserItemProcess={props.getUserItemProcess}
-                getCurrentSessionProcess={props.getCurrentSessionProcess}
                 getUserItem={props.getUserItem}
                 getPairedUserProcess={props.getPairedUserProcess}
               />

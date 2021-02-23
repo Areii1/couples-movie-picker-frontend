@@ -26,7 +26,6 @@ import {
 import { Puff } from "../../../components/puff/Puff";
 
 type Props = {
-  getCurrentAuthenticatedUserProcess: Process;
   getUserItemProcess: Process;
   getUserItem: (username: string, jwtToken: string) => void;
   jwtToken: string;
@@ -43,10 +42,10 @@ export const PictureSection = (props: Props) => {
     status: Status.INITIAL,
   });
 
-  // const [
-  //   randomizeProfilePictureProcess,
-  //   setRandomizeProfilePictureProcess,
-  // ] = React.useState<Process>({ status: Status.INITIAL });
+  const [
+    randomizeProfilePictureProcess,
+    setRandomizeProfilePictureProcess,
+  ] = React.useState<Process>({ status: Status.INITIAL });
 
   const [hoveringProfileBall, setHoveringProfileBall] = React.useState<boolean>(false);
 
@@ -61,13 +60,13 @@ export const PictureSection = (props: Props) => {
   }, [props.getUserItemProcess.status]);
 
   const uploadPicture = async () => {
-    if (props.getCurrentAuthenticatedUserProcess.status === Status.SUCCESS) {
+    if (props.getUserItemProcess.status === Status.SUCCESS) {
       try {
         setUploadPictureProcess({ status: Status.LOADING });
         const uploadPictureResponse = await uploadProfilePicture(
           selectedFile.name,
           selectedFile,
-          props.getCurrentAuthenticatedUserProcess.data.username,
+          props.getUserItemProcess.data.username.S,
         );
         setUploadPictureProcess({
           status: Status.SUCCESS,
@@ -75,11 +74,8 @@ export const PictureSection = (props: Props) => {
         });
         setQueryingUpdatedItem(true);
         setTimeout(() => {
-          if (props.getCurrentAuthenticatedUserProcess.status === Status.SUCCESS)
-            props.getUserItem(
-              props.getCurrentAuthenticatedUserProcess.data.username,
-              props.jwtToken,
-            );
+          if (props.getUserItemProcess.status === Status.SUCCESS)
+            props.getUserItem(props.getUserItemProcess.data.username.S, props.jwtToken);
           toast.success("Uploaded profile picture");
         }, 2000);
       } catch (uploadPictureError) {
@@ -93,11 +89,11 @@ export const PictureSection = (props: Props) => {
   };
 
   const removePicture = async () => {
-    if (props.getCurrentAuthenticatedUserProcess.status === Status.SUCCESS) {
+    if (props.getUserItemProcess.status === Status.SUCCESS) {
       try {
         setRemovePictureProcess({ status: Status.LOADING });
         const uploadPictureResponse = await removeProfilePicture(
-          props.getCurrentAuthenticatedUserProcess.data.username,
+          props.getUserItemProcess.data.username.S,
           props.jwtToken,
         );
         setRemovePictureProcess({
@@ -106,11 +102,8 @@ export const PictureSection = (props: Props) => {
         });
         setQueryingUpdatedItem(true);
         setTimeout(() => {
-          if (props.getCurrentAuthenticatedUserProcess.status === Status.SUCCESS)
-            props.getUserItem(
-              props.getCurrentAuthenticatedUserProcess.data.username,
-              props.jwtToken,
-            );
+          if (props.getUserItemProcess.status === Status.SUCCESS)
+            props.getUserItem(props.getUserItemProcess.data.username.S, props.jwtToken);
           toast.success("Removed profile picture");
         }, 2000);
       } catch (uploadPictureError) {
@@ -124,29 +117,26 @@ export const PictureSection = (props: Props) => {
   };
 
   const randomizePicture = async () => {
-    if (props.getCurrentAuthenticatedUserProcess.status === Status.SUCCESS) {
+    if (props.getUserItemProcess.status === Status.SUCCESS) {
       try {
-        // setRandomizeProfilePictureProcess({ status: Status.LOADING });
-        await randomizeProfilePicture(props.jwtToken);
-        // setRandomizeProfilePictureProcess({
-        //   status: Status.SUCCESS,
-        //   data: randomizeProfilePictureResponse,
-        // });
+        setRandomizeProfilePictureProcess({ status: Status.LOADING });
+        const randomizeProfilePictureResponse = await randomizeProfilePicture(props.jwtToken);
+        setRandomizeProfilePictureProcess({
+          status: Status.SUCCESS,
+          data: randomizeProfilePictureResponse,
+        });
         setQueryingUpdatedItem(true);
         setTimeout(() => {
-          if (props.getCurrentAuthenticatedUserProcess.status === Status.SUCCESS)
-            props.getUserItem(
-              props.getCurrentAuthenticatedUserProcess.data.username,
-              props.jwtToken,
-            );
+          if (props.getUserItemProcess.status === Status.SUCCESS)
+            props.getUserItem(props.getUserItemProcess.data.username.S, props.jwtToken);
           toast.success("Changed profile picture");
         }, 2000);
       } catch (randomizeProfilePictureError) {
         toast.error("Could not change profile picture");
-        // setRandomizeProfilePictureProcess({
-        //   status: Status.ERROR,
-        //   error: randomizeProfilePictureError,
-        // });
+        setRandomizeProfilePictureProcess({
+          status: Status.ERROR,
+          error: randomizeProfilePictureError,
+        });
       }
     }
   };
@@ -187,11 +177,8 @@ export const PictureSection = (props: Props) => {
   };
 
   const getFirstName = () => {
-    if (
-      props.getCurrentAuthenticatedUserProcess.status === Status.SUCCESS &&
-      props.getUserItemProcess.status === Status.SUCCESS
-    ) {
-      return props.getCurrentAuthenticatedUserProcess.data.username;
+    if (props.getUserItemProcess.status === Status.SUCCESS) {
+      return props.getUserItemProcess.data.username.S;
     } else {
       return undefined;
     }
@@ -233,6 +220,7 @@ export const PictureSection = (props: Props) => {
             </ProfileBallOverlay>
           )}
           {(uploadPictureProcess.status === Status.LOADING ||
+            randomizeProfilePictureProcess.status === Status.LOADING ||
             queryingUpdatedItem ||
             removePictureProcess.status === Status.LOADING) && (
             <LoadingIconWrapper>

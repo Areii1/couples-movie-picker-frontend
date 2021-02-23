@@ -160,20 +160,15 @@ export const App: React.FunctionComponent = () => {
   return (
     <ContentWrapper>
       <GetCurrentSessionProcessContext.Provider value={getCurrentSessionProcess}>
-        <NavigationBar
-          getCurrentAuthenticatedUserProcess={getCurrentAuthenticatedUserProcess}
-          getUserItemProcess={getUserItemProcess}
-        />
+        <NavigationBar getUserItemProcess={getUserItemProcess} />
         <div className="container">
           <CardAnimatedRoutes
             getUserItemProcess={getUserItemProcess}
             getUserItem={getUserItem}
-            getCurrentAuthenticatedUserProcess={getCurrentAuthenticatedUserProcess}
             getPairedUserProcess={getPairedUserProcess}
             getUserInfo={getUserInfo}
             resetState={resetState}
             getPairedUser={getPairedUser}
-            getCurrentSessionProcess={getCurrentSessionProcess}
           />
         </div>
       </GetCurrentSessionProcessContext.Provider>

@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { HeartIcon, AnimateType } from "../icons/heartIcon/HeartIcon";
 import { FireIcon } from "../icons/fireIcon/FireIcon";
-import { GetUserItemProcess, Process, Status } from "../../types/Types";
+import { GetUserItemProcess, Status } from "../../types/Types";
 import { GetCurrentSessionProcessContext } from "../../App";
 import { ProfileBall } from "../profileBall/ProfileBall";
 import { bucketUrl } from "../../config/Config";
@@ -10,16 +10,15 @@ import { sizingScale } from "../../styles/Variables";
 import { List, ListItem, IconWrapper, Wrapper } from "./NavigationBarStyles";
 
 type Props = {
-  getCurrentAuthenticatedUserProcess: Process;
   getUserItemProcess: GetUserItemProcess;
 };
 
 export const NavigationBar = (props: Props) => {
   const firstName =
-    props.getCurrentAuthenticatedUserProcess.status === Status.SUCCESS &&
     props.getUserItemProcess.status === Status.SUCCESS
-      ? props.getCurrentAuthenticatedUserProcess.data.username
+      ? props.getUserItemProcess.data.username.S
       : undefined;
+  console.log(firstName, "firstName");
   const getCurrentSessionProcess = React.useContext(GetCurrentSessionProcessContext);
   return (
     <>

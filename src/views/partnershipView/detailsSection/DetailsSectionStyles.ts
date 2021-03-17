@@ -68,3 +68,11 @@ export const DeemphasizedSpan = styled.span`
   font-weight: 300;
   margin: 0 ${`${sizingScale[1]}px`};
 `;
+
+export const SectionPlaceholder = styled.div`
+  height: ${`${sizingScale[10]}px`};
+  width: ${`${sizingScale[12]}px`};
+  margin: auto;
+  background-color: #e9e9e9;
+  border-radius: ${`${borderRadius}px`};
+`;

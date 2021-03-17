@@ -1,7 +1,7 @@
 import React from "react";
 import { toast } from "react-toastify";
 import { MatchSectionWrapper } from "../PartnershipViewStyles";
-import { Process, Status, GetUserItemProcess } from "../../../types/Types";
+import { Process, Status, UserInfo } from "../../../types/Types";
 import { PendingIcon } from "../../../components/icons/pendingIcon/PendingIcon";
 import { ProfileBall } from "../../../components/profileBall/ProfileBall";
 import { AnimateType, HeartIcon } from "../../../components/icons/heartIcon/HeartIcon";
@@ -25,14 +25,6 @@ import {
   DeemphasizedSpan,
 } from "./DetailsSectionStyles";
 
-type Props = {
-  jwtToken: string;
-  getUserItemProcess: GetUserItemProcess;
-  getPairedUserProcess: GetUserItemProcess;
-  getUserItem: (username: string, jwtToken: string) => void;
-  getPairedUser: (username: string, jwtToken: string) => void;
-};
-
 enum ModalOpen {
   BREAK,
   CANCEL,
@@ -40,6 +32,137 @@ enum ModalOpen {
   PICTUREPARTNER,
   NONE,
 }
+
+const getTextSection = (
+  userItem: UserInfo,
+  breakUpPartnershipProcess: Process,
+  cancelPairingRequestProcess: Process,
+  setModalOpen: (modalOpen: ModalOpen) => void,
+) => {
+  if (userItem.partner !== undefined && breakUpPartnershipProcess.status === Status.INITIAL) {
+    return (
+      <TextWrapper>
+        <p>{`${userItem.username.S} loves ${userItem.partner.S}`}</p>
+        <TransparentButton onClick={() => setModalOpen(ModalOpen.BREAK)} title="break up">
+          <Text>break up</Text>
+        </TransparentButton>
+      </TextWrapper>
+    );
+  } else if (
+    userItem.outgoingRequests !== undefined &&
+    cancelPairingRequestProcess.status === Status.INITIAL
+  ) {
+    return (
+      <TextWrapper>
+        <p>
+          {`${userItem.username.S}`}
+          <DeemphasizedSpan>waiting for</DeemphasizedSpan>
+          {`${userItem.outgoingRequests.S}'s`}
+          <DeemphasizedSpan>approval</DeemphasizedSpan>
+        </p>
+        <TransparentButton onClick={() => setModalOpen(ModalOpen.CANCEL)} title="cancel">
+          <Text>cancel</Text>
+        </TransparentButton>
+      </TextWrapper>
+    );
+  } else if (userItem.partner === undefined && userItem.outgoingRequests === undefined) {
+    return <p>{`${userItem.username.S} loves nobody`}</p>;
+  } else if (
+    (userItem.outgoingRequests !== undefined || userItem.partner !== undefined) &&
+    (breakUpPartnershipProcess.status === Status.LOADING ||
+      cancelPairingRequestProcess.status === Status.LOADING)
+  ) {
+    return <Puff size={50} fill="lightblue" />;
+  } else {
+    return <div />;
+  }
+};
+
+const getViewContent = (
+  userItem: UserInfo,
+  breakUpPartnershipProcess: Process,
+  cancelPairingRequestProcess: Process,
+  setModalOpen: (modalOpen: ModalOpen) => void,
+  pairedUserItem?: UserInfo,
+) => {
+  return (
+    <>
+      <SecondaryHeadline>Details</SecondaryHeadline>
+      <MatchSection>
+        <BallsWrapper>
+          <TransparentButton
+            title={`display ${userItem.username.S}`}
+            onClick={() => setModalOpen(ModalOpen.PICTUREUSER)}
+          >
+            <PartnerBallWrapper toLeft={false}>
+              <ProfileBall
+                firstName={userItem.username.S}
+                image={
+                  userItem.profilePicture ? `${bucketUrl}/${userItem.profilePicture.S}` : undefined
+                }
+                isCurrentUser={false}
+                size={192}
+                animate={false}
+                fontSize={100}
+                showText
+                shadow={false}
+                border={false}
+              />
+              <BallOverlay requestPending={userItem.outgoingRequests !== undefined} />
+            </PartnerBallWrapper>
+          </TransparentButton>
+          <TransparentButton
+            title={`display ${userItem.username.S}`}
+            onClick={() => setModalOpen(ModalOpen.PICTUREPARTNER)}
+          >
+            <PartnerBallWrapper toLeft>
+              <ProfileBall
+                firstName={pairedUserItem !== undefined ? pairedUserItem.username.S : ""}
+                image={
+                  pairedUserItem !== undefined && pairedUserItem.profilePicture
+                    ? `${bucketUrl}/${pairedUserItem.profilePicture.S}`
+                    : undefined
+                }
+                isCurrentUser={false}
+                size={192}
+                animate={false}
+                fontSize={100}
+                showText={userItem.outgoingRequests === undefined}
+                shadow={false}
+                border={false}
+              />
+              <BallOverlay requestPending={userItem.outgoingRequests !== undefined} />
+              {userItem.outgoingRequests !== undefined && (
+                <PendingIconWrapper>
+                  <PendingIcon animate={false} size={80} />
+                </PendingIconWrapper>
+              )}
+            </PartnerBallWrapper>
+          </TransparentButton>
+          <IconWrapper>
+            {userItem.outgoingRequests === undefined && (
+              <HeartIcon size={80} animate={AnimateType.NONE} isRed />
+            )}
+          </IconWrapper>
+        </BallsWrapper>
+      </MatchSection>
+      {getTextSection(
+        userItem,
+        breakUpPartnershipProcess,
+        cancelPairingRequestProcess,
+        setModalOpen,
+      )}
+    </>
+  );
+};
+
+type Props = {
+  jwtToken: string;
+  userItem: UserInfo;
+  pairedUserItem?: UserInfo;
+  getUserItem: (username: string, jwtToken: string) => void;
+  getPairedUser: (username: string, jwtToken: string) => void;
+};
 
 export const DetailsSection = (props: Props) => {
   const [breakUpPartnershipProcess, setBreakUpPartnershipProcess] = React.useState<Process>({
@@ -51,14 +174,11 @@ export const DetailsSection = (props: Props) => {
   const [modalOpen, setModalOpen] = React.useState<ModalOpen>(ModalOpen.NONE);
 
   const cancelPairing = async () => {
-    if (
-      props.getUserItemProcess.status === Status.SUCCESS &&
-      props.getUserItemProcess.data.outgoingRequests !== undefined
-    ) {
+    if (props.userItem.outgoingRequests !== undefined) {
       try {
         setCancelPairingRequestProcess({ status: Status.LOADING });
         const cancelPairingResponse = await cancelPairingRequest(
-          props.getUserItemProcess.data.outgoingRequests.S,
+          props.userItem.outgoingRequests.S,
           props.jwtToken,
         );
         toast.success("Cancelled pairing request");
@@ -66,8 +186,8 @@ export const DetailsSection = (props: Props) => {
           status: Status.SUCCESS,
           data: cancelPairingResponse,
         });
-        props.getUserItem(props.getUserItemProcess.data.username.S, props.jwtToken);
-        props.getPairedUser(props.getUserItemProcess.data.outgoingRequests.S, props.jwtToken);
+        props.getUserItem(props.userItem.username.S, props.jwtToken);
+        props.getPairedUser(props.userItem.outgoingRequests.S, props.jwtToken);
       } catch (cancelPairingError) {
         toast.error("Could not cancel pairing");
         setCancelPairingRequestProcess({
@@ -81,15 +201,11 @@ export const DetailsSection = (props: Props) => {
   };
 
   const breakUp = async () => {
-    if (
-      props.getUserItemProcess.status === Status.SUCCESS &&
-      props.getPairedUserProcess.status === Status.SUCCESS &&
-      props.getUserItemProcess.data.partner !== undefined
-    ) {
+    if (props.userItem.partner !== undefined && props.pairedUserItem !== undefined) {
       try {
         setBreakUpPartnershipProcess({ status: Status.LOADING });
         const acceptIncomingRequestResponse = await breakUpPartnership(
-          props.getUserItemProcess.data.partner.S,
+          props.userItem.partner.S,
           props.jwtToken,
         );
         setBreakUpPartnershipProcess({
@@ -97,8 +213,8 @@ export const DetailsSection = (props: Props) => {
           data: acceptIncomingRequestResponse,
         });
         toast.success("Broke up partnership");
-        props.getUserItem(props.getUserItemProcess.data.username.S, props.jwtToken);
-        props.getPairedUser(props.getPairedUserProcess.data.username.S, props.jwtToken);
+        props.getUserItem(props.userItem.username.S, props.jwtToken);
+        props.getPairedUser(props.pairedUserItem.username.S, props.jwtToken);
       } catch (accpetIncomingRequestError) {
         toast.error("Could not break up partnership");
         setBreakUpPartnershipProcess({
@@ -108,57 +224,6 @@ export const DetailsSection = (props: Props) => {
       }
     } else {
       toast.info("can't break up");
-    }
-  };
-
-  const getTextSection = () => {
-    if (props.getUserItemProcess.status === Status.SUCCESS) {
-      if (
-        props.getUserItemProcess.data.partner !== undefined &&
-        breakUpPartnershipProcess.status === Status.INITIAL
-      ) {
-        return (
-          <TextWrapper>
-            <p>{`${props.getUserItemProcess.data.username.S} loves ${props.getUserItemProcess.data.partner.S}`}</p>
-            <TransparentButton onClick={() => setModalOpen(ModalOpen.BREAK)} title="break up">
-              <Text>break up</Text>
-            </TransparentButton>
-          </TextWrapper>
-        );
-      } else if (
-        props.getUserItemProcess.data.outgoingRequests !== undefined &&
-        cancelPairingRequestProcess.status === Status.INITIAL
-      ) {
-        return (
-          <TextWrapper>
-            <p>
-              {`${props.getUserItemProcess.data.username.S}`}
-              <DeemphasizedSpan>waiting for</DeemphasizedSpan>
-              {`${props.getUserItemProcess.data.outgoingRequests.S}'s`}
-              <DeemphasizedSpan>approval</DeemphasizedSpan>
-            </p>
-            <TransparentButton onClick={() => setModalOpen(ModalOpen.CANCEL)} title="cancel">
-              <Text>cancel</Text>
-            </TransparentButton>
-          </TextWrapper>
-        );
-      } else if (
-        props.getUserItemProcess.data.partner === undefined &&
-        props.getUserItemProcess.data.outgoingRequests === undefined
-      ) {
-        return <p>{`${props.getUserItemProcess.data.username.S} loves nobody`}</p>;
-      } else if (
-        (props.getUserItemProcess.data.outgoingRequests !== undefined ||
-          props.getUserItemProcess.data.partner !== undefined) &&
-        (breakUpPartnershipProcess.status === Status.LOADING ||
-          cancelPairingRequestProcess.status === Status.LOADING)
-      ) {
-        return <Puff size={50} fill="lightblue" />;
-      } else {
-        return <div />;
-      }
-    } else {
-      return <div />;
     }
   };
 
@@ -174,131 +239,47 @@ export const DetailsSection = (props: Props) => {
 
   return (
     <MatchSectionWrapper>
-      {props.getUserItemProcess.status === Status.SUCCESS && (
-        <>
-          <SecondaryHeadline>Details</SecondaryHeadline>
-          <MatchSection>
-            <BallsWrapper>
-              <TransparentButton
-                title={`display ${props.getUserItemProcess.data.username.S}`}
-                onClick={() => setModalOpen(ModalOpen.PICTUREUSER)}
-              >
-                <PartnerBallWrapper toLeft={false}>
-                  <ProfileBall
-                    firstName={props.getUserItemProcess.data.username.S}
-                    image={
-                      props.getUserItemProcess.status === Status.SUCCESS &&
-                      props.getUserItemProcess.data.profilePicture
-                        ? `${bucketUrl}/${props.getUserItemProcess.data.profilePicture.S}`
-                        : undefined
-                    }
-                    isCurrentUser={false}
-                    size={192}
-                    animate={false}
-                    fontSize={100}
-                    showText
-                    shadow={false}
-                    border={false}
-                  />
-                  <BallOverlay
-                    requestPending={
-                      props.getUserItemProcess.status === Status.SUCCESS &&
-                      props.getUserItemProcess.data.outgoingRequests !== undefined
-                    }
-                  />
-                </PartnerBallWrapper>
-              </TransparentButton>
-              <TransparentButton
-                title={`display ${props.getUserItemProcess.data.username.S}`}
-                onClick={() => setModalOpen(ModalOpen.PICTUREPARTNER)}
-              >
-                <PartnerBallWrapper toLeft>
-                  <ProfileBall
-                    firstName={
-                      props.getPairedUserProcess.status === Status.SUCCESS
-                        ? props.getPairedUserProcess.data.username.S
-                        : undefined
-                    }
-                    image={
-                      ((props.getUserItemProcess.status === Status.SUCCESS &&
-                        props.getUserItemProcess.data.outgoingRequests !== undefined) ||
-                        (props.getUserItemProcess.status === Status.SUCCESS &&
-                          props.getUserItemProcess.data.partner !== undefined)) &&
-                      props.getPairedUserProcess.status === Status.SUCCESS &&
-                      props.getPairedUserProcess.data.profilePicture
-                        ? `${bucketUrl}/${props.getPairedUserProcess.data.profilePicture.S}`
-                        : undefined
-                    }
-                    isCurrentUser={false}
-                    size={192}
-                    animate={false}
-                    fontSize={100}
-                    showText={
-                      !(
-                        props.getUserItemProcess.status === Status.SUCCESS &&
-                        props.getUserItemProcess.data.outgoingRequests !== undefined
-                      )
-                    }
-                    shadow={false}
-                    border={false}
-                  />
-                  <BallOverlay
-                    requestPending={
-                      props.getUserItemProcess.status === Status.SUCCESS &&
-                      props.getUserItemProcess.data.outgoingRequests !== undefined
-                    }
-                  />
-                  {props.getUserItemProcess.status === Status.SUCCESS &&
-                    props.getUserItemProcess.data.outgoingRequests !== undefined && (
-                      <PendingIconWrapper>
-                        <PendingIcon animate={false} size={80} />
-                      </PendingIconWrapper>
-                    )}
-                </PartnerBallWrapper>
-              </TransparentButton>
-              <IconWrapper>
-                {!(
-                  props.getUserItemProcess.status === Status.SUCCESS &&
-                  props.getUserItemProcess.data.outgoingRequests !== undefined
-                ) && <HeartIcon size={80} animate={AnimateType.NONE} isRed />}
-              </IconWrapper>
-            </BallsWrapper>
-          </MatchSection>
-          {getTextSection()}
-        </>
+      {getViewContent(
+        props.userItem,
+        breakUpPartnershipProcess,
+        cancelPairingRequestProcess,
+        setModalOpen,
+        props.pairedUserItem,
       )}
-      {modalOpen !== ModalOpen.NONE && props.getUserItemProcess.status === Status.SUCCESS && (
+      {modalOpen !== ModalOpen.NONE && (
         <>
-          {modalOpen === ModalOpen.BREAK && props.getUserItemProcess.data.partner && (
+          {modalOpen === ModalOpen.BREAK && props.userItem.partner && (
             <ConfirmModal
-              title={`Break up partnership with ${props.getUserItemProcess.data.partner.S}`}
+              title={`Break up partnership with ${props.userItem.partner.S}`}
               closeModal={() => setModalOpen(ModalOpen.NONE)}
               performAction={() => handleBreakUpModalButtonClick()}
             />
           )}
-          {modalOpen === ModalOpen.CANCEL && props.getUserItemProcess.data.outgoingRequests && (
+          {modalOpen === ModalOpen.CANCEL && props.userItem.outgoingRequests && (
             <ConfirmModal
-              title={`Cancel pending request to ${props.getUserItemProcess.data.outgoingRequests.S}`}
+              title={`Cancel pending request to ${props.userItem.outgoingRequests.S}`}
               closeModal={() => setModalOpen(ModalOpen.NONE)}
               performAction={() => handleCancelModalButtonClick()}
             />
           )}
-          {modalOpen === ModalOpen.PICTUREUSER &&
-            props.getUserItemProcess.status === Status.SUCCESS && (
-              <DisplayProfile
-                closeModal={() => setModalOpen(ModalOpen.NONE)}
-                source={`${bucketUrl}/${props.getUserItemProcess.data.profilePicture.S}`}
-              />
-            )}
-          {modalOpen === ModalOpen.PICTUREPARTNER &&
-            props.getPairedUserProcess.status === Status.SUCCESS && (
-              <DisplayProfile
-                closeModal={() => setModalOpen(ModalOpen.NONE)}
-                source={`${bucketUrl}/${props.getPairedUserProcess.data.profilePicture.S}`}
-              />
-            )}
+          {modalOpen === ModalOpen.PICTUREUSER && (
+            <DisplayProfile
+              closeModal={() => setModalOpen(ModalOpen.NONE)}
+              source={`${bucketUrl}/${props.userItem.profilePicture.S}`}
+            />
+          )}
+          {modalOpen === ModalOpen.PICTUREPARTNER && props.pairedUserItem !== undefined && (
+            <DisplayProfile
+              closeModal={() => setModalOpen(ModalOpen.NONE)}
+              source={`${bucketUrl}/${props.pairedUserItem.profilePicture.S}`}
+            />
+          )}
         </>
       )}
     </MatchSectionWrapper>
   );
+};
+
+DetailsSection.defaultProps = {
+  pairedUserItem: undefined,
 };

@@ -21,7 +21,10 @@ import {
   DislikedMoviesListWrapper,
   ListPadding,
 } from "./MatchesViewStyles";
-import { GetTrendingMovieProcessSuccess, GetTrendingMoviesProcess } from "../mainView/MainView";
+import {
+  GetTrendingMovieProcessSuccess,
+  GetTrendingMoviesProcess,
+} from "../mainView/MainViewTypes";
 import { getSortedMatchedMovies } from "./MatchesViewUtilityFunctions";
 
 export type ProcessedMatchedMovies = {

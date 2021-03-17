@@ -3,7 +3,7 @@ import { FireIcon } from "../icons/fireIcon/FireIcon";
 import { ColdIcon } from "../icons/coldIcon/ColdIcon";
 import { sizingScale } from "../../styles/Variables";
 import { Status } from "../../types/Types";
-import { EvaluateMovieProcess } from "../../views/mainView/MainView";
+import { EvaluateMovieProcess } from "../../views/mainView/MainViewTypes";
 import { Wrapper, ColdIconButton, HotIconButton, MeterSwitchButton } from "./FireMeterStyles";
 
 type Props = {

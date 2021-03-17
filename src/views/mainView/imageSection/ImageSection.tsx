@@ -3,7 +3,7 @@ import { AnimateType, HeartIcon } from "../../../components/icons/heartIcon/Hear
 import { ProfileBall } from "../../../components/profileBall/ProfileBall";
 import { sizingScale } from "../../../styles/Variables";
 import { TransparentButton } from "../../accountSettingsView/pictureSection/PictureSectionStyles";
-import { EvaluateMovieProcess } from "../MainView";
+import { EvaluateMovieProcess } from "../MainViewTypes";
 import {
   userEvaluationItemIsNotBlockedByHoverEffect,
   getImageAlt,

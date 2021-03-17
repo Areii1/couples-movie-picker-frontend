@@ -1,6 +1,6 @@
-import { GetUserItemProcess, Status } from "../../../types/Types";
+import { GetUserItemProcess, LikedMoviesListItem, Status } from "../../../types/Types";
 import { getEvaluatedMovieItem } from "../../movieView/MovieViewUtilityFunctions";
-import { EvaluateMovieProcess } from "../MainView";
+import { EvaluateMovieProcess } from "../MainViewTypes";
 import { HoveringOver } from "./ImageSection";
 
 export const getIsPartnered = (
@@ -25,7 +25,7 @@ export const getPartnerEvaluatedMovie = (
   filteredList: any[],
   swipingIndex: number,
   getPairedUserProcess: GetUserItemProcess,
-) => {
+): LikedMoviesListItem | undefined => {
   if (filteredList.length > 0) {
     return getEvaluatedMovieItem(getPairedUserProcess, filteredList[swipingIndex].id);
   } else {

@@ -5,7 +5,7 @@ import { GetUserItemProcess, Status } from "../../../types/Types";
 import { MovieTertiaryHeadline } from "../MovieViewStyles";
 import { getEvaluatedMovieItem, getIsMatched } from "../MovieViewUtilityFunctions";
 import { FireMeter } from "../../../components/fireMeter/FireMeter";
-import { EvaluateMovieProcess } from "../../mainView/MainView";
+import { EvaluateMovieProcess } from "../../mainView/MainViewTypes";
 import {
   UserEvaluationWrapper,
   UserEvaluationItemWrapper,

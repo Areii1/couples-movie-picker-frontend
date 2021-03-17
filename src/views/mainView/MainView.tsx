@@ -4,13 +4,11 @@ import { toast } from "react-toastify";
 import {
   Status,
   GetUserItemProcess,
-  ProcessInitial,
-  ProcessLoading,
   ProcessSuccess,
-  ProcessError,
   LikedMoviesListItem,
   Movie,
 } from "../../types/Types";
+import { MainViewProps, EvaluateMovieProcess, GetTrendingMoviesProcess } from "./MainViewTypes";
 import { GetCurrentSessionProcessContext } from "../../App";
 import { FireMeter } from "../../components/fireMeter/FireMeter";
 import { SecondaryHeadline } from "../../styles/Styles";
@@ -32,28 +30,7 @@ import {
   TitleWrapper,
 } from "./MainViewStyles";
 
-type Props = {
-  getUserItemProcess: GetUserItemProcess;
-  getUserItem: (username: string, jwtToken: string) => void;
-  getPairedUserProcess: GetUserItemProcess;
-};
-
-export type EvaluateMovieProcessLoading = { status: Status.LOADING; score: number };
-
-export type EvaluateMovieProcess =
-  | ProcessInitial
-  | EvaluateMovieProcessLoading
-  | ProcessSuccess
-  | ProcessError;
-
-export type GetTrendingMovieProcessSuccess = { status: Status.SUCCESS; data: Movie[] };
-export type GetTrendingMoviesProcess =
-  | ProcessInitial
-  | ProcessLoading
-  | GetTrendingMovieProcessSuccess
-  | ProcessError;
-
-export const MainView = (props: Props) => {
+export const MainView = (props: MainViewProps) => {
   const [
     getTrendingMoviesProcess,
     setGetTrendingMoviesProcess,
@@ -112,24 +89,6 @@ export const MainView = (props: Props) => {
     }
   };
 
-  React.useEffect(() => {
-    if (
-      props.getUserItemProcess.status === Status.SUCCESS &&
-      getCurrentSessionProcess.status === Status.SUCCESS
-    ) {
-      props.getUserItem(
-        props.getUserItemProcess.data.username.S,
-        getCurrentSessionProcess.data.getIdToken().getJwtToken(),
-      );
-    }
-  }, []);
-
-  React.useEffect(() => {
-    if (props.getUserItemProcess.status === Status.SUCCESS) {
-      getMovies();
-    }
-  }, [props.getUserItemProcess.status]);
-
   const getFilteredList = () => {
     if (getTrendingMoviesProcess.status === Status.SUCCESS) {
       return getTrendingMoviesProcess.data.filter((movie: Movie) => {
@@ -161,21 +120,24 @@ export const MainView = (props: Props) => {
     props.getUserItemProcess.status === Status.ERROR ||
     getTrendingMoviesProcess.status === Status.ERROR;
 
-  React.useEffect(() => {
+  const displayMatchToast = (
+    getPairedUserProcess: GetUserItemProcess,
+    getUserItemProcess: GetUserItemProcess,
+    evaluateMovieProcessSuccess: ProcessSuccess,
+  ) => {
     if (
-      evaluateMovieProcess.status === Status.SUCCESS &&
-      props.getPairedUserProcess.status === Status.SUCCESS &&
-      props.getPairedUserProcess.data.likedMovies &&
-      props.getUserItemProcess.status === Status.SUCCESS &&
-      props.getUserItemProcess.data.likedMovies
+      getPairedUserProcess.status === Status.SUCCESS &&
+      getPairedUserProcess.data.likedMovies &&
+      getUserItemProcess.status === Status.SUCCESS &&
+      getUserItemProcess.data.likedMovies
     ) {
       const filteredList = getFilteredList();
-      const userEvaluatedLastMovieItem = evaluateMovieProcess.data.Attributes.likedMovies.L.find(
+      const userEvaluatedLastMovieItem = evaluateMovieProcessSuccess.data.Attributes.likedMovies.L.find(
         (likedMovie: LikedMoviesListItem) =>
           filteredList[swipingIndex - 1].id === parseInt(likedMovie.M.id.S, 10),
       );
       if (userEvaluatedLastMovieItem && parseInt(userEvaluatedLastMovieItem.M.score.N, 10) >= 50) {
-        const pairedUserEvaluatedLastItem = props.getPairedUserProcess.data.likedMovies.L.find(
+        const pairedUserEvaluatedLastItem = getPairedUserProcess.data.likedMovies.L.find(
           (likedMovie: LikedMoviesListItem) =>
             filteredList[swipingIndex - 1].id === parseInt(likedMovie.M.id.S, 10),
         );
@@ -183,11 +145,35 @@ export const MainView = (props: Props) => {
           pairedUserEvaluatedLastItem &&
           parseInt(pairedUserEvaluatedLastItem.M.score.N, 10) >= 50
         ) {
-          toast.success(`Movie matched with ${props.getPairedUserProcess.data.username.S}`);
+          toast.success(`Movie matched with ${getPairedUserProcess.data.username.S}`);
         }
       }
     }
+  };
+
+  React.useEffect(() => {
+    if (evaluateMovieProcess.status === Status.SUCCESS) {
+      displayMatchToast(props.getPairedUserProcess, props.getUserItemProcess, evaluateMovieProcess);
+    }
   }, [evaluateMovieProcess.status]);
+
+  React.useEffect(() => {
+    if (
+      props.getUserItemProcess.status === Status.SUCCESS &&
+      getCurrentSessionProcess.status === Status.SUCCESS
+    ) {
+      props.getUserItem(
+        props.getUserItemProcess.data.username.S,
+        getCurrentSessionProcess.data.getIdToken().getJwtToken(),
+      );
+    }
+  }, []);
+
+  React.useEffect(() => {
+    if (props.getUserItemProcess.status === Status.SUCCESS) {
+      getMovies();
+    }
+  }, [props.getUserItemProcess.status]);
 
   const filteredList = getFilteredList();
   return (

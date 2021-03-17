@@ -6,7 +6,7 @@ import { getMovieDetails } from "../../apiService/getMovieDetails";
 import { PrimaryHeadline, SecondaryHeadline } from "../../styles/Styles";
 import { MovieEvaluationSection } from "./movieEvaluationSection/MovieEvaluationSection";
 import { evaluateMovie } from "../../apiService/evaluateMovie";
-import { EvaluateMovieProcess } from "../mainView/MainView";
+import { EvaluateMovieProcess } from "../mainView/MainViewTypes";
 import { ImagePlaceholder, TitlePlaceholder } from "../mainView/MainViewStyles";
 import {
   MovieViewSection,

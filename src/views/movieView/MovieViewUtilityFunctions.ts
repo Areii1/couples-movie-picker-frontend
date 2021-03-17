@@ -48,6 +48,8 @@ export const getOneIsLoading = (processList: Process[]): boolean =>
   processList.some((process) => process.status === Status.LOADING);
 export const getOneIsErrored = (processList: Process[]): boolean =>
   processList.some((process) => process.status === Status.ERROR);
+export const getAllAreSuccessfull = (processList: Process[]): boolean =>
+  !processList.some((process) => process.status !== Status.SUCCESS);
 
 export const getIsMatched = (
   userEvaluatedMovieItem: LikedMoviesListItem | undefined,

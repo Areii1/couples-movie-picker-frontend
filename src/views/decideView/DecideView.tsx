@@ -6,6 +6,7 @@ import { PrimaryHeadline } from "../../styles/Styles";
 import { borderRadius, fontSizes, sizingScale } from "../../styles/Variables";
 import { GetUserItemProcess, LikedMoviesListItem, Movie, Status } from "../../types/Types";
 import { SettingsCardContentWrapper } from "../accountSettingsView/AccountSettingsViewStyles";
+import { TransparentButton } from "../accountSettingsView/pictureSection/PictureSectionStyles";
 import { GetTrendingMoviesProcess } from "../mainView/MainViewTypes";
 
 type Props = {
@@ -19,14 +20,44 @@ const List = styled.ul`
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
+  position: relative;
 `;
 
+type ListItemProps = {
+  draggingInfo: DraggingInfo | undefined;
+  movieId: number;
+  mousePosition: MousePosition | undefined;
+};
+
 const ListItem = styled.li`
+  position: ${(props: ListItemProps) =>
+    props.draggingInfo !== undefined &&
+    props.draggingInfo.movieId === props.movieId &&
+    props.mousePosition
+      ? "fixed"
+      : "static"};
+  top: ${(props: ListItemProps) =>
+    props.draggingInfo !== undefined &&
+    props.draggingInfo.movieId === props.movieId &&
+    props.mousePosition
+      ? `${props.mousePosition.y}px`
+      : "unset"};
+  left: ${(props: ListItemProps) =>
+    props.draggingInfo !== undefined &&
+    props.draggingInfo.movieId === props.movieId &&
+    props.mousePosition
+      ? `${props.mousePosition.x}px`
+      : "unset"};
   width: ${`${sizingScale[10]}px`};
   height: ${`${sizingScale[8]}px`};
   border-radius: ${`${borderRadius}px`};
   margin: ${`${sizingScale[3]}px`} 0;
+`;
+
+const ListItemContentWrapper = styled.div`
   position: relative;
+  width: ${`${sizingScale[10]}px`};
+  height: ${`${sizingScale[8]}px`};
 `;
 
 const Image = styled.img`
@@ -44,13 +75,23 @@ const ItemOverlay = styled.div`
   align-items: center;
   width: ${`${sizingScale[10]}px`};
   height: ${`${sizingScale[8]}px`};
-  background-color: rgba(255, 255, 255, 0.5);
+  background-color: rgba(0, 0, 0, 0.4);
 `;
 
 const OverlayText = styled.h4`
   margin: 0;
-  font-size: ${`${fontSizes[4]}px`};
+  font-size: ${`${fontSizes[6]}px`};
+  color: white;
 `;
+
+type DraggingInfo = {
+  movieId: number;
+};
+
+type MousePosition = {
+  x: string;
+  y: string;
+};
 
 export const DecideView = (props: Props) => {
   const [
@@ -59,6 +100,10 @@ export const DecideView = (props: Props) => {
   ] = React.useState<GetTrendingMoviesProcess>({
     status: Status.INITIAL,
   });
+
+  const [draggingInfo, setDraggingInfo] = React.useState<DraggingInfo | undefined>(undefined);
+
+  const [mousePosition, setMousePosition] = React.useState<MousePosition | undefined>(undefined);
 
   const getFilteredList = () => {
     if (getTrendingMoviesProcess.status === Status.SUCCESS) {
@@ -101,64 +146,126 @@ export const DecideView = (props: Props) => {
 
   React.useEffect(() => {
     getMovies();
+    document.onmousemove = (event: any) => setMousePosition({ x: event.pageX, y: event.pageY });
   }, []);
   const filteredList = getFilteredList();
 
   console.log(props.getPairedUserProcess, "getPairedUserProcess");
   console.log(props.getUserItemProcess, "getUserItemProcess");
 
-  console.log(getTrendingMoviesProcess, "getTrendingMoviesProcess");
-  console.log(filteredList, "filteredList");
+  // console.log(getTrendingMoviesProcess, "getTrendingMoviesProcess");
+  // console.log(filteredList, "filteredList");
+  console.log(mousePosition, "mousePosition");
 
   return (
     <SettingsCardContentWrapper>
       <PrimaryHeadline>Decide view</PrimaryHeadline>
       {filteredList.length > 0 && (
         <List>
-          <ListItem>
-            <Image
-              src={`https://image.tmdb.org/t/p/w342/${filteredList[0].backdrop_path}`}
-              alt="poster"
-            />
-            <ItemOverlay>
-              <OverlayText>1</OverlayText>
-            </ItemOverlay>
+          <ListItem
+            draggingInfo={draggingInfo}
+            movieId={filteredList[0].id}
+            mousePosition={mousePosition}
+          >
+            <TransparentButton
+              onMouseDown={() => setDraggingInfo({ movieId: filteredList[0].id })}
+              onMouseUp={() => setDraggingInfo(undefined)}
+              title={filteredList[0].original_title}
+            >
+              <ListItemContentWrapper>
+                <Image
+                  src={`https://image.tmdb.org/t/p/w342/${filteredList[0].backdrop_path}`}
+                  alt="poster"
+                />
+                <ItemOverlay>
+                  <OverlayText>1</OverlayText>
+                </ItemOverlay>
+              </ListItemContentWrapper>
+            </TransparentButton>
           </ListItem>
-          <ListItem>
-            <Image
-              src={`https://image.tmdb.org/t/p/w342/${filteredList[1].backdrop_path}`}
-              alt="poster"
-            />
-            <ItemOverlay>
-              <OverlayText>2</OverlayText>
-            </ItemOverlay>
+          <ListItem
+            draggingInfo={draggingInfo}
+            movieId={filteredList[1].id}
+            mousePosition={mousePosition}
+          >
+            <TransparentButton
+              onMouseDown={() => setDraggingInfo({ movieId: filteredList[1].id })}
+              onMouseUp={() => setDraggingInfo(undefined)}
+              title={filteredList[1].original_title}
+            >
+              <ListItemContentWrapper>
+                <Image
+                  src={`https://image.tmdb.org/t/p/w342/${filteredList[1].backdrop_path}`}
+                  alt="poster"
+                />
+                <ItemOverlay>
+                  <OverlayText>2</OverlayText>
+                </ItemOverlay>
+              </ListItemContentWrapper>
+            </TransparentButton>
           </ListItem>
-          <ListItem>
-            <Image
-              src={`https://image.tmdb.org/t/p/w342/${filteredList[2].backdrop_path}`}
-              alt="poster"
-            />
-            <ItemOverlay>
-              <OverlayText>3</OverlayText>
-            </ItemOverlay>
+          <ListItem
+            draggingInfo={draggingInfo}
+            movieId={filteredList[2].id}
+            mousePosition={mousePosition}
+          >
+            <TransparentButton
+              onMouseDown={() => setDraggingInfo({ movieId: filteredList[2].id })}
+              onMouseUp={() => setDraggingInfo(undefined)}
+              title={filteredList[2].original_title}
+            >
+              <ListItemContentWrapper>
+                <Image
+                  src={`https://image.tmdb.org/t/p/w342/${filteredList[2].backdrop_path}`}
+                  alt="poster"
+                />
+                <ItemOverlay>
+                  <OverlayText>3</OverlayText>
+                </ItemOverlay>
+              </ListItemContentWrapper>
+            </TransparentButton>
           </ListItem>
-          <ListItem>
-            <Image
-              src={`https://image.tmdb.org/t/p/w342/${filteredList[3].backdrop_path}`}
-              alt="poster"
-            />
-            <ItemOverlay>
-              <OverlayText>4</OverlayText>
-            </ItemOverlay>
+          <ListItem
+            draggingInfo={draggingInfo}
+            movieId={filteredList[3].id}
+            mousePosition={mousePosition}
+          >
+            <TransparentButton
+              onMouseDown={() => setDraggingInfo({ movieId: filteredList[3].id })}
+              onMouseUp={() => setDraggingInfo(undefined)}
+              title={filteredList[3].original_title}
+            >
+              <ListItemContentWrapper>
+                <Image
+                  src={`https://image.tmdb.org/t/p/w342/${filteredList[3].backdrop_path}`}
+                  alt="poster"
+                />
+                <ItemOverlay>
+                  <OverlayText>4</OverlayText>
+                </ItemOverlay>
+              </ListItemContentWrapper>
+            </TransparentButton>
           </ListItem>
-          <ListItem>
-            <Image
-              src={`https://image.tmdb.org/t/p/w342/${filteredList[4].backdrop_path}`}
-              alt="poster"
-            />
-            <ItemOverlay>
-              <OverlayText>5</OverlayText>
-            </ItemOverlay>
+          <ListItem
+            draggingInfo={draggingInfo}
+            movieId={filteredList[4].id}
+            mousePosition={mousePosition}
+          >
+            <TransparentButton
+              onMouseDown={() => setDraggingInfo({ movieId: filteredList[4].id })}
+              onMouseUp={() => setDraggingInfo(undefined)}
+              title={filteredList[4].original_title}
+            >
+              <ListItemContentWrapper>
+                <Image
+                  src={`https://image.tmdb.org/t/p/w342/${filteredList[4].backdrop_path}`}
+                  alt="poster"
+                />
+                <ItemOverlay>
+                  <OverlayText>5</OverlayText>
+                </ItemOverlay>
+              </ListItemContentWrapper>
+            </TransparentButton>
           </ListItem>
         </List>
       )}

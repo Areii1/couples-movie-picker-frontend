@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
-import { CardContentWrapper } from "../logIn/LogInStyles";
+import { Button, ButtonText, CardContentWrapper } from "../logIn/LogInStyles";
 import {
   GetUserItemProcess,
   GetUserItemProcessSuccess,
@@ -26,6 +26,7 @@ import {
   GetTrendingMoviesProcess,
 } from "../mainView/MainViewTypes";
 import { getSortedMatchedMovies } from "./MatchesViewUtilityFunctions";
+import { WaitingModal } from "../../components/modals/waitingModal/WaitingModal";
 
 export type ProcessedMatchedMovies = {
   id: string;
@@ -198,6 +199,8 @@ export const MatchesView = (props: Props) => {
     false,
   );
 
+  const [modalOpen, setModalOpen] = React.useState<boolean>(false);
+
   const getMovies = async () => {
     try {
       setGetTrendingMoviesProcess({ status: Status.LOADING });
@@ -270,6 +273,20 @@ export const MatchesView = (props: Props) => {
                   </>
                 )}
               </>
+            )}
+            <Button
+              type="button"
+              onClick={() => setModalOpen(true)}
+              title="decide a movie now"
+              error={false}
+            >
+              <ButtonText>Decide now</ButtonText>
+            </Button>
+            {modalOpen && (
+              <WaitingModal
+                title={`Waiting for ${props.getPairedUserProcess.data.username.S}'s confirmation`}
+                pairedUserItem={props.getPairedUserProcess.data}
+              />
             )}
           </>
         )}

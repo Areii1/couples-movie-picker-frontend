@@ -22,14 +22,6 @@ const getViewContent = (
   getUserItem: (username: string, jwtToken: string) => void,
   getPairedUser: (username: string, jwtToken: string) => void,
 ) => {
-  console.log(
-    getCurrentSessionProcess,
-    "getCurrentSessionProcess",
-    getPairedUserProcess,
-    "getPairedUserProcess",
-    getUserItemProcess,
-    "getUserItemProcess",
-  );
   const allAreInitial = getAllAreInitial([
     getCurrentSessionProcess,
     getPairedUserProcess,
@@ -46,16 +38,6 @@ const getViewContent = (
     getUserItemProcess,
   ]);
   const allAreSuccessfull = getAllAreSuccessfull([getCurrentSessionProcess, getUserItemProcess]);
-  console.log(
-    allAreInitial,
-    "allAreInitial",
-    oneIsLoading,
-    "oneIsLoading",
-    oneIsErrored,
-    "oneIsErrored",
-    allAreSuccessfull,
-    "allAreSuccessfull",
-  );
   if (allAreInitial) {
     return <div />;
   } else if (oneIsErrored) {

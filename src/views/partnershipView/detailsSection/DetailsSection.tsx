@@ -112,7 +112,7 @@ const getViewContent = (
             </PartnerBallWrapper>
           </TransparentButton>
           <TransparentButton
-            title={`display ${userItem.username.S}`}
+            title={`display ${pairedUserItem !== undefined ? pairedUserItem.username.S : ""}`}
             onClick={() => setModalOpen(ModalOpen.PICTUREPARTNER)}
           >
             <PartnerBallWrapper toLeft>

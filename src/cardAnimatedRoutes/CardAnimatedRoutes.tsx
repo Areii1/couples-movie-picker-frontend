@@ -98,10 +98,7 @@ export const CardAnimatedRoutes = (props: Props) => {
         {({ match }) => (
           <CSSTransition in={match !== null} timeout={300} classNames="page" unmountOnExit>
             <div className="page">
-              <DecideView
-                getUserItemProcess={props.getUserItemProcess}
-                getPairedUserProcess={props.getPairedUserProcess}
-              />
+              <DecideView getUserItemProcess={props.getUserItemProcess} />
             </div>
           </CSSTransition>
         )}

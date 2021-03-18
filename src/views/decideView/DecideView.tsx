@@ -10,7 +10,6 @@ import { TransparentButton } from "../accountSettingsView/pictureSection/Picture
 import { GetTrendingMoviesProcess } from "../mainView/MainViewTypes";
 
 type Props = {
-  getPairedUserProcess: GetUserItemProcess;
   getUserItemProcess: GetUserItemProcess;
 };
 
@@ -27,14 +26,41 @@ type ListItemProps = {
   draggingInfo: DraggingInfo | undefined;
   movieId: number;
   mousePosition: MousePosition | undefined;
+  listElement: any;
+};
+
+const getPosition = (
+  draggingInfo: DraggingInfo | undefined,
+  movieId: number,
+  mousePosition: MousePosition | undefined,
+  listElement: any,
+): boolean => {
+  if (
+    draggingInfo !== undefined &&
+    draggingInfo.movieId === movieId &&
+    mousePosition &&
+    listElement &&
+    listElement.current
+  ) {
+    if (
+      mousePosition.x > 0 &&
+      mousePosition.y > 0 &&
+      mousePosition.x < listElement.current.offsetWidth &&
+      mousePosition.y < listElement.current.offsetHeight
+    ) {
+      return true;
+    } else {
+      return false;
+    }
+  } else {
+    return false;
+  }
 };
 
 const ListItem = styled.li`
   position: ${(props: ListItemProps) =>
-    props.draggingInfo !== undefined &&
-    props.draggingInfo.movieId === props.movieId &&
-    props.mousePosition
-      ? "fixed"
+    getPosition(props.draggingInfo, props.movieId, props.mousePosition, props.listElement)
+      ? "absolute"
       : "static"};
   top: ${(props: ListItemProps) =>
     props.draggingInfo !== undefined &&
@@ -89,8 +115,8 @@ type DraggingInfo = {
 };
 
 type MousePosition = {
-  x: string;
-  y: string;
+  x: number;
+  y: number;
 };
 
 export const DecideView = (props: Props) => {
@@ -100,6 +126,8 @@ export const DecideView = (props: Props) => {
   ] = React.useState<GetTrendingMoviesProcess>({
     status: Status.INITIAL,
   });
+
+  const listElement = React.useRef(null);
 
   const [draggingInfo, setDraggingInfo] = React.useState<DraggingInfo | undefined>(undefined);
 
@@ -146,26 +174,33 @@ export const DecideView = (props: Props) => {
 
   React.useEffect(() => {
     getMovies();
-    document.onmousemove = (event: any) => setMousePosition({ x: event.pageX, y: event.pageY });
+    // document.onmousemove = (event: any) => setMousePosition({ x: event.pageX, y: event.pageY });
   }, []);
   const filteredList = getFilteredList();
 
-  console.log(props.getPairedUserProcess, "getPairedUserProcess");
-  console.log(props.getUserItemProcess, "getUserItemProcess");
+  // console.log(props.getPairedUserProcess, "getPairedUserProcess");
+  // console.log(props.getUserItemProcess, "getUserItemProcess");
 
   // console.log(getTrendingMoviesProcess, "getTrendingMoviesProcess");
   // console.log(filteredList, "filteredList");
-  console.log(mousePosition, "mousePosition");
+  // console.log(mousePosition, "mousePosition");
 
   return (
     <SettingsCardContentWrapper>
       <PrimaryHeadline>Decide view</PrimaryHeadline>
       {filteredList.length > 0 && (
-        <List>
+        <List
+          ref={listElement}
+          onMouseMove={(event: any) => {
+            console.log(event.nativeEvent, "event");
+            setMousePosition({ x: event.nativeEvent.offsetX, y: event.nativeEvent.offsetY });
+          }}
+        >
           <ListItem
             draggingInfo={draggingInfo}
             movieId={filteredList[0].id}
             mousePosition={mousePosition}
+            listElement={listElement}
           >
             <TransparentButton
               onMouseDown={() => setDraggingInfo({ movieId: filteredList[0].id })}
@@ -187,6 +222,7 @@ export const DecideView = (props: Props) => {
             draggingInfo={draggingInfo}
             movieId={filteredList[1].id}
             mousePosition={mousePosition}
+            listElement={listElement}
           >
             <TransparentButton
               onMouseDown={() => setDraggingInfo({ movieId: filteredList[1].id })}
@@ -208,6 +244,7 @@ export const DecideView = (props: Props) => {
             draggingInfo={draggingInfo}
             movieId={filteredList[2].id}
             mousePosition={mousePosition}
+            listElement={listElement}
           >
             <TransparentButton
               onMouseDown={() => setDraggingInfo({ movieId: filteredList[2].id })}
@@ -229,6 +266,7 @@ export const DecideView = (props: Props) => {
             draggingInfo={draggingInfo}
             movieId={filteredList[3].id}
             mousePosition={mousePosition}
+            listElement={listElement}
           >
             <TransparentButton
               onMouseDown={() => setDraggingInfo({ movieId: filteredList[3].id })}
@@ -250,6 +288,7 @@ export const DecideView = (props: Props) => {
             draggingInfo={draggingInfo}
             movieId={filteredList[4].id}
             mousePosition={mousePosition}
+            listElement={listElement}
           >
             <TransparentButton
               onMouseDown={() => setDraggingInfo({ movieId: filteredList[4].id })}

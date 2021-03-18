@@ -94,7 +94,7 @@ export const CardAnimatedRoutes = (props: Props) => {
           </CSSTransition>
         )}
       </Route>
-      <Route exact path="/decide">
+      <Route exact path="/decide/:id">
         {({ match }) => (
           <CSSTransition in={match !== null} timeout={300} classNames="page" unmountOnExit>
             <div className="page">

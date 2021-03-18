@@ -50,6 +50,7 @@ export const SignUp: React.FC = () => {
     }
   };
 
+  console.log(signUpProcess, "signUpProcess");
   return (
     <SignupCardContentWrapper>
       <HeadlineWrapper>

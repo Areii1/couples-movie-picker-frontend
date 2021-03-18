@@ -26,7 +26,8 @@ import {
   GetTrendingMoviesProcess,
 } from "../mainView/MainViewTypes";
 import { getSortedMatchedMovies } from "./MatchesViewUtilityFunctions";
-import { WaitingModal } from "../../components/modals/waitingModal/WaitingModal";
+import { CreateRoomModal } from "../../components/modals/createRoomModal/CreateRoomModal";
+import { GetCurrentSessionProcessContext } from "../../App";
 
 export type ProcessedMatchedMovies = {
   id: string;
@@ -201,6 +202,8 @@ export const MatchesView = (props: Props) => {
 
   const [modalOpen, setModalOpen] = React.useState<boolean>(false);
 
+  const getCurrentSessionProcess = React.useContext(GetCurrentSessionProcessContext);
+
   const getMovies = async () => {
     try {
       setGetTrendingMoviesProcess({ status: Status.LOADING });
@@ -229,7 +232,8 @@ export const MatchesView = (props: Props) => {
     <CardContentWrapper>
       {props.getPairedUserProcess.status === Status.SUCCESS &&
         props.getUserItemProcess.status === Status.SUCCESS &&
-        getTrendingMoviesProcess.status === Status.SUCCESS && (
+        getTrendingMoviesProcess.status === Status.SUCCESS &&
+        getCurrentSessionProcess.status === Status.SUCCESS && (
           <>
             {getMatchesLikedListItems(
               props.getPairedUserProcess,
@@ -283,8 +287,9 @@ export const MatchesView = (props: Props) => {
               <ButtonText>Decide now</ButtonText>
             </Button>
             {modalOpen && (
-              <WaitingModal
-                pairedUserItem={props.getPairedUserProcess.data}
+              <CreateRoomModal
+                username={props.getUserItemProcess.data.username.S}
+                jwtToken={getCurrentSessionProcess.data.getIdToken().getJwtToken()}
                 closeModal={() => setModalOpen(false)}
               />
             )}

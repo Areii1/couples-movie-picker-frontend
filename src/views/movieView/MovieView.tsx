@@ -105,7 +105,7 @@ type Props = {
   getUserItem: (username: string, jwtToken: string) => void;
   getPairedUserProcess: GetUserItemProcess;
 };
-interface ParamTypes {
+export interface ParamTypes {
   id?: string;
 }
 

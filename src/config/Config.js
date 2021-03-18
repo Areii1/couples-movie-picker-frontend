@@ -1,11 +1,11 @@
 import Amplify from "aws-amplify";
 
-const isProd = true;
+const isProd = false;
 
 const bucketNameDev = "couplesmoviepickerbacken-profilepicturesbucketdev-ugb2hg23ts3z";
 const bucketNameProd = "couplesmoviepickerbacken-profilepicturesbucketpro-s3dw2ajqi2y8";
 const apiNameProd = "couples-movie-picker-api-prod";
-const apiNameDev = "couples-movie-picker-api";
+const apiNameDev = "couples-movie-picker-api-dev";
 
 export const apiName = isProd ? apiNameProd : apiNameDev;
 export const bucketUrl = `https://${
@@ -16,10 +16,10 @@ export const configureAmplify = () => {
   if (!isProd) {
     Amplify.configure({
       Auth: {
-        identityPoolId: "eu-central-1:f8b2582c-367f-4ad6-b1ca-6c7a8ad90df1",
+        identityPoolId: "eu-central-1:16c7a6c4-e18d-44e5-ae7f-a1340eebdcde",
         region: "eu-central-1",
-        userPoolId: "eu-central-1_W6JLN2fl0",
-        userPoolWebClientId: "7s61asv7likcj62ng17v06731o",
+        userPoolId: "eu-central-1_UumnQIIqi",
+        userPoolWebClientId: "1plodvadp073s1sarvmpi07q55",
       },
       Storage: {
         bucket: bucketNameDev,
@@ -28,8 +28,8 @@ export const configureAmplify = () => {
       API: {
         endpoints: [
           {
-            endpoint: "https://113idz1bmg.execute-api.eu-central-1.amazonaws.com/prod",
-            name: "couples-movie-picker-api-dev",
+            endpoint: "https://sb44kllufe.execute-api.eu-central-1.amazonaws.com/prod",
+            name: apiNameDev,
             region: "eu-central-1",
           },
         ],

@@ -58,6 +58,7 @@
     "jsx-a11y/anchor-is-valid": "off",
     "react/jsx-no-target-blank": "warn",
     "@typescript-eslint/quotes": "off",
-    "@typescript-eslint/triple-slash-reference": "warn"
+    "@typescript-eslint/triple-slash-reference": "warn",
+    "@typescript-eslint/ban-ts-comment": "warn"
   }
 }

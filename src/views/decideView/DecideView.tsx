@@ -6,7 +6,6 @@ import { PrimaryHeadline } from "../../styles/Styles";
 import { borderRadius, fontSizes, sizingScale } from "../../styles/Variables";
 import { GetUserItemProcess, LikedMoviesListItem, Movie, Status } from "../../types/Types";
 import { SettingsCardContentWrapper } from "../accountSettingsView/AccountSettingsViewStyles";
-import { TransparentButton } from "../accountSettingsView/pictureSection/PictureSectionStyles";
 import { GetTrendingMoviesProcess } from "../mainView/MainViewTypes";
 
 type Props = {
@@ -20,6 +19,7 @@ const List = styled.ul`
   justify-content: space-between;
   flex-wrap: wrap;
   position: relative;
+  height: ${`${sizingScale[12]}px`};
 `;
 
 type ListItemProps = {
@@ -38,7 +38,7 @@ const getPosition = (
   if (
     draggingInfo !== undefined &&
     draggingInfo.movieId === movieId &&
-    mousePosition &&
+    mousePosition !== undefined &&
     listElement &&
     listElement.current
   ) {
@@ -60,24 +60,35 @@ const getPosition = (
 const ListItem = styled.li`
   position: ${(props: ListItemProps) =>
     getPosition(props.draggingInfo, props.movieId, props.mousePosition, props.listElement)
-      ? "absolute"
+      ? "fixed"
       : "static"};
   top: ${(props: ListItemProps) =>
     props.draggingInfo !== undefined &&
     props.draggingInfo.movieId === props.movieId &&
-    props.mousePosition
-      ? `${props.mousePosition.y}px`
+    props.mousePosition &&
+    props.listElement.current
+      ? `${
+          props.listElement.current.getBoundingClientRect().top +
+          props.mousePosition.y -
+          sizingScale[8] / 2
+        }px`
       : "unset"};
   left: ${(props: ListItemProps) =>
     props.draggingInfo !== undefined &&
     props.draggingInfo.movieId === props.movieId &&
     props.mousePosition
-      ? `${props.mousePosition.x}px`
+      ? `${
+          props.listElement.current.getBoundingClientRect().left +
+          props.mousePosition.x -
+          sizingScale[10] / 2
+        }px`
       : "unset"};
   width: ${`${sizingScale[10]}px`};
   height: ${`${sizingScale[8]}px`};
   border-radius: ${`${borderRadius}px`};
   margin: ${`${sizingScale[3]}px`} 0;
+  cursor: pointer;
+  user-select: none;
 `;
 
 const ListItemContentWrapper = styled.div`
@@ -174,16 +185,25 @@ export const DecideView = (props: Props) => {
 
   React.useEffect(() => {
     getMovies();
-    // document.onmousemove = (event: any) => setMousePosition({ x: event.pageX, y: event.pageY });
   }, []);
   const filteredList = getFilteredList();
 
-  // console.log(props.getPairedUserProcess, "getPairedUserProcess");
-  // console.log(props.getUserItemProcess, "getUserItemProcess");
+  const handleListItemMouseDown = (movieId: number) => {
+    if (draggingInfo === undefined) {
+      setDraggingInfo({ movieId });
+    }
+  };
 
-  // console.log(getTrendingMoviesProcess, "getTrendingMoviesProcess");
-  // console.log(filteredList, "filteredList");
-  // console.log(mousePosition, "mousePosition");
+  const listXPosition =
+    listElement && listElement !== null && listElement.current && listElement.current !== null
+      ? // @ts-ignore: Object is possibly 'null'.
+        listElement.current!.getBoundingClientRect().left
+      : 0;
+  const listYPosition =
+    listElement && listElement !== null && listElement.current && listElement.current !== null
+      ? // @ts-ignore: Object is possibly 'null'.
+        listElement.current!.getBoundingClientRect().top
+      : 0;
 
   return (
     <SettingsCardContentWrapper>
@@ -191,123 +211,109 @@ export const DecideView = (props: Props) => {
       {filteredList.length > 0 && (
         <List
           ref={listElement}
-          onMouseMove={(event: any) => {
-            console.log(event.nativeEvent, "event");
-            setMousePosition({ x: event.nativeEvent.offsetX, y: event.nativeEvent.offsetY });
-          }}
+          onMouseMove={(event: any) =>
+            setMousePosition({
+              x: event.nativeEvent.pageX - listXPosition,
+              y: event.nativeEvent.pageY - listYPosition,
+            })
+          }
+          onMouseUp={() => setDraggingInfo(undefined)}
+          onMouseLeave={() => setDraggingInfo(undefined)}
         >
           <ListItem
             draggingInfo={draggingInfo}
             movieId={filteredList[0].id}
             mousePosition={mousePosition}
             listElement={listElement}
+            onMouseDown={() => handleListItemMouseDown(filteredList[0].id)}
+            title={filteredList[0].original_title}
           >
-            <TransparentButton
-              onMouseDown={() => setDraggingInfo({ movieId: filteredList[0].id })}
-              onMouseUp={() => setDraggingInfo(undefined)}
-              title={filteredList[0].original_title}
-            >
-              <ListItemContentWrapper>
-                <Image
-                  src={`https://image.tmdb.org/t/p/w342/${filteredList[0].backdrop_path}`}
-                  alt="poster"
-                />
-                <ItemOverlay>
-                  <OverlayText>1</OverlayText>
-                </ItemOverlay>
-              </ListItemContentWrapper>
-            </TransparentButton>
+            <ListItemContentWrapper>
+              <Image
+                src={`https://image.tmdb.org/t/p/w342/${filteredList[0].backdrop_path}`}
+                alt="poster"
+              />
+              <ItemOverlay>
+                <OverlayText>1</OverlayText>
+              </ItemOverlay>
+            </ListItemContentWrapper>
           </ListItem>
           <ListItem
             draggingInfo={draggingInfo}
             movieId={filteredList[1].id}
             mousePosition={mousePosition}
             listElement={listElement}
+            onMouseDown={() => handleListItemMouseDown(filteredList[1].id)}
+            title={filteredList[1].original_title}
           >
-            <TransparentButton
-              onMouseDown={() => setDraggingInfo({ movieId: filteredList[1].id })}
-              onMouseUp={() => setDraggingInfo(undefined)}
-              title={filteredList[1].original_title}
-            >
-              <ListItemContentWrapper>
-                <Image
-                  src={`https://image.tmdb.org/t/p/w342/${filteredList[1].backdrop_path}`}
-                  alt="poster"
-                />
-                <ItemOverlay>
-                  <OverlayText>2</OverlayText>
-                </ItemOverlay>
-              </ListItemContentWrapper>
-            </TransparentButton>
+            <ListItemContentWrapper>
+              <Image
+                src={`https://image.tmdb.org/t/p/w342/${filteredList[1].backdrop_path}`}
+                alt="poster"
+              />
+              <ItemOverlay>
+                <OverlayText>2</OverlayText>
+              </ItemOverlay>
+            </ListItemContentWrapper>
           </ListItem>
           <ListItem
             draggingInfo={draggingInfo}
             movieId={filteredList[2].id}
             mousePosition={mousePosition}
             listElement={listElement}
+            onMouseDown={() => handleListItemMouseDown(filteredList[2].id)}
+            title={filteredList[2].original_title}
           >
-            <TransparentButton
-              onMouseDown={() => setDraggingInfo({ movieId: filteredList[2].id })}
-              onMouseUp={() => setDraggingInfo(undefined)}
-              title={filteredList[2].original_title}
-            >
-              <ListItemContentWrapper>
-                <Image
-                  src={`https://image.tmdb.org/t/p/w342/${filteredList[2].backdrop_path}`}
-                  alt="poster"
-                />
-                <ItemOverlay>
-                  <OverlayText>3</OverlayText>
-                </ItemOverlay>
-              </ListItemContentWrapper>
-            </TransparentButton>
+            <ListItemContentWrapper>
+              <Image
+                src={`https://image.tmdb.org/t/p/w342/${filteredList[2].backdrop_path}`}
+                alt="poster"
+              />
+              <ItemOverlay>
+                <OverlayText>3</OverlayText>
+              </ItemOverlay>
+            </ListItemContentWrapper>
           </ListItem>
           <ListItem
             draggingInfo={draggingInfo}
             movieId={filteredList[3].id}
             mousePosition={mousePosition}
             listElement={listElement}
+            onMouseDown={() => handleListItemMouseDown(filteredList[3].id)}
+            title={filteredList[3].original_title}
           >
-            <TransparentButton
-              onMouseDown={() => setDraggingInfo({ movieId: filteredList[3].id })}
-              onMouseUp={() => setDraggingInfo(undefined)}
-              title={filteredList[3].original_title}
-            >
-              <ListItemContentWrapper>
-                <Image
-                  src={`https://image.tmdb.org/t/p/w342/${filteredList[3].backdrop_path}`}
-                  alt="poster"
-                />
-                <ItemOverlay>
-                  <OverlayText>4</OverlayText>
-                </ItemOverlay>
-              </ListItemContentWrapper>
-            </TransparentButton>
+            <ListItemContentWrapper>
+              <Image
+                src={`https://image.tmdb.org/t/p/w342/${filteredList[3].backdrop_path}`}
+                alt="poster"
+              />
+              <ItemOverlay>
+                <OverlayText>4</OverlayText>
+              </ItemOverlay>
+            </ListItemContentWrapper>
           </ListItem>
           <ListItem
             draggingInfo={draggingInfo}
             movieId={filteredList[4].id}
             mousePosition={mousePosition}
             listElement={listElement}
+            onMouseDown={() => handleListItemMouseDown(filteredList[4].id)}
+            title={filteredList[4].original_title}
           >
-            <TransparentButton
-              onMouseDown={() => setDraggingInfo({ movieId: filteredList[4].id })}
-              onMouseUp={() => setDraggingInfo(undefined)}
-              title={filteredList[4].original_title}
-            >
-              <ListItemContentWrapper>
-                <Image
-                  src={`https://image.tmdb.org/t/p/w342/${filteredList[4].backdrop_path}`}
-                  alt="poster"
-                />
-                <ItemOverlay>
-                  <OverlayText>5</OverlayText>
-                </ItemOverlay>
-              </ListItemContentWrapper>
-            </TransparentButton>
+            <ListItemContentWrapper>
+              <Image
+                src={`https://image.tmdb.org/t/p/w342/${filteredList[4].backdrop_path}`}
+                alt="poster"
+              />
+              <ItemOverlay>
+                <OverlayText>5</OverlayText>
+              </ItemOverlay>
+            </ListItemContentWrapper>
           </ListItem>
         </List>
       )}
+      {/* <Dot listElement={listElement} />
+      <AnotherDot listElement={listElement} mousePosition={mousePosition} /> */}
     </SettingsCardContentWrapper>
   );
 };

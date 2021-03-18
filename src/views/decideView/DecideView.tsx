@@ -4,13 +4,9 @@ import styled from "styled-components";
 import { getTrendingMovies } from "../../apiService/getTrendingMovies";
 import { PrimaryHeadline } from "../../styles/Styles";
 import { borderRadius, fontSizes, sizingScale } from "../../styles/Variables";
-import { GetUserItemProcess, LikedMoviesListItem, Movie, Status } from "../../types/Types";
+import { Movie } from "../../types/Types";
 import { SettingsCardContentWrapper } from "../accountSettingsView/AccountSettingsViewStyles";
-import { GetTrendingMoviesProcess } from "../mainView/MainViewTypes";
-
-type Props = {
-  getUserItemProcess: GetUserItemProcess;
-};
+// import { GetTrendingMoviesProcess } from "../mainView/MainViewTypes";
 
 const List = styled.ul`
   list-style-type: none;
@@ -91,6 +87,15 @@ const ListItem = styled.li`
   user-select: none;
 `;
 
+const ListItemPlaceholder = styled.li`
+  opacity: 0;
+  width: ${`${sizingScale[10]}px`};
+  height: ${`${sizingScale[8]}px`};
+  border-radius: ${`${borderRadius}px`};
+  margin: ${`${sizingScale[3]}px`} 0;
+  user-select: none;
+`;
+
 const ListItemContentWrapper = styled.div`
   position: relative;
   width: ${`${sizingScale[10]}px`};
@@ -130,13 +135,13 @@ type MousePosition = {
   y: number;
 };
 
-export const DecideView = (props: Props) => {
-  const [
-    getTrendingMoviesProcess,
-    setGetTrendingMoviesProcess,
-  ] = React.useState<GetTrendingMoviesProcess>({
-    status: Status.INITIAL,
-  });
+export const DecideView = () => {
+  // const [
+  //   getTrendingMoviesProcess,
+  //   setGetTrendingMoviesProcess,
+  // ] = React.useState<GetTrendingMoviesProcess>({
+  //   status: Status.INITIAL,
+  // });
 
   const listElement = React.useRef(null);
 
@@ -144,54 +149,57 @@ export const DecideView = (props: Props) => {
 
   const [mousePosition, setMousePosition] = React.useState<MousePosition | undefined>(undefined);
 
-  const getFilteredList = () => {
-    if (getTrendingMoviesProcess.status === Status.SUCCESS) {
-      return getTrendingMoviesProcess.data.filter((movie: Movie) => {
-        if (
-          props.getUserItemProcess.status === Status.SUCCESS &&
-          props.getUserItemProcess.data.likedMovies
-        ) {
-          return (
-            props.getUserItemProcess.data.likedMovies.L.find(
-              (likedMovie: LikedMoviesListItem) => movie.id === parseInt(likedMovie.M.id.S, 10),
-            ) === undefined
-          );
-        } else {
-          return true;
-        }
-      });
-    } else {
-      return [];
-    }
-  };
+  const [hoveringOverPlacement, setHoverOverPlacement] = React.useState<number | undefined>(
+    undefined,
+  );
+
+  const [orderedList, setOrderedList] = React.useState<Movie[] | undefined>(undefined);
 
   const getMovies = async () => {
     try {
-      setGetTrendingMoviesProcess({ status: Status.LOADING });
+      // setGetTrendingMoviesProcess({ status: Status.LOADING });
       const getTrendingMoviesResponse = await getTrendingMovies();
       const parsedGetTrendingMoviesResponse = await getTrendingMoviesResponse.json();
-      setGetTrendingMoviesProcess({
-        status: Status.SUCCESS,
-        data: parsedGetTrendingMoviesResponse.results,
-      });
+      // setGetTrendingMoviesProcess({
+      //   status: Status.SUCCESS,
+      //   data: parsedGetTrendingMoviesResponse.results,
+      // });
+      setOrderedList(parsedGetTrendingMoviesResponse.results);
     } catch (getTrendingMoviesError) {
       toast.error("Could not fetch movies list");
-      setGetTrendingMoviesProcess({
-        status: Status.ERROR,
-        error: getTrendingMoviesError,
-      });
+      // setGetTrendingMoviesProcess({
+      //   status: Status.ERROR,
+      //   error: getTrendingMoviesError,
+      // });
     }
   };
 
   React.useEffect(() => {
     getMovies();
   }, []);
-  const filteredList = getFilteredList();
 
   const handleListItemMouseDown = (movieId: number) => {
     if (draggingInfo === undefined) {
       setDraggingInfo({ movieId });
     }
+  };
+
+  const handleItemDrop = () => {
+    if (hoveringOverPlacement && draggingInfo !== undefined && orderedList !== undefined) {
+      const draggedItemIndex = orderedList.findIndex(
+        (movie: Movie) => movie.id === draggingInfo.movieId,
+      );
+      if (draggedItemIndex !== hoveringOverPlacement) {
+        console.log("moving", draggedItemIndex + 1, "to", hoveringOverPlacement);
+        const copiedList = [...orderedList];
+        const tempItem = copiedList[draggedItemIndex];
+        copiedList[draggedItemIndex] = copiedList[hoveringOverPlacement - 1];
+        copiedList[hoveringOverPlacement - 1] = tempItem;
+        const filteredList = copiedList.filter((item: Movie) => item !== undefined);
+        setOrderedList(filteredList);
+      }
+    }
+    setDraggingInfo(undefined);
   };
 
   const listXPosition =
@@ -208,7 +216,7 @@ export const DecideView = (props: Props) => {
   return (
     <SettingsCardContentWrapper>
       <PrimaryHeadline>Decide view</PrimaryHeadline>
-      {filteredList.length > 0 && (
+      {orderedList !== undefined && orderedList.length > 0 && (
         <List
           ref={listElement}
           onMouseMove={(event: any) =>
@@ -217,20 +225,31 @@ export const DecideView = (props: Props) => {
               y: event.nativeEvent.pageY - listYPosition,
             })
           }
-          onMouseUp={() => setDraggingInfo(undefined)}
-          onMouseLeave={() => setDraggingInfo(undefined)}
+          onMouseUp={() => handleItemDrop()}
+          onMouseLeave={() => handleItemDrop()}
         >
+          {draggingInfo && draggingInfo.movieId === orderedList[0].id && <ListItemPlaceholder />}
           <ListItem
             draggingInfo={draggingInfo}
-            movieId={filteredList[0].id}
+            movieId={orderedList[0].id}
             mousePosition={mousePosition}
             listElement={listElement}
-            onMouseDown={() => handleListItemMouseDown(filteredList[0].id)}
-            title={filteredList[0].original_title}
+            onMouseDown={() => handleListItemMouseDown(orderedList[0].id)}
+            title={orderedList[0].original_title}
+            onMouseEnter={
+              draggingInfo && draggingInfo.movieId === orderedList[0].id
+                ? () => {}
+                : () => setHoverOverPlacement(1)
+            }
+            onMouseLeave={
+              draggingInfo && draggingInfo.movieId === orderedList[0].id
+                ? () => {}
+                : () => setHoverOverPlacement(undefined)
+            }
           >
             <ListItemContentWrapper>
               <Image
-                src={`https://image.tmdb.org/t/p/w342/${filteredList[0].backdrop_path}`}
+                src={`https://image.tmdb.org/t/p/w342/${orderedList[0].backdrop_path}`}
                 alt="poster"
               />
               <ItemOverlay>
@@ -238,17 +257,28 @@ export const DecideView = (props: Props) => {
               </ItemOverlay>
             </ListItemContentWrapper>
           </ListItem>
+          {draggingInfo && draggingInfo.movieId === orderedList[1].id && <ListItemPlaceholder />}
           <ListItem
             draggingInfo={draggingInfo}
-            movieId={filteredList[1].id}
+            movieId={orderedList[1].id}
             mousePosition={mousePosition}
             listElement={listElement}
-            onMouseDown={() => handleListItemMouseDown(filteredList[1].id)}
-            title={filteredList[1].original_title}
+            onMouseDown={() => handleListItemMouseDown(orderedList[1].id)}
+            title={orderedList[1].original_title}
+            onMouseEnter={
+              draggingInfo && draggingInfo.movieId === orderedList[1].id
+                ? () => {}
+                : () => setHoverOverPlacement(2)
+            }
+            onMouseLeave={
+              draggingInfo && draggingInfo.movieId === orderedList[1].id
+                ? () => {}
+                : () => setHoverOverPlacement(undefined)
+            }
           >
             <ListItemContentWrapper>
               <Image
-                src={`https://image.tmdb.org/t/p/w342/${filteredList[1].backdrop_path}`}
+                src={`https://image.tmdb.org/t/p/w342/${orderedList[1].backdrop_path}`}
                 alt="poster"
               />
               <ItemOverlay>
@@ -256,17 +286,28 @@ export const DecideView = (props: Props) => {
               </ItemOverlay>
             </ListItemContentWrapper>
           </ListItem>
+          {draggingInfo && draggingInfo.movieId === orderedList[2].id && <ListItemPlaceholder />}
           <ListItem
             draggingInfo={draggingInfo}
-            movieId={filteredList[2].id}
+            movieId={orderedList[2].id}
             mousePosition={mousePosition}
             listElement={listElement}
-            onMouseDown={() => handleListItemMouseDown(filteredList[2].id)}
-            title={filteredList[2].original_title}
+            onMouseDown={() => handleListItemMouseDown(orderedList[2].id)}
+            title={orderedList[2].original_title}
+            onMouseEnter={
+              draggingInfo && draggingInfo.movieId === orderedList[2].id
+                ? () => {}
+                : () => setHoverOverPlacement(3)
+            }
+            onMouseLeave={
+              draggingInfo && draggingInfo.movieId === orderedList[2].id
+                ? () => {}
+                : () => setHoverOverPlacement(undefined)
+            }
           >
             <ListItemContentWrapper>
               <Image
-                src={`https://image.tmdb.org/t/p/w342/${filteredList[2].backdrop_path}`}
+                src={`https://image.tmdb.org/t/p/w342/${orderedList[2].backdrop_path}`}
                 alt="poster"
               />
               <ItemOverlay>
@@ -274,17 +315,28 @@ export const DecideView = (props: Props) => {
               </ItemOverlay>
             </ListItemContentWrapper>
           </ListItem>
+          {draggingInfo && draggingInfo.movieId === orderedList[3].id && <ListItemPlaceholder />}
           <ListItem
             draggingInfo={draggingInfo}
-            movieId={filteredList[3].id}
+            movieId={orderedList[3].id}
             mousePosition={mousePosition}
             listElement={listElement}
-            onMouseDown={() => handleListItemMouseDown(filteredList[3].id)}
-            title={filteredList[3].original_title}
+            onMouseDown={() => handleListItemMouseDown(orderedList[3].id)}
+            title={orderedList[3].original_title}
+            onMouseEnter={
+              draggingInfo && draggingInfo.movieId === orderedList[3].id
+                ? () => {}
+                : () => setHoverOverPlacement(4)
+            }
+            onMouseLeave={
+              draggingInfo && draggingInfo.movieId === orderedList[3].id
+                ? () => {}
+                : () => setHoverOverPlacement(undefined)
+            }
           >
             <ListItemContentWrapper>
               <Image
-                src={`https://image.tmdb.org/t/p/w342/${filteredList[3].backdrop_path}`}
+                src={`https://image.tmdb.org/t/p/w342/${orderedList[3].backdrop_path}`}
                 alt="poster"
               />
               <ItemOverlay>
@@ -292,17 +344,28 @@ export const DecideView = (props: Props) => {
               </ItemOverlay>
             </ListItemContentWrapper>
           </ListItem>
+          {draggingInfo && draggingInfo.movieId === orderedList[4].id && <ListItemPlaceholder />}
           <ListItem
             draggingInfo={draggingInfo}
-            movieId={filteredList[4].id}
+            movieId={orderedList[4].id}
             mousePosition={mousePosition}
             listElement={listElement}
-            onMouseDown={() => handleListItemMouseDown(filteredList[4].id)}
-            title={filteredList[4].original_title}
+            onMouseDown={() => handleListItemMouseDown(orderedList[4].id)}
+            title={orderedList[4].original_title}
+            onMouseEnter={
+              draggingInfo && draggingInfo.movieId === orderedList[4].id
+                ? () => {}
+                : () => setHoverOverPlacement(5)
+            }
+            onMouseLeave={
+              draggingInfo && draggingInfo.movieId === orderedList[4].id
+                ? () => {}
+                : () => setHoverOverPlacement(undefined)
+            }
           >
             <ListItemContentWrapper>
               <Image
-                src={`https://image.tmdb.org/t/p/w342/${filteredList[4].backdrop_path}`}
+                src={`https://image.tmdb.org/t/p/w342/${orderedList[4].backdrop_path}`}
                 alt="poster"
               />
               <ItemOverlay>
@@ -312,8 +375,6 @@ export const DecideView = (props: Props) => {
           </ListItem>
         </List>
       )}
-      {/* <Dot listElement={listElement} />
-      <AnotherDot listElement={listElement} mousePosition={mousePosition} /> */}
     </SettingsCardContentWrapper>
   );
 };

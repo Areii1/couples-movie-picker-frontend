@@ -284,8 +284,8 @@ export const MatchesView = (props: Props) => {
             </Button>
             {modalOpen && (
               <WaitingModal
-                title={`Waiting for ${props.getPairedUserProcess.data.username.S}'s confirmation`}
                 pairedUserItem={props.getPairedUserProcess.data}
+                closeModal={() => setModalOpen(false)}
               />
             )}
           </>

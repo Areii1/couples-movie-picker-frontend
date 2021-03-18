@@ -9,6 +9,7 @@ import { PartnershipView } from "../views/partnershipView/PartnershipView";
 import { MatchesView } from "../views/matchesView/MatchesView";
 import { MovieView } from "../views/movieView/MovieView";
 import { GetUserItemProcess } from "../types/Types";
+import { DecideView } from "../views/decideView/DecideView";
 
 type Props = {
   getUserItemProcess: GetUserItemProcess;
@@ -86,6 +87,18 @@ export const CardAnimatedRoutes = (props: Props) => {
           <CSSTransition in={match !== null} timeout={300} classNames="page" unmountOnExit>
             <div className="page">
               <MatchesView
+                getUserItemProcess={props.getUserItemProcess}
+                getPairedUserProcess={props.getPairedUserProcess}
+              />
+            </div>
+          </CSSTransition>
+        )}
+      </Route>
+      <Route exact path="/decide">
+        {({ match }) => (
+          <CSSTransition in={match !== null} timeout={300} classNames="page" unmountOnExit>
+            <div className="page">
+              <DecideView
                 getUserItemProcess={props.getUserItemProcess}
                 getPairedUserProcess={props.getPairedUserProcess}
               />

@@ -1,5 +1,7 @@
 import React from "react";
 import styled from "styled-components";
+import { Redirect } from "react-router-dom";
+import { toast } from "react-toastify";
 import { bucketUrl } from "../../../config/Config";
 import { SecondaryHeadline } from "../../../styles/Styles";
 import { sizingScale } from "../../../styles/Variables";
@@ -33,18 +35,31 @@ const LoadingIconWrapper = styled.div`
 `;
 
 type Props = {
-  title: string;
   pairedUserItem: UserInfo;
+  closeModal: () => void;
 };
 
 export const WaitingModal = (props: Props) => {
+  const [shouldRedirect, setShouldRedirect] = React.useState<boolean>(false);
+
+  React.useEffect(() => {
+    setTimeout(() => {
+      if (Math.random() > 0.5) {
+        toast.success(`${props.pairedUserItem.username.S} accepted your challenge`);
+        setShouldRedirect(true);
+      } else {
+        props.closeModal();
+        toast.error(`${props.pairedUserItem.username.S} rejected your challenge`);
+      }
+    }, 5000);
+  }, []);
   return (
     <ModalBackground>
       <Modal>
-        <SecondaryHeadline>{props.title}</SecondaryHeadline>
+        <SecondaryHeadline>{`Waiting for ${props.pairedUserItem.username.S}'s confirmation`}</SecondaryHeadline>
         <ProfileBallWrapper>
           <LoadingIconWrapper>
-            <Puff size={75} fill="white" />
+            <Puff size={100} fill="white" />
           </LoadingIconWrapper>
           <ProfileBall
             firstName={props.pairedUserItem.username.S}
@@ -66,6 +81,7 @@ export const WaitingModal = (props: Props) => {
           <ButtonText>Cancel</ButtonText>
         </Button>
       </Modal>
+      {shouldRedirect && <Redirect to="/decide" />}
     </ModalBackground>
   );
 };

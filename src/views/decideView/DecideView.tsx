@@ -306,6 +306,12 @@ export const DecideView = (props: Props) => {
     }
   }, [timeLeft]);
 
+  React.useEffect(() => {
+    if (terminateRoomProcess.status === Status.SUCCESS) {
+      fetchRoomDetails();
+    }
+  }, [terminateRoomProcess.status]);
+
   const handleListItemMouseDown = (movieId: number) => {
     if (draggingInfo === undefined) {
       setDraggingInfo({ movieId });
@@ -385,6 +391,8 @@ export const DecideView = (props: Props) => {
                     closeModal={() => setModalOpen(false)}
                     performAction={terminateOngoingRoom}
                     title="terminate room"
+                    status={terminateRoomProcess.status}
+                    buttonText="Terminate"
                   />
                 )}
               </>

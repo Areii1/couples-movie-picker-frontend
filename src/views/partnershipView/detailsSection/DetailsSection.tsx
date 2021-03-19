@@ -253,6 +253,8 @@ export const DetailsSection = (props: Props) => {
               title={`Break up partnership with ${props.userItem.partner.S}`}
               closeModal={() => setModalOpen(ModalOpen.NONE)}
               performAction={() => handleBreakUpModalButtonClick()}
+              status={breakUpPartnershipProcess.status}
+              buttonText="Break up"
             />
           )}
           {modalOpen === ModalOpen.CANCEL && props.userItem.outgoingRequests && (
@@ -260,6 +262,8 @@ export const DetailsSection = (props: Props) => {
               title={`Cancel pending request to ${props.userItem.outgoingRequests.S}`}
               closeModal={() => setModalOpen(ModalOpen.NONE)}
               performAction={() => handleCancelModalButtonClick()}
+              status={cancelPairingRequestProcess.status}
+              buttonText="Cancel request"
             />
           )}
           {modalOpen === ModalOpen.PICTUREUSER && (

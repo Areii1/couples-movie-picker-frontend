@@ -258,6 +258,8 @@ export const PictureSection = (props: Props) => {
           title="Remove profile picture?"
           performAction={handleModalButtonClick}
           closeModal={() => setModalOpen(false)}
+          status={removePictureProcess.status}
+          buttonText="Remove"
         />
       )}
     </Section>

@@ -1,12 +1,10 @@
 import React from "react";
 import { toast } from "react-toastify";
-import styled from "styled-components";
 import { useParams } from "react-router-dom";
 import { ParamTypes } from "../movieView/MovieView";
 import { getTrendingMovies } from "../../apiService/getTrendingMovies";
 import { SecondaryHeadline } from "../../styles/Styles";
-import { borderRadius, fontSizes, sizingScale } from "../../styles/Variables";
-import { GetUserItemProcess, Movie, Process, Status } from "../../types/Types";
+import { Movie, Process, Status } from "../../types/Types";
 import { SettingsCardContentWrapper } from "../accountSettingsView/AccountSettingsViewStyles";
 import { getRoomDetails } from "../../apiService/getRoomDetails";
 import { terminateRoom } from "../../apiService/terminateRoom";
@@ -17,185 +15,22 @@ import { bucketUrl } from "../../config/Config";
 import { Button, ButtonText } from "../logIn/LogInStyles";
 import { ConfirmModal } from "../../components/modals/confirmModal/ConfirmModal";
 import { joinRoom } from "../../apiService/joinRoom";
+import { DraggingInfo, MousePosition, DecideViewProps } from "./DecideViewTypes";
+import {
+  List,
+  ListItem,
+  ListItemPlaceholder,
+  ListItemContentWrapper,
+  Image,
+  ItemOverlay,
+  OverlayText,
+  ProgressBarWrapper,
+  ProgressBar,
+  ProfileBallWrapper,
+  LoadingIconWrapper,
+} from "./DecideViewStyles";
 
-const List = styled.ul`
-  list-style-type: none;
-  padding: 0;
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  position: relative;
-  height: ${`${sizingScale[12]}px`};
-`;
-
-type ListItemProps = {
-  draggingInfo: DraggingInfo | undefined;
-  movieId: number;
-  mousePosition: MousePosition | undefined;
-  listElement: any;
-};
-
-const getPosition = (
-  draggingInfo: DraggingInfo | undefined,
-  movieId: number,
-  mousePosition: MousePosition | undefined,
-  listElement: any,
-): boolean => {
-  if (
-    draggingInfo !== undefined &&
-    draggingInfo.movieId === movieId &&
-    mousePosition !== undefined &&
-    listElement &&
-    listElement.current
-  ) {
-    if (
-      mousePosition.x > 0 &&
-      mousePosition.y > 0 &&
-      mousePosition.x < listElement.current.offsetWidth &&
-      mousePosition.y < listElement.current.offsetHeight
-    ) {
-      return true;
-    } else {
-      return false;
-    }
-  } else {
-    return false;
-  }
-};
-
-const ListItem = styled.li`
-  position: ${(props: ListItemProps) =>
-    getPosition(props.draggingInfo, props.movieId, props.mousePosition, props.listElement)
-      ? "fixed"
-      : "static"};
-  top: ${(props: ListItemProps) =>
-    props.draggingInfo !== undefined &&
-    props.draggingInfo.movieId === props.movieId &&
-    props.mousePosition &&
-    props.listElement.current
-      ? `${
-          props.listElement.current.getBoundingClientRect().top +
-          props.mousePosition.y -
-          sizingScale[8] / 2
-        }px`
-      : "unset"};
-  left: ${(props: ListItemProps) =>
-    props.draggingInfo !== undefined &&
-    props.draggingInfo.movieId === props.movieId &&
-    props.mousePosition
-      ? `${
-          props.listElement.current.getBoundingClientRect().left +
-          props.mousePosition.x -
-          sizingScale[10] / 2
-        }px`
-      : "unset"};
-  width: ${`${sizingScale[10]}px`};
-  height: ${`${sizingScale[8]}px`};
-  border-radius: ${`${borderRadius}px`};
-  margin: ${`${sizingScale[3]}px`} 0;
-  cursor: pointer;
-  user-select: none;
-`;
-
-const ListItemPlaceholder = styled.li`
-  opacity: 0;
-  width: ${`${sizingScale[10]}px`};
-  height: ${`${sizingScale[8]}px`};
-  border-radius: ${`${borderRadius}px`};
-  margin: ${`${sizingScale[3]}px`} 0;
-  user-select: none;
-`;
-
-const ListItemContentWrapper = styled.div`
-  position: relative;
-  width: ${`${sizingScale[10]}px`};
-  height: ${`${sizingScale[8]}px`};
-`;
-
-const Image = styled.img`
-  max-width: ${`${sizingScale[10]}px`};
-  max-height: ${`${sizingScale[8]}px`};
-  border-radius: ${`${borderRadius}px`};
-`;
-
-type ItemOverlayProps = {
-  isHovering: boolean;
-};
-
-const ItemOverlay = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: ${`${sizingScale[10]}px`};
-  height: ${`${sizingScale[8]}px`};
-  background-color: ${(props: ItemOverlayProps) =>
-    props.isHovering ? `rgba(255, 255, 255, 0.8)` : `rgba(0, 0, 0, 0.3)`};
-`;
-
-const OverlayText = styled.h4`
-  margin: 0;
-  font-size: ${`${fontSizes[6]}px`};
-  color: white;
-`;
-
-type ProgressBarTypes = {
-  percent: number;
-};
-
-const ProgressBarWrapper = styled.div`
-  height: ${`${sizingScale[3]}px`};
-  background-color: gray;
-  border-radius: ${`${borderRadius}px`};
-`;
-
-const ProgressBar = styled.div`
-  width: ${(props: ProgressBarTypes) => `${props.percent}%`};
-  height: ${`${sizingScale[3]}px`};
-  border-radius: ${`${borderRadius}px`};
-  background-color: green;
-`;
-
-const ProfileBallWrapper = styled.div`
-  margin: ${`${sizingScale[4]}px`} auto 0 auto;
-  width: ${`${sizingScale[9]}px`};
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow: hidden;
-  position: relative;
-  border-radius: ${`${sizingScale[8]}px`};
-`;
-
-const LoadingIconWrapper = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: ${`${sizingScale[9]}px`};
-  height: ${`${sizingScale[9]}px`};
-  background-color: rgb(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-
-type DraggingInfo = {
-  movieId: number;
-};
-
-type MousePosition = {
-  x: number;
-  y: number;
-};
-
-type Props = {
-  getPairedUserProcess: GetUserItemProcess;
-  getUserItemProcess: GetUserItemProcess;
-};
-
-export const DecideView = (props: Props) => {
+export const DecideView = (props: DecideViewProps) => {
   const [getRoomDetailsProcess, setGetRoomDetailsProcess] = React.useState<Process>({
     status: Status.INITIAL,
   });
@@ -252,7 +87,6 @@ export const DecideView = (props: Props) => {
   };
 
   const joinTheRoom = async () => {
-    console.log("join the room");
     if (getCurrentSessionProcess.status === Status.SUCCESS && id) {
       try {
         setJoinRoomProcess({ status: Status.LOADING });
@@ -279,13 +113,7 @@ export const DecideView = (props: Props) => {
           id,
           getCurrentSessionProcess.data.getIdToken().getJwtToken(),
         );
-        console.log(getRoomDetailsResponse, "getRoomDetailsResponse");
         if (getRoomDetailsResponse !== "no access") {
-          console.log(
-            props.getPairedUserProcess.data.username.S,
-            "props.getPairedUserProcess.data.username.S",
-          );
-          console.log(getRoomDetailsResponse.creator.S, "getRoomDetailsResponse.creator.S");
           if (
             getRoomDetailsResponse.status.S === "waiting" &&
             props.getPairedUserProcess.data.username.S === getRoomDetailsResponse.creator.S
@@ -328,7 +156,16 @@ export const DecideView = (props: Props) => {
   }, [props.getPairedUserProcess.status]);
 
   React.useEffect(() => {
-    if (getRoomDetailsProcess.status === Status.SUCCESS) {
+    if (joinRoomProcess.status === Status.SUCCESS) {
+      fetchRoomDetails();
+    }
+  }, [joinRoomProcess.status]);
+
+  React.useEffect(() => {
+    if (
+      getRoomDetailsProcess.status === Status.SUCCESS &&
+      getRoomDetailsProcess.data.status.S === "sorting"
+    ) {
       getMovies();
       setTimeLeft(30);
     }
@@ -385,6 +222,8 @@ export const DecideView = (props: Props) => {
       ? // @ts-ignore: Object is possibly 'null'.
         listElement.current!.getBoundingClientRect().top
       : 0;
+
+  console.log(timeLeft, "timeLeft");
 
   return (
     <SettingsCardContentWrapper>
@@ -458,10 +297,7 @@ export const DecideView = (props: Props) => {
                 {getRoomDetailsProcess.data.status.S === "terminated" && (
                   <SecondaryHeadline>Room has been terminated</SecondaryHeadline>
                 )}
-                {!(
-                  getRoomDetailsProcess.data.status.S === "waiting" ||
-                  getRoomDetailsProcess.data.status.S === "terminated"
-                ) && (
+                {getRoomDetailsProcess.data.status.S === "sorting" && (
                   <>
                     {timeLeft <= 0 && <SecondaryHeadline>sorted list sent</SecondaryHeadline>}
                     {timeLeft > 0 && (

@@ -11,10 +11,13 @@ import { GetUserItemProcess, Movie, Process, Status } from "../../types/Types";
 import { SettingsCardContentWrapper } from "../accountSettingsView/AccountSettingsViewStyles";
 // import { GetTrendingMoviesProcess } from "../mainView/MainViewTypes";
 import { getRoomDetails } from "../../apiService/getRoomDetails";
+import { terminateRoom } from "../../apiService/terminateRoom";
 import { GetCurrentSessionProcessContext } from "../../App";
 import { Puff } from "../../components/puff/Puff";
 import { ProfileBall } from "../../components/profileBall/ProfileBall";
 import { bucketUrl } from "../../config/Config";
+import { Button, ButtonText } from "../logIn/LogInStyles";
+import { ConfirmModal } from "../../components/modals/confirmModal/ConfirmModal";
 
 const List = styled.ul`
   list-style-type: none;
@@ -196,6 +199,10 @@ export const DecideView = (props: Props) => {
   const [getRoomDetailsProcess, setGetRoomDetailsProcess] = React.useState<Process>({
     status: Status.INITIAL,
   });
+
+  const [terminateRoomProcess, setTerminateRoomProcess] = React.useState<Process>({
+    status: Status.INITIAL,
+  });
   // const [
   //   getTrendingMoviesProcess,
   //   setGetTrendingMoviesProcess,
@@ -216,6 +223,8 @@ export const DecideView = (props: Props) => {
   const [orderedList, setOrderedList] = React.useState<Movie[] | undefined>(undefined);
 
   const [timeLeft, setTimeLeft] = React.useState<number>(30);
+
+  const [modalOpen, setModalOpen] = React.useState<boolean>(false);
 
   const { id } = useParams<ParamTypes>();
 
@@ -251,6 +260,21 @@ export const DecideView = (props: Props) => {
         setGetRoomDetailsProcess({ status: Status.SUCCESS, data: getRoomDetailsResponse });
       } catch (getRoomDetailsError) {
         setGetRoomDetailsProcess({ status: Status.ERROR, error: getRoomDetailsError });
+      }
+    }
+  };
+
+  const terminateOngoingRoom = async () => {
+    if (getCurrentSessionProcess.status === Status.SUCCESS && id) {
+      try {
+        setTerminateRoomProcess({ status: Status.LOADING });
+        const terminateRoomResponse = await terminateRoom(
+          getCurrentSessionProcess.data.getIdToken().getJwtToken(),
+          id,
+        );
+        setTerminateRoomProcess({ status: Status.SUCCESS, data: terminateRoomResponse });
+      } catch (getRoomDetailsError) {
+        setTerminateRoomProcess({ status: Status.ERROR, error: getRoomDetailsError });
       }
     }
   };
@@ -294,6 +318,7 @@ export const DecideView = (props: Props) => {
   };
 
   console.log(getRoomDetailsProcess, "getRoomDetailsProcess");
+  console.log(terminateRoomProcess, "terminateRoomProcess");
 
   const listXPosition =
     listElement && listElement !== null && listElement.current && listElement.current !== null
@@ -334,6 +359,21 @@ export const DecideView = (props: Props) => {
                     border={false}
                   />
                 </ProfileBallWrapper>
+                <Button
+                  type="button"
+                  onClick={() => setModalOpen(true)}
+                  title="terminate the room"
+                  error={false}
+                >
+                  <ButtonText>Terminate room</ButtonText>
+                </Button>
+                {modalOpen && (
+                  <ConfirmModal
+                    closeModal={() => setModalOpen(false)}
+                    performAction={terminateOngoingRoom}
+                    title="terminate room"
+                  />
+                )}
               </>
             )}
             {getRoomDetailsProcess.data.status.S !== "waiting" && (

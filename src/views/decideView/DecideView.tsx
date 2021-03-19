@@ -7,11 +7,14 @@ import { getTrendingMovies } from "../../apiService/getTrendingMovies";
 import { SecondaryHeadline } from "../../styles/Styles";
 // import { PrimaryHeadline } from "../../styles/Styles";
 import { borderRadius, fontSizes, sizingScale } from "../../styles/Variables";
-import { Movie, Process, Status } from "../../types/Types";
+import { GetUserItemProcess, Movie, Process, Status } from "../../types/Types";
 import { SettingsCardContentWrapper } from "../accountSettingsView/AccountSettingsViewStyles";
 // import { GetTrendingMoviesProcess } from "../mainView/MainViewTypes";
 import { getRoomDetails } from "../../apiService/getRoomDetails";
 import { GetCurrentSessionProcessContext } from "../../App";
+import { Puff } from "../../components/puff/Puff";
+import { ProfileBall } from "../../components/profileBall/ProfileBall";
+import { bucketUrl } from "../../config/Config";
 
 const List = styled.ul`
   list-style-type: none;
@@ -153,6 +156,29 @@ const ProgressBar = styled.div`
   background-color: green;
 `;
 
+const ProfileBallWrapper = styled.div`
+  margin: ${`${sizingScale[4]}px`} auto 0 auto;
+  width: ${`${sizingScale[9]}px`};
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  position: relative;
+  border-radius: ${`${sizingScale[8]}px`};
+`;
+
+const LoadingIconWrapper = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: ${`${sizingScale[9]}px`};
+  height: ${`${sizingScale[9]}px`};
+  background-color: rgb(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
 type DraggingInfo = {
   movieId: number;
 };
@@ -162,7 +188,11 @@ type MousePosition = {
   y: number;
 };
 
-export const DecideView = () => {
+type Props = {
+  getPairedUserProcess: GetUserItemProcess;
+};
+
+export const DecideView = (props: Props) => {
   const [getRoomDetailsProcess, setGetRoomDetailsProcess] = React.useState<Process>({
     status: Status.INITIAL,
   });
@@ -278,183 +308,217 @@ export const DecideView = () => {
 
   return (
     <SettingsCardContentWrapper>
-      {timeLeft <= 0 && <SecondaryHeadline>sorted list sent</SecondaryHeadline>}
-      {timeLeft > 0 && (
-        <>
-          <ProgressBarWrapper>
-            <ProgressBar percent={timeLeft * 3.3333} />
-          </ProgressBarWrapper>
-          {orderedList !== undefined && orderedList.length > 0 && (
-            <List
-              ref={listElement}
-              onMouseMove={(event: any) =>
-                setMousePosition({
-                  x: event.nativeEvent.pageX - listXPosition,
-                  y: event.nativeEvent.pageY - listYPosition,
-                })
-              }
-              onMouseUp={() => handleItemDrop()}
-              onMouseLeave={() => handleItemDrop()}
-            >
-              {draggingInfo && draggingInfo.movieId === orderedList[0].id && (
-                <ListItemPlaceholder />
-              )}
-              <ListItem
-                draggingInfo={draggingInfo}
-                movieId={orderedList[0].id}
-                mousePosition={mousePosition}
-                listElement={listElement}
-                onMouseDown={() => handleListItemMouseDown(orderedList[0].id)}
-                title={orderedList[0].original_title}
-                onMouseEnter={
-                  draggingInfo && draggingInfo.movieId === orderedList[0].id
-                    ? () => {}
-                    : () => setHoverOverPlacement(1)
-                }
-                onMouseLeave={
-                  draggingInfo && draggingInfo.movieId === orderedList[0].id
-                    ? () => {}
-                    : () => setHoverOverPlacement(undefined)
-                }
-              >
-                <ListItemContentWrapper>
-                  <Image
-                    src={`https://image.tmdb.org/t/p/w342/${orderedList[0].backdrop_path}`}
-                    alt="poster"
+      {getRoomDetailsProcess.status === Status.SUCCESS &&
+        props.getPairedUserProcess.status === Status.SUCCESS && (
+          <>
+            {getRoomDetailsProcess.data.status.S === "waiting" && (
+              <>
+                <SecondaryHeadline>{`Waiting for ${props.getPairedUserProcess.data.username.S} to join the room`}</SecondaryHeadline>
+                <ProfileBallWrapper>
+                  <LoadingIconWrapper>
+                    <Puff size={100} fill="white" />
+                  </LoadingIconWrapper>
+                  <ProfileBall
+                    firstName={props.getPairedUserProcess.data.username.S}
+                    image={
+                      props.getPairedUserProcess.data.profilePicture
+                        ? `${bucketUrl}/${props.getPairedUserProcess.data.profilePicture.S}`
+                        : undefined
+                    }
+                    isCurrentUser={false}
+                    size={128}
+                    animate={false}
+                    fontSize={60}
+                    showText={props.getPairedUserProcess.data.profilePicture !== undefined}
+                    shadow={false}
+                    border={false}
                   />
-                  <ItemOverlay isHovering={hoveringOverPlacement === 1}>
-                    <OverlayText>1</OverlayText>
-                  </ItemOverlay>
-                </ListItemContentWrapper>
-              </ListItem>
-              {draggingInfo && draggingInfo.movieId === orderedList[1].id && (
-                <ListItemPlaceholder />
-              )}
-              <ListItem
-                draggingInfo={draggingInfo}
-                movieId={orderedList[1].id}
-                mousePosition={mousePosition}
-                listElement={listElement}
-                onMouseDown={() => handleListItemMouseDown(orderedList[1].id)}
-                title={orderedList[1].original_title}
-                onMouseEnter={
-                  draggingInfo && draggingInfo.movieId === orderedList[1].id
-                    ? () => {}
-                    : () => setHoverOverPlacement(2)
-                }
-                onMouseLeave={
-                  draggingInfo && draggingInfo.movieId === orderedList[1].id
-                    ? () => {}
-                    : () => setHoverOverPlacement(undefined)
-                }
-              >
-                <ListItemContentWrapper>
-                  <Image
-                    src={`https://image.tmdb.org/t/p/w342/${orderedList[1].backdrop_path}`}
-                    alt="poster"
-                  />
-                  <ItemOverlay isHovering={hoveringOverPlacement === 2}>
-                    <OverlayText>2</OverlayText>
-                  </ItemOverlay>
-                </ListItemContentWrapper>
-              </ListItem>
-              {draggingInfo && draggingInfo.movieId === orderedList[2].id && (
-                <ListItemPlaceholder />
-              )}
-              <ListItem
-                draggingInfo={draggingInfo}
-                movieId={orderedList[2].id}
-                mousePosition={mousePosition}
-                listElement={listElement}
-                onMouseDown={() => handleListItemMouseDown(orderedList[2].id)}
-                title={orderedList[2].original_title}
-                onMouseEnter={
-                  draggingInfo && draggingInfo.movieId === orderedList[2].id
-                    ? () => {}
-                    : () => setHoverOverPlacement(3)
-                }
-                onMouseLeave={
-                  draggingInfo && draggingInfo.movieId === orderedList[2].id
-                    ? () => {}
-                    : () => setHoverOverPlacement(undefined)
-                }
-              >
-                <ListItemContentWrapper>
-                  <Image
-                    src={`https://image.tmdb.org/t/p/w342/${orderedList[2].backdrop_path}`}
-                    alt="poster"
-                  />
-                  <ItemOverlay isHovering={hoveringOverPlacement === 3}>
-                    <OverlayText>3</OverlayText>
-                  </ItemOverlay>
-                </ListItemContentWrapper>
-              </ListItem>
-              {draggingInfo && draggingInfo.movieId === orderedList[3].id && (
-                <ListItemPlaceholder />
-              )}
-              <ListItem
-                draggingInfo={draggingInfo}
-                movieId={orderedList[3].id}
-                mousePosition={mousePosition}
-                listElement={listElement}
-                onMouseDown={() => handleListItemMouseDown(orderedList[3].id)}
-                title={orderedList[3].original_title}
-                onMouseEnter={
-                  draggingInfo && draggingInfo.movieId === orderedList[3].id
-                    ? () => {}
-                    : () => setHoverOverPlacement(4)
-                }
-                onMouseLeave={
-                  draggingInfo && draggingInfo.movieId === orderedList[3].id
-                    ? () => {}
-                    : () => setHoverOverPlacement(undefined)
-                }
-              >
-                <ListItemContentWrapper>
-                  <Image
-                    src={`https://image.tmdb.org/t/p/w342/${orderedList[3].backdrop_path}`}
-                    alt="poster"
-                  />
-                  <ItemOverlay isHovering={hoveringOverPlacement === 4}>
-                    <OverlayText>4</OverlayText>
-                  </ItemOverlay>
-                </ListItemContentWrapper>
-              </ListItem>
-              {draggingInfo && draggingInfo.movieId === orderedList[4].id && (
-                <ListItemPlaceholder />
-              )}
-              <ListItem
-                draggingInfo={draggingInfo}
-                movieId={orderedList[4].id}
-                mousePosition={mousePosition}
-                listElement={listElement}
-                onMouseDown={() => handleListItemMouseDown(orderedList[4].id)}
-                title={orderedList[4].original_title}
-                onMouseEnter={
-                  draggingInfo && draggingInfo.movieId === orderedList[4].id
-                    ? () => {}
-                    : () => setHoverOverPlacement(5)
-                }
-                onMouseLeave={
-                  draggingInfo && draggingInfo.movieId === orderedList[4].id
-                    ? () => {}
-                    : () => setHoverOverPlacement(undefined)
-                }
-              >
-                <ListItemContentWrapper>
-                  <Image
-                    src={`https://image.tmdb.org/t/p/w342/${orderedList[4].backdrop_path}`}
-                    alt="poster"
-                  />
-                  <ItemOverlay isHovering={hoveringOverPlacement === 5}>
-                    <OverlayText>5</OverlayText>
-                  </ItemOverlay>
-                </ListItemContentWrapper>
-              </ListItem>
-            </List>
-          )}
-        </>
-      )}
+                </ProfileBallWrapper>
+              </>
+            )}
+            {getRoomDetailsProcess.data.status.S !== "waiting" && (
+              <>
+                {timeLeft <= 0 && <SecondaryHeadline>sorted list sent</SecondaryHeadline>}
+                {timeLeft > 0 && (
+                  <>
+                    <ProgressBarWrapper>
+                      <ProgressBar percent={timeLeft * 3.3333} />
+                    </ProgressBarWrapper>
+                    {orderedList !== undefined && orderedList.length > 0 && (
+                      <List
+                        ref={listElement}
+                        onMouseMove={(event: any) =>
+                          setMousePosition({
+                            x: event.nativeEvent.pageX - listXPosition,
+                            y: event.nativeEvent.pageY - listYPosition,
+                          })
+                        }
+                        onMouseUp={() => handleItemDrop()}
+                        onMouseLeave={() => handleItemDrop()}
+                      >
+                        {draggingInfo && draggingInfo.movieId === orderedList[0].id && (
+                          <ListItemPlaceholder />
+                        )}
+                        <ListItem
+                          draggingInfo={draggingInfo}
+                          movieId={orderedList[0].id}
+                          mousePosition={mousePosition}
+                          listElement={listElement}
+                          onMouseDown={() => handleListItemMouseDown(orderedList[0].id)}
+                          title={orderedList[0].original_title}
+                          onMouseEnter={
+                            draggingInfo && draggingInfo.movieId === orderedList[0].id
+                              ? () => {}
+                              : () => setHoverOverPlacement(1)
+                          }
+                          onMouseLeave={
+                            draggingInfo && draggingInfo.movieId === orderedList[0].id
+                              ? () => {}
+                              : () => setHoverOverPlacement(undefined)
+                          }
+                        >
+                          <ListItemContentWrapper>
+                            <Image
+                              src={`https://image.tmdb.org/t/p/w342/${orderedList[0].backdrop_path}`}
+                              alt="poster"
+                            />
+                            <ItemOverlay isHovering={hoveringOverPlacement === 1}>
+                              <OverlayText>1</OverlayText>
+                            </ItemOverlay>
+                          </ListItemContentWrapper>
+                        </ListItem>
+                        {draggingInfo && draggingInfo.movieId === orderedList[1].id && (
+                          <ListItemPlaceholder />
+                        )}
+                        <ListItem
+                          draggingInfo={draggingInfo}
+                          movieId={orderedList[1].id}
+                          mousePosition={mousePosition}
+                          listElement={listElement}
+                          onMouseDown={() => handleListItemMouseDown(orderedList[1].id)}
+                          title={orderedList[1].original_title}
+                          onMouseEnter={
+                            draggingInfo && draggingInfo.movieId === orderedList[1].id
+                              ? () => {}
+                              : () => setHoverOverPlacement(2)
+                          }
+                          onMouseLeave={
+                            draggingInfo && draggingInfo.movieId === orderedList[1].id
+                              ? () => {}
+                              : () => setHoverOverPlacement(undefined)
+                          }
+                        >
+                          <ListItemContentWrapper>
+                            <Image
+                              src={`https://image.tmdb.org/t/p/w342/${orderedList[1].backdrop_path}`}
+                              alt="poster"
+                            />
+                            <ItemOverlay isHovering={hoveringOverPlacement === 2}>
+                              <OverlayText>2</OverlayText>
+                            </ItemOverlay>
+                          </ListItemContentWrapper>
+                        </ListItem>
+                        {draggingInfo && draggingInfo.movieId === orderedList[2].id && (
+                          <ListItemPlaceholder />
+                        )}
+                        <ListItem
+                          draggingInfo={draggingInfo}
+                          movieId={orderedList[2].id}
+                          mousePosition={mousePosition}
+                          listElement={listElement}
+                          onMouseDown={() => handleListItemMouseDown(orderedList[2].id)}
+                          title={orderedList[2].original_title}
+                          onMouseEnter={
+                            draggingInfo && draggingInfo.movieId === orderedList[2].id
+                              ? () => {}
+                              : () => setHoverOverPlacement(3)
+                          }
+                          onMouseLeave={
+                            draggingInfo && draggingInfo.movieId === orderedList[2].id
+                              ? () => {}
+                              : () => setHoverOverPlacement(undefined)
+                          }
+                        >
+                          <ListItemContentWrapper>
+                            <Image
+                              src={`https://image.tmdb.org/t/p/w342/${orderedList[2].backdrop_path}`}
+                              alt="poster"
+                            />
+                            <ItemOverlay isHovering={hoveringOverPlacement === 3}>
+                              <OverlayText>3</OverlayText>
+                            </ItemOverlay>
+                          </ListItemContentWrapper>
+                        </ListItem>
+                        {draggingInfo && draggingInfo.movieId === orderedList[3].id && (
+                          <ListItemPlaceholder />
+                        )}
+                        <ListItem
+                          draggingInfo={draggingInfo}
+                          movieId={orderedList[3].id}
+                          mousePosition={mousePosition}
+                          listElement={listElement}
+                          onMouseDown={() => handleListItemMouseDown(orderedList[3].id)}
+                          title={orderedList[3].original_title}
+                          onMouseEnter={
+                            draggingInfo && draggingInfo.movieId === orderedList[3].id
+                              ? () => {}
+                              : () => setHoverOverPlacement(4)
+                          }
+                          onMouseLeave={
+                            draggingInfo && draggingInfo.movieId === orderedList[3].id
+                              ? () => {}
+                              : () => setHoverOverPlacement(undefined)
+                          }
+                        >
+                          <ListItemContentWrapper>
+                            <Image
+                              src={`https://image.tmdb.org/t/p/w342/${orderedList[3].backdrop_path}`}
+                              alt="poster"
+                            />
+                            <ItemOverlay isHovering={hoveringOverPlacement === 4}>
+                              <OverlayText>4</OverlayText>
+                            </ItemOverlay>
+                          </ListItemContentWrapper>
+                        </ListItem>
+                        {draggingInfo && draggingInfo.movieId === orderedList[4].id && (
+                          <ListItemPlaceholder />
+                        )}
+                        <ListItem
+                          draggingInfo={draggingInfo}
+                          movieId={orderedList[4].id}
+                          mousePosition={mousePosition}
+                          listElement={listElement}
+                          onMouseDown={() => handleListItemMouseDown(orderedList[4].id)}
+                          title={orderedList[4].original_title}
+                          onMouseEnter={
+                            draggingInfo && draggingInfo.movieId === orderedList[4].id
+                              ? () => {}
+                              : () => setHoverOverPlacement(5)
+                          }
+                          onMouseLeave={
+                            draggingInfo && draggingInfo.movieId === orderedList[4].id
+                              ? () => {}
+                              : () => setHoverOverPlacement(undefined)
+                          }
+                        >
+                          <ListItemContentWrapper>
+                            <Image
+                              src={`https://image.tmdb.org/t/p/w342/${orderedList[4].backdrop_path}`}
+                              alt="poster"
+                            />
+                            <ItemOverlay isHovering={hoveringOverPlacement === 5}>
+                              <OverlayText>5</OverlayText>
+                            </ItemOverlay>
+                          </ListItemContentWrapper>
+                        </ListItem>
+                      </List>
+                    )}
+                  </>
+                )}
+              </>
+            )}
+          </>
+        )}
     </SettingsCardContentWrapper>
   );
 };

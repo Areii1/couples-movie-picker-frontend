@@ -280,10 +280,23 @@ export const DecideView = (props: Props) => {
   };
 
   React.useEffect(() => {
-    getMovies();
-    fetchRoomDetails();
-    setTimeLeft(30);
+    if (getCurrentSessionProcess.status === Status.SUCCESS) {
+      fetchRoomDetails();
+    }
   }, []);
+
+  React.useEffect(() => {
+    if (getCurrentSessionProcess.status === Status.SUCCESS) {
+      fetchRoomDetails();
+    }
+  }, [getCurrentSessionProcess.status]);
+
+  React.useEffect(() => {
+    if (getRoomDetailsProcess.status === Status.SUCCESS) {
+      getMovies();
+      setTimeLeft(30);
+    }
+  }, [getRoomDetailsProcess.status]);
 
   React.useEffect(() => {
     if (timeLeft > 0) {
@@ -376,7 +389,13 @@ export const DecideView = (props: Props) => {
                 )}
               </>
             )}
-            {getRoomDetailsProcess.data.status.S !== "waiting" && (
+            {getRoomDetailsProcess.data.status.S === "terminated" && (
+              <SecondaryHeadline>Room has been terminated</SecondaryHeadline>
+            )}
+            {!(
+              getRoomDetailsProcess.data.status.S === "waiting" ||
+              getRoomDetailsProcess.data.status.S === "terminated"
+            ) && (
               <>
                 {timeLeft <= 0 && <SecondaryHeadline>sorted list sent</SecondaryHeadline>}
                 {timeLeft > 0 && (

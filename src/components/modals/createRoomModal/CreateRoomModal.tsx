@@ -16,6 +16,7 @@ import {
   ButtonsWrapper,
 } from "../confirmModal/ConfirmModalStyles";
 import { createRoom } from "../../../apiService/createRoom";
+import { Puff } from "../../puff/Puff";
 
 type Props = {
   closeModal: () => void;
@@ -47,8 +48,6 @@ export const CreateRoomModal = (props: Props) => {
     }
   };
 
-  console.log(createRoomProcess, "createRoomProcess");
-
   if (createRoomProcess.status === Status.SUCCESS) {
     return <Redirect to={`/decide/${createRoomProcess.data.id.S}`} />;
   } else {
@@ -64,16 +63,30 @@ export const CreateRoomModal = (props: Props) => {
             </TransparentButton>
           </CloseButtonWrapper>
           <ButtonsWrapper>
-            <ButtonWrapper>
-              <Button
-                type="button"
-                title="remove picture"
-                onClick={createDecidingRoom}
-                error={false}
-              >
-                <ButtonText>Create room</ButtonText>
-              </Button>
-            </ButtonWrapper>
+            {createRoomProcess.status === Status.INITIAL && (
+              <ButtonWrapper>
+                <Button
+                  type="button"
+                  title="create room"
+                  onClick={createDecidingRoom}
+                  error={false}
+                >
+                  <ButtonText>Create room</ButtonText>
+                </Button>
+              </ButtonWrapper>
+            )}
+            {createRoomProcess.status === Status.LOADING && (
+              <ButtonWrapper>
+                <Puff size={50} fill="blue" />
+              </ButtonWrapper>
+            )}
+            {createRoomProcess.status === Status.ERROR && (
+              <ButtonWrapper>
+                <Button type="button" title="try again" onClick={createDecidingRoom} error>
+                  <ButtonText>Try again</ButtonText>
+                </Button>
+              </ButtonWrapper>
+            )}
             <ButtonWrapper>
               <Button type="button" title="cancel" onClick={props.closeModal} error={false}>
                 <ButtonText>Cancel</ButtonText>

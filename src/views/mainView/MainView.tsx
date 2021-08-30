@@ -31,12 +31,10 @@ import {
 } from "./MainViewStyles";
 
 export const MainView = (props: MainViewProps) => {
-  const [
-    getTrendingMoviesProcess,
-    setGetTrendingMoviesProcess,
-  ] = React.useState<GetTrendingMoviesProcess>({
-    status: Status.INITIAL,
-  });
+  const [getTrendingMoviesProcess, setGetTrendingMoviesProcess] =
+    React.useState<GetTrendingMoviesProcess>({
+      status: Status.INITIAL,
+    });
 
   const [swipingIndex, setSwipingIndex] = React.useState<number>(0);
 
@@ -132,10 +130,11 @@ export const MainView = (props: MainViewProps) => {
       getUserItemProcess.data.likedMovies
     ) {
       const filteredList = getFilteredList();
-      const userEvaluatedLastMovieItem = evaluateMovieProcessSuccess.data.Attributes.likedMovies.L.find(
-        (likedMovie: LikedMoviesListItem) =>
-          filteredList[swipingIndex - 1].id === parseInt(likedMovie.M.id.S, 10),
-      );
+      const userEvaluatedLastMovieItem =
+        evaluateMovieProcessSuccess.data.Attributes.likedMovies.L.find(
+          (likedMovie: LikedMoviesListItem) =>
+            filteredList[swipingIndex - 1].id === parseInt(likedMovie.M.id.S, 10),
+        );
       if (userEvaluatedLastMovieItem && parseInt(userEvaluatedLastMovieItem.M.score.N, 10) >= 50) {
         const pairedUserEvaluatedLastItem = getPairedUserProcess.data.likedMovies.L.find(
           (likedMovie: LikedMoviesListItem) =>

@@ -69,7 +69,7 @@ export const ConfirmModal = (props: Props) => {
             <Button
               type="button"
               title="cancel"
-              disabled={props.status === Status.INITIAL}
+              disabled={props.status !== Status.INITIAL}
               onClick={props.closeModal}
               error={false}
             >

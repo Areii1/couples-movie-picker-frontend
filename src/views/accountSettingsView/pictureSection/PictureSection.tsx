@@ -42,10 +42,8 @@ export const PictureSection = (props: Props) => {
     status: Status.INITIAL,
   });
 
-  const [
-    randomizeProfilePictureProcess,
-    setRandomizeProfilePictureProcess,
-  ] = React.useState<Process>({ status: Status.INITIAL });
+  const [randomizeProfilePictureProcess, setRandomizeProfilePictureProcess] =
+    React.useState<Process>({ status: Status.INITIAL });
 
   const [hoveringProfileBall, setHoveringProfileBall] = React.useState<boolean>(false);
 

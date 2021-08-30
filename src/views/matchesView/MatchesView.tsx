@@ -28,6 +28,8 @@ import {
 import { getSortedMatchedMovies } from "./MatchesViewUtilityFunctions";
 import { CreateRoomModal } from "../../components/modals/createRoomModal/CreateRoomModal";
 import { GetCurrentSessionProcessContext } from "../../App";
+import { Section } from "../accountSettingsView/AccountSettingsViewStyles";
+import { SecondaryHeadline } from "../../styles/Styles";
 
 export type ProcessedMatchedMovies = {
   id: string;
@@ -190,15 +192,12 @@ type Props = {
 };
 
 export const MatchesView = (props: Props) => {
-  const [
-    getTrendingMoviesProcess,
-    setGetTrendingMoviesProcess,
-  ] = React.useState<GetTrendingMoviesProcess>({
-    status: Status.INITIAL,
-  });
-  const [dislikedMoviesListExpanded, setDislikedMoviesListExpanded] = React.useState<boolean>(
-    false,
-  );
+  const [getTrendingMoviesProcess, setGetTrendingMoviesProcess] =
+    React.useState<GetTrendingMoviesProcess>({
+      status: Status.INITIAL,
+    });
+  const [dislikedMoviesListExpanded, setDislikedMoviesListExpanded] =
+    React.useState<boolean>(false);
 
   const [modalOpen, setModalOpen] = React.useState<boolean>(false);
 
@@ -278,14 +277,18 @@ export const MatchesView = (props: Props) => {
                 )}
               </>
             )}
-            <Button
-              type="button"
-              onClick={() => setModalOpen(true)}
-              title="decide a movie now"
-              error={false}
-            >
-              <ButtonText>Decide now</ButtonText>
-            </Button>
+            <Section>
+              <SecondaryHeadline>Decide movie</SecondaryHeadline>
+              <Button
+                type="button"
+                onClick={() => setModalOpen(true)}
+                title="decide a movie now"
+                error={false}
+              >
+                <ButtonText>Decide</ButtonText>
+              </Button>
+            </Section>
+
             {modalOpen && (
               <CreateRoomModal
                 username={props.getUserItemProcess.data.username.S}

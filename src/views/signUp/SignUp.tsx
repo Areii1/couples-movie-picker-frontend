@@ -19,10 +19,8 @@ import { SignupCardContentWrapper } from "./SignUpStyles";
 export const SignUp: React.FC = () => {
   const [signupUsernameFieldValue, setSignupUsernameFieldValue] = React.useState<string>("");
   const [signupPasswordFieldValue, setSignupPasswordFieldValue] = React.useState<string>("");
-  const [
-    signupConfirmPasswordFieldValue,
-    setSignupConfirmPasswordFieldValue,
-  ] = React.useState<string>("");
+  const [signupConfirmPasswordFieldValue, setSignupConfirmPasswordFieldValue] =
+    React.useState<string>("");
   const [signUpProcess, setSignUpProcess] = React.useState<Process>({
     status: Status.INITIAL,
   });

@@ -44,7 +44,7 @@ export type ProcessLoading = {
 
 export type ProcessSuccess = { status: Status.SUCCESS; data: any };
 
-export type ProcessError = { status: Status.ERROR; error: Error };
+export type ProcessError = { status: Status.ERROR; error: any };
 
 export type Process = ProcessInitial | ProcessLoading | ProcessSuccess | ProcessError;
 

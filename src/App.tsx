@@ -17,19 +17,15 @@ export const GetCurrentSessionProcessContext = React.createContext<GetCurrentSes
 });
 
 export const App: React.FunctionComponent = () => {
-  const [
-    getCurrentSessionProcess,
-    setGetCurrentSessionProcess,
-  ] = React.useState<GetCurrentSessionProcess>({
-    status: Status.INITIAL,
-  });
+  const [getCurrentSessionProcess, setGetCurrentSessionProcess] =
+    React.useState<GetCurrentSessionProcess>({
+      status: Status.INITIAL,
+    });
 
-  const [
-    getCurrentAuthenticatedUserProcess,
-    setGetCurrentAuthenticatedUserProcess,
-  ] = React.useState<Process>({
-    status: Status.INITIAL,
-  });
+  const [getCurrentAuthenticatedUserProcess, setGetCurrentAuthenticatedUserProcess] =
+    React.useState<Process>({
+      status: Status.INITIAL,
+    });
 
   const [getPairedUserProcess, setGetPairedUserProcess] = React.useState<GetUserItemProcess>({
     status: Status.INITIAL,

@@ -6,7 +6,7 @@ import { LogIn } from "../views/logIn/LogIn";
 import { SignUp } from "../views/signUp/SignUp";
 import { AccountSettingsView } from "../views/accountSettingsView/AccountSettingsView";
 import { PartnershipView } from "../views/partnershipView/PartnershipView";
-import { MatchesView } from "../views/matchesView/MatchesView";
+import { MovieListUseCase, MovieListView } from "../views/movieListView/MovieListView";
 import { MovieView } from "../views/movieView/MovieView";
 import { GetUserItemProcess } from "../types/Types";
 import { DecideView } from "../views/decideView/DecideView";
@@ -86,9 +86,36 @@ export const CardAnimatedRoutes = (props: Props) => {
         {({ match }) => (
           <CSSTransition in={match !== null} timeout={300} classNames="page" unmountOnExit>
             <div className="page">
-              <MatchesView
+              <MovieListView
                 getUserItemProcess={props.getUserItemProcess}
                 getPairedUserProcess={props.getPairedUserProcess}
+                useCase={MovieListUseCase.MATCHES}
+              />
+            </div>
+          </CSSTransition>
+        )}
+      </Route>
+      <Route exact path="/likes">
+        {({ match }) => (
+          <CSSTransition in={match !== null} timeout={300} classNames="page" unmountOnExit>
+            <div className="page">
+              <MovieListView
+                getUserItemProcess={props.getUserItemProcess}
+                getPairedUserProcess={props.getPairedUserProcess}
+                useCase={MovieListUseCase.LIKES}
+              />
+            </div>
+          </CSSTransition>
+        )}
+      </Route>
+      <Route exact path="/dislikes">
+        {({ match }) => (
+          <CSSTransition in={match !== null} timeout={300} classNames="page" unmountOnExit>
+            <div className="page">
+              <MovieListView
+                getUserItemProcess={props.getUserItemProcess}
+                getPairedUserProcess={props.getPairedUserProcess}
+                useCase={MovieListUseCase.DISLIKES}
               />
             </div>
           </CSSTransition>

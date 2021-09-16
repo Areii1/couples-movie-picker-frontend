@@ -1,4 +1,4 @@
-import { ProcessedMatchedMovies } from "./MatchesView";
+import { ProcessedMatchedMovies } from "./MovieListView";
 
 export const getSortedMatchedMovies = (
   matchedMovies: Array<ProcessedMatchedMovies | undefined>,

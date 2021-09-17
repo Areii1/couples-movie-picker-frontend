@@ -2,12 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Button, ButtonText, CardContentWrapper } from "../logIn/LogInStyles";
-import {
-  GetUserItemProcess,
-  GetUserItemProcessSuccess,
-  Status,
-  LikedMoviesListItem,
-} from "../../types/Types";
+import { GetUserItemProcess, GetUserItemProcessSuccess, Status } from "../../types/Types";
 import { getTrendingMovies } from "../../apiService/getTrendingMovies";
 import { ScoreText } from "../mainView/imageSection/ImageSectionStyles";
 // import { DownwardArrow } from "../../components/icons/downwardArrow/DownwardArrow";
@@ -25,11 +20,11 @@ import {
   GetTrendingMovieProcessSuccess,
   GetTrendingMoviesProcess,
 } from "../mainView/MainViewTypes";
-import { getSortedMatchedMovies } from "./MovieListViewUtilityFunctions";
 import { CreateRoomModal } from "../../components/modals/createRoomModal/CreateRoomModal";
 import { GetCurrentSessionProcessContext } from "../../App";
 import { Section } from "../accountSettingsView/AccountSettingsViewStyles";
 import { SecondaryHeadline } from "../../styles/Styles";
+import { getMatchedMoviesDetails, getLikedMoviesDetails } from "./MovieListViewUtilityFunctions";
 
 export type ProcessedMatchedMovies = {
   id: string;
@@ -41,87 +36,6 @@ export enum MovieListUseCase {
   DISLIKES,
   MATCHES,
 }
-
-const getMatchedMovies = (
-  givenGetPairedUserProcess: GetUserItemProcessSuccess,
-  givenGetUserItemProcess: GetUserItemProcessSuccess,
-) => {
-  if (givenGetUserItemProcess.data.likedMovies) {
-    return givenGetUserItemProcess.data.likedMovies.L.filter(
-      (userLikedMovie: LikedMoviesListItem) => {
-        if (givenGetPairedUserProcess.data.likedMovies) {
-          const partnerHasLikedMovie = givenGetPairedUserProcess.data.likedMovies.L.find(
-            (partnerLikedMovie: LikedMoviesListItem) =>
-              partnerLikedMovie.M.id.S === userLikedMovie.M.id.S,
-          );
-          return partnerHasLikedMovie;
-        } else {
-          return true;
-        }
-      },
-    );
-  } else {
-    return [];
-  }
-};
-
-const getProcessedMatchedMovies = (
-  matchedMovies: LikedMoviesListItem[],
-  givenGetPairedUserProcess: GetUserItemProcessSuccess,
-): Array<ProcessedMatchedMovies | undefined> => {
-  return matchedMovies.map((movie: LikedMoviesListItem) => {
-    if (givenGetPairedUserProcess.data.likedMovies) {
-      const partnerScoreA = givenGetPairedUserProcess.data.likedMovies.L.find(
-        (likedMovie: LikedMoviesListItem) => likedMovie.M.id.S === movie.M.id.S,
-      );
-      if (partnerScoreA) {
-        return {
-          id: movie.M.id.S,
-          commonScore: parseInt(movie.M.score.N, 10) + parseInt(partnerScoreA.M.score.N, 10),
-        };
-      } else {
-        return undefined;
-      }
-    } else {
-      return undefined;
-    }
-  });
-};
-
-const getMatchedMoviesDetails = (
-  givenGetPairedUserProcess: GetUserItemProcessSuccess,
-  givenGetUserItemProcess: GetUserItemProcessSuccess,
-  givenGetTrendingMoviesProcess: GetTrendingMovieProcessSuccess,
-) => {
-  const matchedMovies = getMatchedMovies(givenGetPairedUserProcess, givenGetUserItemProcess);
-  const processedMatchedMovies = getProcessedMatchedMovies(
-    matchedMovies,
-    givenGetPairedUserProcess,
-  );
-  console.log(processedMatchedMovies, "processedMatchedMovies");
-  const sortedMovies = getSortedMatchedMovies(processedMatchedMovies);
-  if (sortedMovies) {
-    const matchedMoviesDetails = sortedMovies.map((matchedMovie: any) => {
-      if (givenGetTrendingMoviesProcess.status === Status.SUCCESS) {
-        const matchedMovieDetails = givenGetTrendingMoviesProcess.data.find((movie: any) => {
-          return movie.id === parseInt(matchedMovie.id, 10);
-        });
-        return {
-          ...matchedMovieDetails,
-          commonScore: matchedMovie.commonScore,
-        };
-      } else {
-        return matchedMovie;
-      }
-    });
-    const filteredList = matchedMoviesDetails.filter(
-      (movieDetailsItems) => movieDetailsItems !== undefined,
-    );
-    return filteredList;
-  } else {
-    return [];
-  }
-};
 
 const getMatchesLikedListItems = (
   givenGetPairedUserProcess: GetUserItemProcessSuccess,
@@ -154,53 +68,6 @@ const getMatchesLikedListItems = (
         </MatchesListItem>
       );
     });
-  } else {
-    return [];
-  }
-};
-
-const getProcessedLikedMovies = (
-  likedMovies: LikedMoviesListItem[],
-): Array<ProcessedMatchedMovies | undefined> => {
-  return likedMovies.map((movie: LikedMoviesListItem) => {
-    return {
-      id: movie.M.id.S,
-      commonScore: parseInt(movie.M.score.N, 10),
-    };
-  });
-};
-
-const getLikedMoviesDetails = (
-  givenGetUserItemProcess: GetUserItemProcessSuccess,
-  givenGetTrendingMoviesProcess: GetTrendingMovieProcessSuccess,
-) => {
-  if (givenGetUserItemProcess.data.likedMovies !== undefined) {
-    const processedMatchedMovies = getProcessedLikedMovies(
-      givenGetUserItemProcess.data.likedMovies.L,
-    );
-    console.log(processedMatchedMovies, "processedMatchedMovies");
-    const sortedMovies = getSortedMatchedMovies(processedMatchedMovies);
-    if (sortedMovies) {
-      const matchedMoviesDetails = sortedMovies.map((matchedMovie: any) => {
-        if (givenGetTrendingMoviesProcess.status === Status.SUCCESS) {
-          const matchedMovieDetails = givenGetTrendingMoviesProcess.data.find((movie: any) => {
-            return movie.id === parseInt(matchedMovie.id, 10);
-          });
-          return {
-            ...matchedMovieDetails,
-            commonScore: matchedMovie.commonScore,
-          };
-        } else {
-          return matchedMovie;
-        }
-      });
-      const filteredList = matchedMoviesDetails.filter(
-        (movieDetailsItems) => movieDetailsItems !== undefined,
-      );
-      return filteredList;
-    } else {
-      return [];
-    }
   } else {
     return [];
   }

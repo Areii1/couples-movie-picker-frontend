@@ -38,6 +38,7 @@ export const App: React.FunctionComponent = () => {
   const [initialized, setInitialized] = React.useState<boolean>(false);
 
   const updateInitialized = (isInitialized: boolean) => {
+    console.log("initialized");
     setInitialized(isInitialized);
   };
 
@@ -158,6 +159,7 @@ export const App: React.FunctionComponent = () => {
   // console.log(getCurrentSessionProcess, "getCurrentSessionProcess");
   // console.log(getCurrentAuthenticatedUserProcess, "getCurrentAuthenticatedUserProcess");
   // console.log(getPairedUserProcess, "getPairedUserProcess");
+  console.log(initialized, "initialized");
 
   return (
     <>

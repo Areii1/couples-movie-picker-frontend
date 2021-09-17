@@ -118,18 +118,22 @@ export const PartnershipView = (props: Props) => {
 
   React.useEffect(() => {
     if (props.getUserItemProcess.status === Status.SUCCESS) {
-      if (props.getUserItemProcess.data.partner) {
-        if (
-          props.getPairedUserProcess.status === Status.SUCCESS ||
-          props.getPairedUserProcess.status === Status.ERROR
-        ) {
-          props.updateInitialized(true);
-        }
-      } else {
+      if (!props.getUserItemProcess.data.partner) {
         props.updateInitialized(true);
       }
+    } else if (props.getUserItemProcess.status === Status.ERROR) {
+      props.updateInitialized(true);
     }
-  }, [props.getUserItemProcess]);
+  }, [props.getUserItemProcess.status]);
+
+  React.useEffect(() => {
+    if (
+      props.getPairedUserProcess.status === Status.SUCCESS ||
+      props.getUserItemProcess.status === Status.ERROR
+    ) {
+      props.updateInitialized(true);
+    }
+  }, [props.getPairedUserProcess.status]);
 
   return (
     <PartnershipCardContentWrapper>

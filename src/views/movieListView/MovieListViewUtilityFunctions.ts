@@ -125,7 +125,6 @@ export const getMatchedMoviesDetails = (
     matchedMovies,
     givenGetPairedUserProcess,
   );
-  console.log(processedMatchedMovies, "processedMatchedMovies");
   const sortedMovies = getSortedMatchedMovies(processedMatchedMovies);
   if (sortedMovies) {
     const matchedMoviesDetails = sortedMovies.map((matchedMovie: any) => {

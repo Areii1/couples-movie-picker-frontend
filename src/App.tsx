@@ -197,11 +197,6 @@ export const App: React.FunctionComponent = () => {
   console.log(getCurrentAuthenticatedUserProcess, "getCurrentAuthenticatedUserProcess");
   console.log(getPairedUserProcess, "getPairedUserProcess");
 
-  // const loading =
-  //   getCurrentSessionProcess.status === Status.LOADING ||
-  //   getCurrentAuthenticatedUserProcess.status === Status.LOADING ||
-  //   getUserItemProcess.status === Status.LOADING;
-  console.log(initialized, "initialized");
   return (
     <>
       <LoadingTextWrapper isInitialized={initialized}>

@@ -1,13 +1,7 @@
 import React from "react";
 import { Link, Redirect } from "react-router-dom";
 import { toast } from "react-toastify";
-import {
-  Status,
-  GetUserItemProcess,
-  ProcessSuccess,
-  LikedMoviesListItem,
-  Movie,
-} from "../../types/Types";
+import { Status, GetUserItemProcessSuccess } from "../../types/Types";
 import { MainViewProps, EvaluateMovieProcess, GetTrendingMoviesProcess } from "./MainViewTypes";
 import { GetCurrentSessionProcessContext } from "../../App";
 import { FireMeter } from "../../components/fireMeter/FireMeter";
@@ -19,6 +13,7 @@ import { ImageIcon } from "../../components/icons/imageIcon/ImageIcon";
 import { bucketUrl } from "../../config/Config";
 import { DisplayProfile } from "../../components/modals/displayProfileModal/DisplayProfileModal";
 import { ImageSection } from "./imageSection/ImageSection";
+import { checkForMatch, getFilteredList } from "./MainViewUtilityFunctions";
 import {
   Wrapper,
   Title,
@@ -89,73 +84,29 @@ export const MainView = (props: MainViewProps) => {
     }
   };
 
-  const getFilteredList = () => {
-    if (getTrendingMoviesProcess.status === Status.SUCCESS) {
-      return getTrendingMoviesProcess.data.filter((movie: Movie) => {
-        if (
-          props.getUserItemProcess.status === Status.SUCCESS &&
-          props.getUserItemProcess.data.likedMovies
-        ) {
-          return (
-            props.getUserItemProcess.data.likedMovies.L.find(
-              (likedMovie: LikedMoviesListItem) => movie.id === parseInt(likedMovie.M.id.S, 10),
-            ) === undefined
-          );
-        } else {
-          return true;
-        }
-      });
-    } else {
-      return [];
-    }
-  };
-
   const viewInitialized =
     getCurrentSessionProcess.status === Status.SUCCESS &&
     props.getUserItemProcess.status === Status.SUCCESS &&
     getTrendingMoviesProcess.status === Status.SUCCESS;
-  console.log(viewInitialized, "viewInitialized");
   const viewErrored =
     getCurrentSessionProcess.status === Status.ERROR ||
     props.getUserItemProcess.status === Status.ERROR ||
     getTrendingMoviesProcess.status === Status.ERROR;
 
-  console.log(viewErrored, "viewErrored");
-  const displayMatchToast = (
-    getPairedUserProcess: GetUserItemProcess,
-    getUserItemProcess: GetUserItemProcess,
-    evaluateMovieProcessSuccess: ProcessSuccess,
-  ) => {
-    if (
-      getPairedUserProcess.status === Status.SUCCESS &&
-      getPairedUserProcess.data.likedMovies &&
-      getUserItemProcess.status === Status.SUCCESS &&
-      getUserItemProcess.data.likedMovies
-    ) {
-      const filteredList = getFilteredList();
-      const userEvaluatedLastMovieItem =
-        evaluateMovieProcessSuccess.data.Attributes.likedMovies.L.find(
-          (likedMovie: LikedMoviesListItem) =>
-            filteredList[swipingIndex - 1].id === parseInt(likedMovie.M.id.S, 10),
-        );
-      if (userEvaluatedLastMovieItem && parseInt(userEvaluatedLastMovieItem.M.score.N, 10) >= 50) {
-        const pairedUserEvaluatedLastItem = getPairedUserProcess.data.likedMovies.L.find(
-          (likedMovie: LikedMoviesListItem) =>
-            filteredList[swipingIndex - 1].id === parseInt(likedMovie.M.id.S, 10),
-        );
-        if (
-          pairedUserEvaluatedLastItem &&
-          parseInt(pairedUserEvaluatedLastItem.M.score.N, 10) >= 50
-        ) {
-          toast.success(`Movie matched with ${getPairedUserProcess.data.username.S}`);
-        }
-      }
-    }
-  };
-
   React.useEffect(() => {
     if (evaluateMovieProcess.status === Status.SUCCESS) {
-      displayMatchToast(props.getPairedUserProcess, props.getUserItemProcess, evaluateMovieProcess);
+      if (
+        checkForMatch(
+          props.getPairedUserProcess,
+          props.getUserItemProcess,
+          evaluateMovieProcess,
+          getTrendingMoviesProcess,
+          swipingIndex,
+        )
+      ) {
+        const successFullProcess = props.getPairedUserProcess as GetUserItemProcessSuccess;
+        toast.success(`Movie matched with ${successFullProcess.data.username.S}`);
+      }
     }
   }, [evaluateMovieProcess.status]);
 
@@ -179,7 +130,7 @@ export const MainView = (props: MainViewProps) => {
     }
   }, [props.getUserItemProcess.status]);
 
-  const filteredList = getFilteredList();
+  const filteredList = getFilteredList(getTrendingMoviesProcess, props.getUserItemProcess);
   return (
     <>
       {(viewInitialized || viewErrored) && (

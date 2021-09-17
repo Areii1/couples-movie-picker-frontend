@@ -67,6 +67,7 @@ export const CardAnimatedRoutes = (props: Props) => {
                 getUserItemProcess={props.getUserItemProcess}
                 getUserItem={props.getUserItem}
                 resetState={props.resetState}
+                updateInitialized={props.updateInitialized}
               />
             </div>
           </CSSTransition>
@@ -81,6 +82,7 @@ export const CardAnimatedRoutes = (props: Props) => {
                 getPairedUserProcess={props.getPairedUserProcess}
                 getPairedUser={props.getPairedUser}
                 getUserItem={props.getUserItem}
+                updateInitialized={props.updateInitialized}
               />
             </div>
           </CSSTransition>

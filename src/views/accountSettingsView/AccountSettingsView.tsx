@@ -84,6 +84,7 @@ type Props = {
   getUserItemProcess: GetUserItemProcess;
   getUserItem: (username: string) => void;
   resetState: () => void;
+  updateInitialized: any;
 };
 
 export const AccountSettingsView = (props: Props) => {
@@ -92,6 +93,15 @@ export const AccountSettingsView = (props: Props) => {
   });
 
   const getCurrentSessionProcess = React.useContext(GetCurrentSessionProcessContext);
+
+  React.useEffect(() => {
+    if (
+      props.getUserItemProcess.status === Status.SUCCESS ||
+      props.getUserItemProcess.status === Status.ERROR
+    ) {
+      props.updateInitialized(true);
+    }
+  }, [props.getUserItemProcess.status]);
 
   const signOut = async () => {
     try {

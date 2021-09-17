@@ -110,10 +110,26 @@ type Props = {
   getPairedUserProcess: GetUserItemProcess;
   getUserItem: (username: string, jwtToken: string) => void;
   getPairedUser: (username: string, jwtToken: string) => void;
+  updateInitialized: any;
 };
 
 export const PartnershipView = (props: Props) => {
   const getCurrentSessionProcess = React.useContext(GetCurrentSessionProcessContext);
+
+  React.useEffect(() => {
+    if (props.getUserItemProcess.status === Status.SUCCESS) {
+      if (props.getUserItemProcess.data.partner) {
+        if (
+          props.getPairedUserProcess.status === Status.SUCCESS ||
+          props.getPairedUserProcess.status === Status.ERROR
+        ) {
+          props.updateInitialized(true);
+        }
+      } else {
+        props.updateInitialized(true);
+      }
+    }
+  }, [props.getUserItemProcess]);
 
   return (
     <PartnershipCardContentWrapper>

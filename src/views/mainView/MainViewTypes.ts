@@ -12,6 +12,7 @@ export type MainViewProps = {
   getUserItemProcess: GetUserItemProcess;
   getUserItem: (username: string, jwtToken: string) => void;
   getPairedUserProcess: GetUserItemProcess;
+  updateInitialized: any;
 };
 
 type EvaluateMovieProcessLoading = { status: Status.LOADING; score: number };

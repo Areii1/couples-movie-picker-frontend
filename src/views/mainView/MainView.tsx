@@ -55,12 +55,14 @@ export const MainView = (props: MainViewProps) => {
         status: Status.SUCCESS,
         data: parsedGetTrendingMoviesResponse.results,
       });
+      props.updateInitialized(true);
     } catch (getTrendingMoviesError) {
       toast.error("Could not fetch movies list");
       setGetTrendingMoviesProcess({
         status: Status.ERROR,
         error: getTrendingMoviesError,
       });
+      props.updateInitialized(true);
     }
   };
 
@@ -112,12 +114,13 @@ export const MainView = (props: MainViewProps) => {
     getCurrentSessionProcess.status === Status.SUCCESS &&
     props.getUserItemProcess.status === Status.SUCCESS &&
     getTrendingMoviesProcess.status === Status.SUCCESS;
-
+  console.log(viewInitialized, "viewInitialized");
   const viewErrored =
     getCurrentSessionProcess.status === Status.ERROR ||
     props.getUserItemProcess.status === Status.ERROR ||
     getTrendingMoviesProcess.status === Status.ERROR;
 
+  console.log(viewErrored, "viewErrored");
   const displayMatchToast = (
     getPairedUserProcess: GetUserItemProcess,
     getUserItemProcess: GetUserItemProcess,
@@ -171,75 +174,81 @@ export const MainView = (props: MainViewProps) => {
   React.useEffect(() => {
     if (props.getUserItemProcess.status === Status.SUCCESS) {
       getMovies();
+    } else if (props.getUserItemProcess.status === Status.ERROR) {
+      props.updateInitialized(true);
     }
   }, [props.getUserItemProcess.status]);
 
   const filteredList = getFilteredList();
   return (
     <>
-      {getCurrentSessionProcess.status !== Status.ERROR && (
-        <Wrapper>
-          {!viewInitialized && !viewErrored && (
-            <div>
-              <ImagePlaceholder />
-              <TitlePlaceholder />
-            </div>
-          )}
-          {getCurrentSessionProcess.status === Status.SUCCESS &&
-            props.getUserItemProcess.status === Status.SUCCESS &&
-            getTrendingMoviesProcess.status === Status.SUCCESS && (
-              <>
-                {filteredList.length > 0 && filteredList[swipingIndex] !== undefined && (
-                  <div>
-                    <ImageSection
-                      jwtToken={getCurrentSessionProcess.data.getIdToken().getJwtToken()}
-                      getUserItemProcess={props.getUserItemProcess}
-                      getPairedUserProcess={props.getPairedUserProcess}
-                      filteredList={filteredList}
-                      swipingIndex={swipingIndex}
-                      evaluateMovieProcess={evaluateMovieProcess}
-                      evaluateItem={evaluateItem}
-                      setModalOpen={setModalOpen}
-                    />
-                    <DetailsSection>
-                      <Link
-                        to={`movie/${filteredList[swipingIndex].id}`}
-                        title={filteredList[swipingIndex].original_title}
-                      >
-                        <Title>{filteredList[swipingIndex].original_title}</Title>
-                      </Link>
-                      <FireMeterWrapper>
-                        <FireMeter
-                          jwtToken={getCurrentSessionProcess.data.getIdToken().getJwtToken()}
-                          evaluateItem={evaluateItem}
-                          movieId={filteredList[swipingIndex].id}
-                          evaluateMovieProcess={evaluateMovieProcess}
-                        />
-                      </FireMeterWrapper>
-                    </DetailsSection>
-                  </div>
-                )}
-                {(filteredList.length === 0 || filteredList[swipingIndex] === undefined) && (
+      {(viewInitialized || viewErrored) && (
+        <>
+          {getCurrentSessionProcess.status !== Status.ERROR && (
+            <Wrapper>
+              {!viewInitialized && !viewErrored && (
+                <div>
+                  <ImagePlaceholder />
+                  <TitlePlaceholder />
+                </div>
+              )}
+              {getCurrentSessionProcess.status === Status.SUCCESS &&
+                props.getUserItemProcess.status === Status.SUCCESS &&
+                getTrendingMoviesProcess.status === Status.SUCCESS && (
                   <>
-                    <ImageWrapper>
-                      <ImageIcon size={sizingScale[10]} animate={false} color="gray" />
-                    </ImageWrapper>
-                    <TitleWrapper>
-                      <SecondaryHeadline>Everything swiped</SecondaryHeadline>
-                    </TitleWrapper>
+                    {filteredList.length > 0 && filteredList[swipingIndex] !== undefined && (
+                      <div>
+                        <ImageSection
+                          jwtToken={getCurrentSessionProcess.data.getIdToken().getJwtToken()}
+                          getUserItemProcess={props.getUserItemProcess}
+                          getPairedUserProcess={props.getPairedUserProcess}
+                          filteredList={filteredList}
+                          swipingIndex={swipingIndex}
+                          evaluateMovieProcess={evaluateMovieProcess}
+                          evaluateItem={evaluateItem}
+                          setModalOpen={setModalOpen}
+                        />
+                        <DetailsSection>
+                          <Link
+                            to={`movie/${filteredList[swipingIndex].id}`}
+                            title={filteredList[swipingIndex].original_title}
+                          >
+                            <Title>{filteredList[swipingIndex].original_title}</Title>
+                          </Link>
+                          <FireMeterWrapper>
+                            <FireMeter
+                              jwtToken={getCurrentSessionProcess.data.getIdToken().getJwtToken()}
+                              evaluateItem={evaluateItem}
+                              movieId={filteredList[swipingIndex].id}
+                              evaluateMovieProcess={evaluateMovieProcess}
+                            />
+                          </FireMeterWrapper>
+                        </DetailsSection>
+                      </div>
+                    )}
+                    {(filteredList.length === 0 || filteredList[swipingIndex] === undefined) && (
+                      <>
+                        <ImageWrapper>
+                          <ImageIcon size={sizingScale[10]} animate={false} color="gray" />
+                        </ImageWrapper>
+                        <TitleWrapper>
+                          <SecondaryHeadline>Everything swiped</SecondaryHeadline>
+                        </TitleWrapper>
+                      </>
+                    )}
                   </>
                 )}
-              </>
-            )}
-          {modalOpen && props.getPairedUserProcess.status === Status.SUCCESS && (
-            <DisplayProfile
-              closeModal={() => setModalOpen(false)}
-              source={`${bucketUrl}/${props.getPairedUserProcess.data.profilePicture.S}`}
-            />
+              {modalOpen && props.getPairedUserProcess.status === Status.SUCCESS && (
+                <DisplayProfile
+                  closeModal={() => setModalOpen(false)}
+                  source={`${bucketUrl}/${props.getPairedUserProcess.data.profilePicture.S}`}
+                />
+              )}
+            </Wrapper>
           )}
-        </Wrapper>
+          {getCurrentSessionProcess.status === Status.ERROR && <Redirect to="/signup" />}
+        </>
       )}
-      {getCurrentSessionProcess.status === Status.ERROR && <Redirect to="/signup" />}
     </>
   );
 };

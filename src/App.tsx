@@ -1,5 +1,6 @@
 import React from "react";
 import "./App.css";
+import styled, { keyframes } from "styled-components";
 import { ToastContainer, toast } from "react-toastify";
 import { configureAmplify } from "./config/Config";
 import { NavigationBar } from "./components/navigationBar/NavigationBar";
@@ -9,12 +10,49 @@ import { Status, Process, GetCurrentSessionProcess, GetUserItemProcess } from ".
 import "react-toastify/dist/ReactToastify.css";
 import { ContentWrapper } from "./AppStyles";
 import { CardAnimatedRoutes } from "./cardAnimatedRoutes/CardAnimatedRoutes";
+import { fontSizes } from "./styles/Variables";
 
 configureAmplify();
 
 export const GetCurrentSessionProcessContext = React.createContext<GetCurrentSessionProcess>({
   status: Status.INITIAL,
 });
+
+type LoadingTextWrapperProps = {
+  isInitialized: boolean;
+};
+
+const LoadingTextWrapper = styled.div`
+  display: ${(props: LoadingTextWrapperProps) => (props.isInitialized ? "none" : "flex")};
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+  justify-content: center;
+  align-items: center;
+
+  h1 {
+    display: ${(props: LoadingTextWrapperProps) => (props.isInitialized ? "none" : "initial")};
+  }
+`;
+
+const hoverText = keyframes`
+  0% {
+    font-size: ${`${fontSizes[8]}px`};
+  }
+  50% {
+    font-size: ${`${fontSizes[8] - 15}px`};
+  }
+  100% {
+    font-size: ${`${fontSizes[8]}px`};
+  }
+`;
+
+const LoadingText = styled.h1`
+  font-size: ${`${fontSizes[8]}px`};
+  margin: 0;
+  color: red;
+  animation: ${hoverText} 3s linear infinite;
+`;
 
 export const App: React.FunctionComponent = () => {
   const [getCurrentSessionProcess, setGetCurrentSessionProcess] =
@@ -34,6 +72,12 @@ export const App: React.FunctionComponent = () => {
   const [getUserItemProcess, setGetUserItemProcess] = React.useState<GetUserItemProcess>({
     status: Status.INITIAL,
   });
+
+  const [initialized, setInitialized] = React.useState<boolean>(false);
+
+  const updateInitialized = (isInitialized: boolean) => {
+    setInitialized(isInitialized);
+  };
 
   const getPairedUser = async (username: string, jwtToken?: string) => {
     try {
@@ -153,30 +197,41 @@ export const App: React.FunctionComponent = () => {
   console.log(getCurrentAuthenticatedUserProcess, "getCurrentAuthenticatedUserProcess");
   console.log(getPairedUserProcess, "getPairedUserProcess");
 
+  // const loading =
+  //   getCurrentSessionProcess.status === Status.LOADING ||
+  //   getCurrentAuthenticatedUserProcess.status === Status.LOADING ||
+  //   getUserItemProcess.status === Status.LOADING;
+  console.log(initialized, "initialized");
   return (
-    <ContentWrapper>
-      <GetCurrentSessionProcessContext.Provider value={getCurrentSessionProcess}>
-        <NavigationBar getUserItemProcess={getUserItemProcess} />
-        <div className="container">
-          <CardAnimatedRoutes
-            getUserItemProcess={getUserItemProcess}
-            getUserItem={getUserItem}
-            getPairedUserProcess={getPairedUserProcess}
-            getUserInfo={getUserInfo}
-            resetState={resetState}
-            getPairedUser={getPairedUser}
-          />
-        </div>
-      </GetCurrentSessionProcessContext.Provider>
-      <ToastContainer
-        position="bottom-left"
-        autoClose={10000}
-        hideProgressBar
-        newestOnTop
-        pauseOnFocusLoss
-        draggable={false}
-        pauseOnHover
-      />
-    </ContentWrapper>
+    <>
+      <LoadingTextWrapper isInitialized={initialized}>
+        <LoadingText>Movie picker</LoadingText>
+      </LoadingTextWrapper>
+      <ContentWrapper isInitialized={initialized}>
+        <GetCurrentSessionProcessContext.Provider value={getCurrentSessionProcess}>
+          <NavigationBar getUserItemProcess={getUserItemProcess} initialized={initialized} />
+          <div className="container">
+            <CardAnimatedRoutes
+              getUserItemProcess={getUserItemProcess}
+              getUserItem={getUserItem}
+              getPairedUserProcess={getPairedUserProcess}
+              getUserInfo={getUserInfo}
+              resetState={resetState}
+              getPairedUser={getPairedUser}
+              updateInitialized={updateInitialized}
+            />
+          </div>
+        </GetCurrentSessionProcessContext.Provider>
+        <ToastContainer
+          position="bottom-left"
+          autoClose={10000}
+          hideProgressBar
+          newestOnTop
+          pauseOnFocusLoss
+          draggable={false}
+          pauseOnHover
+        />
+      </ContentWrapper>
+    </>
   );
 };

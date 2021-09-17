@@ -18,6 +18,7 @@ type Props = {
   getPairedUser: (username: string, jwtToken?: string) => void;
   getUserInfo: () => void;
   resetState: () => void;
+  updateInitialized: (initialized: boolean) => void;
 };
 
 export const CardAnimatedRoutes = (props: Props) => {
@@ -31,6 +32,7 @@ export const CardAnimatedRoutes = (props: Props) => {
                 getUserItemProcess={props.getUserItemProcess}
                 getUserItem={props.getUserItem}
                 getPairedUserProcess={props.getPairedUserProcess}
+                updateInitialized={props.updateInitialized}
               />
             </div>
           </CSSTransition>

@@ -19,6 +19,7 @@ type Props = {
   getUserInfo: () => void;
   resetState: () => void;
   updateInitialized: (initialized: boolean) => void;
+  initialized: boolean;
 };
 
 export const CardAnimatedRoutes = (props: Props) => {
@@ -33,6 +34,7 @@ export const CardAnimatedRoutes = (props: Props) => {
                 getUserItem={props.getUserItem}
                 getPairedUserProcess={props.getPairedUserProcess}
                 updateInitialized={props.updateInitialized}
+                initialized={props.initialized}
               />
             </div>
           </CSSTransition>

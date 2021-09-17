@@ -84,14 +84,10 @@ export const MainView = (props: MainViewProps) => {
     }
   };
 
-  const viewInitialized =
+  const viewSuccessfull =
     getCurrentSessionProcess.status === Status.SUCCESS &&
     props.getUserItemProcess.status === Status.SUCCESS &&
     getTrendingMoviesProcess.status === Status.SUCCESS;
-  const viewErrored =
-    getCurrentSessionProcess.status === Status.ERROR ||
-    props.getUserItemProcess.status === Status.ERROR ||
-    getTrendingMoviesProcess.status === Status.ERROR;
 
   React.useEffect(() => {
     if (evaluateMovieProcess.status === Status.SUCCESS) {
@@ -131,64 +127,63 @@ export const MainView = (props: MainViewProps) => {
   }, [props.getUserItemProcess.status]);
 
   const filteredList = getFilteredList(getTrendingMoviesProcess, props.getUserItemProcess);
+  const nextMovieExists = filteredList.length > 0 && filteredList[swipingIndex] !== undefined;
   return (
     <>
-      {(viewInitialized || viewErrored) && (
+      {props.initialized && (
         <>
           {getCurrentSessionProcess.status !== Status.ERROR && (
             <Wrapper>
-              {!viewInitialized && !viewErrored && (
+              {props.initialized && getTrendingMoviesProcess.status === Status.LOADING && (
                 <div>
                   <ImagePlaceholder />
                   <TitlePlaceholder />
                 </div>
               )}
-              {getCurrentSessionProcess.status === Status.SUCCESS &&
-                props.getUserItemProcess.status === Status.SUCCESS &&
-                getTrendingMoviesProcess.status === Status.SUCCESS && (
-                  <>
-                    {filteredList.length > 0 && filteredList[swipingIndex] !== undefined && (
-                      <div>
-                        <ImageSection
-                          jwtToken={getCurrentSessionProcess.data.getIdToken().getJwtToken()}
-                          getUserItemProcess={props.getUserItemProcess}
-                          getPairedUserProcess={props.getPairedUserProcess}
-                          filteredList={filteredList}
-                          swipingIndex={swipingIndex}
-                          evaluateMovieProcess={evaluateMovieProcess}
-                          evaluateItem={evaluateItem}
-                          setModalOpen={setModalOpen}
-                        />
-                        <DetailsSection>
-                          <Link
-                            to={`movie/${filteredList[swipingIndex].id}`}
-                            title={filteredList[swipingIndex].original_title}
-                          >
-                            <Title>{filteredList[swipingIndex].original_title}</Title>
-                          </Link>
-                          <FireMeterWrapper>
-                            <FireMeter
-                              jwtToken={getCurrentSessionProcess.data.getIdToken().getJwtToken()}
-                              evaluateItem={evaluateItem}
-                              movieId={filteredList[swipingIndex].id}
-                              evaluateMovieProcess={evaluateMovieProcess}
-                            />
-                          </FireMeterWrapper>
-                        </DetailsSection>
-                      </div>
-                    )}
-                    {(filteredList.length === 0 || filteredList[swipingIndex] === undefined) && (
-                      <>
-                        <ImageWrapper>
-                          <ImageIcon size={sizingScale[10]} animate={false} color="gray" />
-                        </ImageWrapper>
-                        <TitleWrapper>
-                          <SecondaryHeadline>Everything swiped</SecondaryHeadline>
-                        </TitleWrapper>
-                      </>
-                    )}
-                  </>
-                )}
+              {viewSuccessfull && (
+                <>
+                  {nextMovieExists && (
+                    <div>
+                      <ImageSection
+                        jwtToken={getCurrentSessionProcess.data.getIdToken().getJwtToken()}
+                        getUserItemProcess={props.getUserItemProcess}
+                        getPairedUserProcess={props.getPairedUserProcess}
+                        filteredList={filteredList}
+                        swipingIndex={swipingIndex}
+                        evaluateMovieProcess={evaluateMovieProcess}
+                        evaluateItem={evaluateItem}
+                        setModalOpen={setModalOpen}
+                      />
+                      <DetailsSection>
+                        <Link
+                          to={`movie/${filteredList[swipingIndex].id}`}
+                          title={filteredList[swipingIndex].original_title}
+                        >
+                          <Title>{filteredList[swipingIndex].original_title}</Title>
+                        </Link>
+                        <FireMeterWrapper>
+                          <FireMeter
+                            jwtToken={getCurrentSessionProcess.data.getIdToken().getJwtToken()}
+                            evaluateItem={evaluateItem}
+                            movieId={filteredList[swipingIndex].id}
+                            evaluateMovieProcess={evaluateMovieProcess}
+                          />
+                        </FireMeterWrapper>
+                      </DetailsSection>
+                    </div>
+                  )}
+                  {!nextMovieExists && (
+                    <>
+                      <ImageWrapper>
+                        <ImageIcon size={sizingScale[10]} animate={false} color="gray" />
+                      </ImageWrapper>
+                      <TitleWrapper>
+                        <SecondaryHeadline>Everything swiped</SecondaryHeadline>
+                      </TitleWrapper>
+                    </>
+                  )}
+                </>
+              )}
               {modalOpen && props.getPairedUserProcess.status === Status.SUCCESS && (
                 <DisplayProfile
                   closeModal={() => setModalOpen(false)}

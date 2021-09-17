@@ -1,6 +1,5 @@
 import React from "react";
 import "./App.css";
-import styled, { keyframes } from "styled-components";
 import { ToastContainer, toast } from "react-toastify";
 import { configureAmplify } from "./config/Config";
 import { NavigationBar } from "./components/navigationBar/NavigationBar";
@@ -8,51 +7,14 @@ import { getUser } from "./apiService/getUser";
 import { getCurrentSession, getCurrentAuthenticatedUser } from "./apiService/getUserInformation";
 import { Status, Process, GetCurrentSessionProcess, GetUserItemProcess } from "./types/Types";
 import "react-toastify/dist/ReactToastify.css";
-import { ContentWrapper } from "./AppStyles";
+import { ContentWrapper, LoadingText, LoadingTextWrapper } from "./AppStyles";
 import { CardAnimatedRoutes } from "./cardAnimatedRoutes/CardAnimatedRoutes";
-import { fontSizes } from "./styles/Variables";
 
 configureAmplify();
 
 export const GetCurrentSessionProcessContext = React.createContext<GetCurrentSessionProcess>({
   status: Status.INITIAL,
 });
-
-type LoadingTextWrapperProps = {
-  isInitialized: boolean;
-};
-
-const LoadingTextWrapper = styled.div`
-  display: ${(props: LoadingTextWrapperProps) => (props.isInitialized ? "none" : "flex")};
-  position: absolute;
-  width: 100vw;
-  height: 100vh;
-  justify-content: center;
-  align-items: center;
-
-  h1 {
-    display: ${(props: LoadingTextWrapperProps) => (props.isInitialized ? "none" : "initial")};
-  }
-`;
-
-const hoverText = keyframes`
-  0% {
-    font-size: ${`${fontSizes[8]}px`};
-  }
-  50% {
-    font-size: ${`${fontSizes[8] - 15}px`};
-  }
-  100% {
-    font-size: ${`${fontSizes[8]}px`};
-  }
-`;
-
-const LoadingText = styled.h1`
-  font-size: ${`${fontSizes[8]}px`};
-  margin: 0;
-  color: red;
-  animation: ${hoverText} 3s linear infinite;
-`;
 
 export const App: React.FunctionComponent = () => {
   const [getCurrentSessionProcess, setGetCurrentSessionProcess] =
@@ -192,10 +154,10 @@ export const App: React.FunctionComponent = () => {
     setGetUserItemProcess({ status: Status.INITIAL });
   };
 
-  console.log(getUserItemProcess, "getUserItemProcess");
-  console.log(getCurrentSessionProcess, "getCurrentSessionProcess");
-  console.log(getCurrentAuthenticatedUserProcess, "getCurrentAuthenticatedUserProcess");
-  console.log(getPairedUserProcess, "getPairedUserProcess");
+  // console.log(getUserItemProcess, "getUserItemProcess");
+  // console.log(getCurrentSessionProcess, "getCurrentSessionProcess");
+  // console.log(getCurrentAuthenticatedUserProcess, "getCurrentAuthenticatedUserProcess");
+  // console.log(getPairedUserProcess, "getPairedUserProcess");
 
   return (
     <>
@@ -214,6 +176,7 @@ export const App: React.FunctionComponent = () => {
               resetState={resetState}
               getPairedUser={getPairedUser}
               updateInitialized={updateInitialized}
+              initialized={initialized}
             />
           </div>
         </GetCurrentSessionProcessContext.Provider>
